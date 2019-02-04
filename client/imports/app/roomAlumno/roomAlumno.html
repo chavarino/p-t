@@ -1,0 +1,130 @@
+<div class="container room-alumno card">
+
+
+    <div class="card-body">
+        <h2 class="bd-title">
+            Consulta profesor  <span style="float: right" *ngIf="clase.estadoText" class="alert alert-primary">{{clase.estadoText}}</span>
+        </h2>
+        <div *ngIf="!isInClass()">
+
+            <!--<form #claseForm="ngForm" [formGroup]="addForm" (ngSubmit)="save()"  >
+    
+                  
+                    <div class="row  mt-3">
+                        <div class="col">
+                            <label for="titulo">Título</label>
+                            <input  formControlName="titulo" type="text" class="form-control" id="titulo" name="titulo" required placeholder="Título..." [(ngModel)]="clase.titulo">
+    
+                        </div>
+                        <div class="col">
+                            <label for="peticion">Petición</label>
+                            <textarea formControlName="peticion" class="form-control" id="peticion" name="peticion" required placeholder="Mi consulta es la siguiente..." [(ngModel)]="clase.peticion">
+    
+                            </textarea> 
+                           
+    
+                        </div>
+                      
+                    </div>
+                    
+                    <div class="row  mt-3">
+                        <div class="col">
+    
+                            <button [disabled]="!isValid()" type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </div>
+              </form>
+            -->
+
+
+            <div class="row" >
+                <div class="col-sm-12" *ngFor="let prof of profesores | async">
+                  <div class="card">
+                    <div class="card-body">
+                        <div class="row col-sm">
+
+                            <div class="col-sm-8">
+                                <img [src]="prof.profile.foto" id="foto" alt="Foto perfil" height="100" width="auto">
+
+                            </div>
+
+                            <div class="col-sm-4">
+                                <span >
+                                        <i class="material-icons iconos" data-toggle="modal" (click)="setModalConfig()" data-target="#m-confirm" style="cursor: pointer" > 
+                                                call
+                                        </i>
+                                         
+                                </span>
+                            </div>
+                        </div>
+                        <div  class="row col-sm">
+                            <h4 class="card-title">
+                             
+                                  {{prof.profile.nombre + " " + prof.profile.apellidos}}
+                              
+                            </h4>
+
+                        </div>
+                      <p class="card-text">Profesor Matematicas </p>
+                      <!--
+                          <a href="#" class="btn btn-primary">Go somewhere</a>
+
+                      -->
+                    </div>
+                  </div>
+                </div>
+            </div>
+
+        </div>
+        <div  *ngIf="isInClass()">
+
+            <form #claseForm="ngForm" [formGroup]="addForm"  >
+  
+              <div class="row  mt-3" *ngIf="clase.urlVideo && clase.urlVideo!==''">
+                  <div  class="col">
+
+                                            <iframe id="ytplayer" type="text/html" width="720" height="405"
+                    [src]="getUrl()"
+                    frameborder="0" allowfullscreen>
+                    </iframe>
+                  </div>
+                
+              </div>
+                
+              <div class="row  mt-3">
+                  <div class="col">
+                      <label for="titulo"><strong>Título: </strong> </label>
+                      <span id="titulo">{{clase.titulo}}</span>
+  
+                  </div>
+                  <div class="col">
+                      <label for="peticion"><strong>Petición: </strong></label>
+                      <span id="peticion">
+                          {{clase.peticion}}
+                      </span>
+                       <!--<textarea formControlName="peticion" class="form-control" id="peticion" name="peticion" [disabled]="isInClass" required placeholder="Mi consulta es la siguiente..." [(ngModel)]="clase.peticion">
+  
+                      </textarea> 
+                    
+                         <input formControlName="apellidos" type="text" class="form-control" id="apellidos" name="apellidos" required placeholder="Apellidos" [(ngModel)]="clase.apellidos">
+  
+                     --> 
+  
+                  </div>
+                
+              </div>
+              
+              <div class="row  mt-3">
+                  <div class="col">
+  
+                      <button [disabled]="!clase.activo" (click)="terminar()"  class="btn btn-primary">Terminar</button>
+                  </div>
+              </div>
+        </form>
+
+        </div>
+    </div>
+</div>
+
+
+  

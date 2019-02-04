@@ -1,0 +1,57 @@
+<div class="container perfil card">
+
+
+    <div class="card-body">
+        <h2 class="bd-title">
+            Perfil
+        </h2>
+        <form #perfilForm="ngForm" [formGroup]="addForm" (ngSubmit)="save()">
+                <div class="row" style="border-bottom: 1px solid #f5efef;">
+                        <div class="col">
+                           
+                            <img [src]="perfil.foto" id="foto" alt="Foto perfil" height="100" width="auto">
+                                
+                        </div>
+                        <div class="col">
+                            <h4>Email: {{perfil.email}}</h4>
+                            
+                        </div>
+                
+                </div>
+
+                <div class="row" >
+                        <div class="col">
+                           
+                            
+                                
+                        </div>
+                        <div class="col">
+                           
+                            
+                        </div>
+                
+                </div>
+                <div class="row  mt-3">
+                    <div class="col">
+                        <label for="nombre">Nombre</label>
+                        <input  formControlName="nombre" type="text" class="form-control" id="nombre" name="nombre" required placeholder="Nombre..." [(ngModel)]="perfil.nombre">
+
+                    </div>
+                    <div class="col">
+                        <label for="apellidos">Apellidos</label>
+                        <input formControlName="apellidos" type="text" class="form-control" id="apellidos" name="apellidos" required placeholder="Apellidos" [(ngModel)]="perfil.apellidos">
+
+                    </div>
+                  
+                </div>
+                
+                <div class="row  mt-3">
+                    <div class="col">
+
+                        <button [disabled]="!isValid()" type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+          </form>
+
+    </div>
+</div>

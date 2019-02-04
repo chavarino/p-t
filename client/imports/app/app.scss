@@ -1,0 +1,21 @@
+.selector-for-some-widget {
+    box-sizing: content-box;
+  }
+body {
+    font-family: Roboto;
+}
+
+.truncate {
+    width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+.router-cont {
+    margin-top: 60px;
+}
+
+.material-icons {
+    font-family: 'Material Icons' !important;
+}

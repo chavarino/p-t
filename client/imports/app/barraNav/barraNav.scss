@@ -1,0 +1,23 @@
+.gb_ab {
+    -webkit-background-size: 32px 32px;
+    background-size: 32px 32px;
+    -webkit-border-radius: 50%;
+    border-radius: 50%;
+    display: block;
+    margin: -1px;
+    overflow: hidden;
+    position: relative;
+    height: 32px;
+    width: 32px;
+    z-index: 0;
+}
+
+
+.dropdown-toggle::after {
+   
+    float: right;
+}
+
+nav.navbar {
+    box-shadow: 0px 1px 1px 1px #ada9a9;
+}

@@ -1,0 +1,39 @@
+accesos
+:
+comun, alumno, profesor, admin
+
+room 
+
+{
+ profesorId? : Number, //profesor id
+ url ?: string, //url video
+ alumno : Number, id alumno
+
+ categoria: Number, //categoria id de momento invisible
+
+ nivel : Number, //nivel
+
+ titulo : string, //titlo de la peticion
+ consulta : string,  //cunsulta
+
+ fechaIni : Date, //calcular tiempo
+ fechaFin : Date
+}
+
+
+
+categoria {
+
+    
+    nombre : string,
+    nivel : []
+}
+
+
+
+{ "_id" : ObjectId("5bef28fcadf47c7f449f2388"), "codigo" : 1, "rol" : { "comun" : { "read" : 0, "write" : 0 }, "alumno" : { "read" : 0, "write" : 0 }, "prof" : { "read" : 0, "write" : 0 }, "admin" : { "read" : 0, "write" : 0 } } }
+{ "_id" : ObjectId("5bef28fcadf47c7f449f2389"), "codigo" : 2, "rol" : { "comun" : { "read" : 1, "write" : 1 }, "alumno" : { "read" : 0, "write" : 0 }, "prof" : { "read" : 0, "write" : 0 }, "admin" : { "read" : 0, "write" : 0 } } }
+{ "_id" : ObjectId("5bef28fcadf47c7f449f238a"), "codigo" : 3, "rol" : { "comun" : { "read" : 1, "write" : 1 }, "alumno" : { "read" : 1, "write" : 1 }, "prof" : { "read" : 0, "write" : 0 }, "admin" : { "read" : 0, "write" : 0 } } }
+{ "_id" : ObjectId("5bef28fcadf47c7f449f238b"), "codigo" : 4, "rol" : { "comun" : { "read" : 1, "write" : 1 }, "alumno" : { "read" : 0, "write" : 0 }, "prof" : { "read" : 1, "write" : 1 }, "admin" : { "read" : 0, "write" : 0 } } }
+{ "_id" : ObjectId("5bef28fcadf47c7f449f238c"), "codigo" : 5, "rol" : { "comun" : { "read" : 1, "write" : 1 }, "alumno" : { "read" : 1, "write" : 1 }, "prof" : { "read" : 1, "write" : 1 }, "admin" : { "read" : 1, "write" : 1 } } }
+{ "_id" : ObjectId("5bef28fcadf47c7f449f238d"), "codigo" : 6, "rol" : { "comun" : { "read" : 1, "write" : 1 }, "alumno" : { "read" : 1, "write" : 1 }, "prof" : { "read" : 1, "write" : 1 }, "admin" : { "read" : 99, "write" : 99 } } }

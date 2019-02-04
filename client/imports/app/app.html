@@ -1,0 +1,12 @@
+
+<div [hidden]="logginIn()">
+
+    <barraNav></barraNav>
+
+</div>
+<div class="router-cont">
+    <router-outlet></router-outlet>
+
+    
+    <modal *ngIf="flags.getModalConfig()" [config] = "flags.getModalConfig().config" (retorno)="flags.getModalConfig().fn($event)" ></modal>
+</div>
