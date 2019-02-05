@@ -1,7 +1,0 @@
-{
-    "galaxy.meteor.com": {
-       "env": {
-         "MONGO_URL": "mongodb://fasmos:javier88@ds253243.mlab.com:53243/meteor"
-       }
-     }
-  }
