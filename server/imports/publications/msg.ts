@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 
 import { Msg } from '../../../imports/collections/msg';
 
-import { Error } from '../../imports/functions/errors'
+import { Error } from '../../../imports/functions/errors'
 
 Meteor.publish('getMsg', function() {
     //1 sin logueo solo acceso a common
@@ -19,7 +19,7 @@ Meteor.publish('getMsg', function() {
 
 
   
-  return Msg.find({ to : Meteor.userId()});
+  return Msg.find({ to : Meteor.userId(), readed : !true});
 });
 
 

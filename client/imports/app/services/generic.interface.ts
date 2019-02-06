@@ -4,6 +4,7 @@ import { Rol } from '../../../../imports/models/rol';
 import { Map } from '../../../../imports/models/map';
 import $ from "jquery";
 import {Message, MessageRtc, MsgTipo} from "../../../../imports/models/message"
+import {MsgClass} from "../../../../imports/functions/commonFunctions"
 interface RolesEnt {
     module : string,
     min : Rol,
@@ -16,13 +17,14 @@ export class Generic {
     modulo : string;
     rol : RolesService;
     rolesElemnt : Map<RolesEnt> 
+    msgServ : MsgClass
     constructor(minWrite : number,  minRead : number,modulo : string, rol : RolesService)
     {
         let vm = this;
         this.minRead = minRead;
         this.minWrite = minWrite;
         this.modulo = modulo;
-
+        this.msgServ =  new MsgClass();
         this.rol = rol;
 
         this.rolesElemnt = 
@@ -147,12 +149,7 @@ export class Generic {
 
     sendMsg(to :string, tipo : MsgTipo, cuerpo ?: any)
     {
-        let mensaje : Message = {
-            to : to,
-            from : Meteor.userId(),
-            msgTipo : tipo,
-            cuerpo : cuerpo
-        } 
+        this.msgServ.sendMsg(to, tipo,cuerpo)
         //send mensaje
     }
  

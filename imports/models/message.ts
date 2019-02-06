@@ -10,7 +10,8 @@ export interface Message  {
     to : string, //id del receptor
 
     msgTipo : MsgTipo,
-    cuerpo ?: any
+    cuerpo ?: any,
+    readed ?: boolean
 
 }
 

@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import { Error } from '../../imports/functions/errors'
+import { Error } from '../../../imports/functions/errors'
 import { Users } from '../../../imports/collections/users';
 import { Perfil } from '../../../imports/models/perfil';
 import { User } from 'imports/models/User';

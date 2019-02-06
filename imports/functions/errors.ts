@@ -2,6 +2,18 @@ import { Meteor } from 'meteor/meteor';
 export class Error {
 
 
+    static frontHandle(error, result)
+    {
+        
+                   
+            if(error)
+            {
+                alert(error);
+                console.error(error);
+            }
+            
+    }
+    
     static camposInsuficientes() 
     {
         

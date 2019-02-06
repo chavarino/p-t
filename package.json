@@ -4,7 +4,9 @@
     "start": "meteor run",
     "start:prod": "AOT=1 ROLLUP=1 meteor --production",
     "test": "TEST_BROWSER_DRIVER=phantomjs meteor test --driver-package=ardatan:mocha",
-    "test:ci": "TEST_BROWSER_DRIVER=phantomjs meteor test --driver-package=ardatan:mocha --once"
+    "test:ci": "TEST_BROWSER_DRIVER=phantomjs meteor test --driver-package=ardatan:mocha --once",
+    "updateAll" : "meteor update --all-packages",
+    "seeVulnera" : "npm audit"
   },
   "dependencies": {
     "@angular/animations": "^6.0.5",

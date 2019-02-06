@@ -25,7 +25,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
     addForm: FormGroup;
     inClass : boolean;
     sanitizer : DomSanitizer;
-    todos: Observable<Room>;
+    ///todos: Observable<Room>;
     flags : BanderasService;
     profesoresSuscription:  Subscription;
 

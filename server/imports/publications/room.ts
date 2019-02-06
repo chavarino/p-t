@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Room} from "../../../imports/models/room"
 import { Rooms } from '../../../imports/collections/room';
-import { Error } from '../../imports/functions/errors'
+import { Error } from '../../../imports/functions/errors'
 
 
 

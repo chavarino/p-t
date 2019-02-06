@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import { Error } from '../../imports/functions/errors'
+import { Error } from '../../../imports/functions/errors'
 import { Msg } from '../../../imports/collections/msg';
 import { Message } from '../../../imports/models/message';
 
@@ -38,5 +38,18 @@ Meteor.methods({
        }
 
        Msg.remove(id)
+    },
+    borrarAllMsg()
+    {
+        //Borramos todos nuestro mensajes de entrada
+
+        if(!Meteor.user())
+        {  
+            Error.noLogueado();
+          }
+
+       
+
+       Msg.remove({to : Meteor.userId()})
     }
 })

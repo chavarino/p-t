@@ -3,8 +3,8 @@ import { Meteor } from 'meteor/meteor';
 import { Rooms } from '../../../imports/collections/room';
 import { Users } from '../../../imports/collections/users';
 import { Room } from '../../../imports/models/room';
-import { Error } from '../../imports/functions/errors'
-import { Semaforo } from '../../imports/functions/semaforo'
+import { Error } from '../../../imports/functions/errors'
+
 import { User } from 'imports/models/User';
 import { Perfil } from 'imports/models/perfil';
 function getTexto(room : Room)
