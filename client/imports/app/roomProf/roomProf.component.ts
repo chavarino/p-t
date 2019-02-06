@@ -100,6 +100,63 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
 
 
 
+    estadoWaitCall() : Estado
+    {
+        let vm =this;
+        let estado :Estado = {
+
+        }
+
+        estado.ini= function()
+        {
+          
+           let perfil : Perfil =   Meteor.user().profile;
+
+           if(!perfil.disponible)
+           {
+               //TODO quitar disponible
+               vm.setDisponible(false)
+              
+           }
+
+           //esta en una clase?
+           //borramos mensajes
+           vm.borrarMsg()
+           if(perfil.claseId && perfil.claseId !== "")
+           {
+               //si
+               
+               //mandamos mensaje de resconexion
+
+               //TODO
+               let idAlumno : string;
+                if(vm.clase && vm.clase.alumnoId)
+                {
+                     idAlumno =  vm.clase.alumnoId;
+                }
+                else{
+                    idAlumno = Rooms.findOne(perfil.claseId).alumnoId;
+                }
+                
+                vm.sendMsg(idAlumno, MsgTipo.RECONNECT);
+
+                vm.redux.nextStatus(ETipo.GO_CLASS)
+            
+
+           }
+           else{
+                //no está en clase
+                //ponemos la disponibilidad a true;
+
+                vm.setDisponible(true)
+                vm.redux.nextStatus(ETipo.WAIT_CALL)
+           }
+
+        }
+
+        return estado;
+    }
+
     estadoInicio() : Estado
     {
         let vm =this;
