@@ -5,9 +5,14 @@ export interface Estado {
     ini ?: ()=>void;
     dispatcher?: ()=>void; //Funcion que será llamada para realizar tareas recurrentes (lectura de mensajes, preguntar si ha pasado algo)
     destroy?: ()=>void;
+    id ?: number,
+    userFrom ?: string
 }
 
-
+export interface LogicEstado {
+    action : number,
+    fromEstado : any[]
+}
 
 export class ReduxC {
     
@@ -47,7 +52,25 @@ export class ReduxC {
         });
     }
 
+    canGo(logicas :  LogicEstado[], eActual : Estado, action:number) :  number
+    {
 
+        let includes  =  (array : any[], e) :boolean  =>
+        {   
+            return array.indexOf(e) !== -1;
+
+        } 
+
+        
+        for (const l of logicas) {
+            if(includes(l.fromEstado, eActual.id) && l.action === action)
+            {
+                return action;
+            }
+        }
+
+        return -1;
+    }
     nextStatus(action : any)
     {
         this.store.dispatch(action);

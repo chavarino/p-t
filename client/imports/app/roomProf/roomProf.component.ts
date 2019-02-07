@@ -11,7 +11,7 @@ import { MeteorObservable } from 'meteor-rxjs';
 import { Subscription } from 'rxjs/Subscription';
 
 
-import {ReduxC, Estado} from "../services/reduxC";
+import {ReduxC, Estado, LogicEstado} from "../services/reduxC";
 import { Action } from 'redux';
 import { MsgTipo, Message } from 'imports/models/message';
 import { MsgClass } from 'imports/functions/commonFunctions';
@@ -19,8 +19,12 @@ import { MsgClass } from 'imports/functions/commonFunctions';
 enum ETipo  {
     INIT = 1,
     GO_CLASS = 2,
-    WAIT_CALL = 3
+    WAIT_CALL = 3,
+    WAIT_CALL_ACCEPT =4
 }
+
+
+
 @Component({
   selector: 'roomP',
   templateUrl: 'roomProf.html',
@@ -34,22 +38,36 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
     existePet : boolean;
     interval : any;
     redux : ReduxC;
-    pFlags : Map<string, boolean>;
+    estadoLogic :  LogicEstado[];
     constructor( rol : RolesService, private formBuilder: FormBuilder )
     {
         super(1, 1, "Prof", rol);
 
         let vm =this;
-                // Creamos un store de Redux almacenando el estado de la aplicación.
-        // Su API es { subscribe, dispatch, getState }.
-        this.pFlags = {
-            cancelar : false
-        }
+
         vm.redux = new ReduxC(function(state : Estado, action : Action<number>)
         {
             return vm.reducer(state, action);
         })
         
+        vm.estadoLogic =[
+
+           // init : 
+            {
+                action : ETipo.INIT,
+                fromEstado : [null, undefined, ETipo.WAIT_CALL_ACCEPT] 
+            },
+//            waitCall :
+            {
+                action : ETipo.WAIT_CALL,
+                fromEstado : [ETipo.INIT]
+            },
+            //waitCallAccept :
+            {
+                action : ETipo.WAIT_CALL_ACCEPT,
+                fromEstado : [ ETipo.WAIT_CALL]
+            }
+        ]
 
 
         this.iniClase();
@@ -97,161 +115,167 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
     //BORRAR MENSAJES
 
 
+    
 
+    
 
-    estadoWaitCall() : Estado
-    {
-        let vm =this;
-        let estado :Estado = {
-
-        }
-
-        estado.dispatcher = function()
-        {
-            let vm =this;
-            let mServ : MsgClass =  this.msgServ;
-            let mapa : Map<Number, (m :Message)=> void > ;
-            let profile : Perfil=  Meteor.user().profile;
-            mapa[MsgTipo.CALL_INI] = function(m :Message)
-            {
-                
-                if(profile.disponible)
-                {
-                    profile.disponible =false;
-                    vm.setDisponible(false);
-
-
-
-                }
-                else{
-                    mServ.sendMsg(m.from,MsgTipo.CALL_NO_DISPONIBLE)
-                }
-
-            }
-            mServ.readMsgs
-        }
-        estado.ini= function()
-        {
-          
-           let perfil : Perfil =   Meteor.user().profile;
-
-           if(!perfil.disponible)
-           {
-               //TODO quitar disponible
-               vm.setDisponible(false)
-              
-           }
-
-           //esta en una clase?
-           //borramos mensajes
-           vm.borrarMsg()
-           if(perfil.claseId && perfil.claseId !== "")
-           {
-               //si
-               
-               //mandamos mensaje de resconexion
-
-               //TODO
-               let idAlumno : string;
-                if(vm.clase && vm.clase.alumnoId)
-                {
-                     idAlumno =  vm.clase.alumnoId;
-                }
-                else{
-                    idAlumno = Rooms.findOne(perfil.claseId).alumnoId;
-                }
-                
-                vm.sendMsg(idAlumno, MsgTipo.RECONNECT);
-
-                vm.redux.nextStatus(ETipo.GO_CLASS)
-            
-
-           }
-           else{
-                //no está en clase
-                //ponemos la disponibilidad a true;
-
-                vm.setDisponible(true)
-                vm.redux.nextStatus(ETipo.WAIT_CALL)
-           }
-
-        }
-
-        return estado;
-    }
-
-    estadoInicio() : Estado
-    {
-        let vm =this;
-        let estado :Estado = {
-
-        }
-
-        estado.ini= function()
-        {
-          
-           let perfil : Perfil =   Meteor.user().profile;
-
-           if(!perfil.disponible)
-           {
-               //TODO quitar disponible
-               vm.setDisponible(false)
-              
-           }
-
-           //esta en una clase?
-           //borramos mensajes
-           vm.borrarMsg()
-           if(perfil.claseId && perfil.claseId !== "")
-           {
-               //si
-               
-               //mandamos mensaje de resconexion
-
-               //TODO
-               let idAlumno : string;
-                if(vm.clase && vm.clase.alumnoId)
-                {
-                     idAlumno =  vm.clase.alumnoId;
-                }
-                else{
-                    idAlumno = Rooms.findOne(perfil.claseId).alumnoId;
-                }
-                
-                vm.sendMsg(idAlumno, MsgTipo.RECONNECT);
-
-                vm.redux.nextStatus(ETipo.GO_CLASS)
-            
-
-           }
-           else{
-                //no está en clase
-                //ponemos la disponibilidad a true;
-
-                vm.setDisponible(true)
-                vm.redux.nextStatus(ETipo.WAIT_CALL)
-           }
-
-        }
-
-        return estado;
-    }
+    
 
 
     private reducer (state : Estado = {}, action : Action<number>) : Estado
     {
         let vm =this;
-        switch (action.type) {
+        let nextState :Estado = {
+            id : action.type
+        }
+        let mServ : MsgClass =  this.msgServ;
+        let funciones : Map<Number, (m :Message)=> void > ;
+        let profile : Perfil=  Meteor.user().profile;
+        let fnMsgCallIni = function(m :Message)
+        {
+            
+            if(profile.disponible)
+            {
+                profile.disponible =false;
+                vm.setDisponible(false);
+                vm.redux.estado.userFrom = m.from;
+                vm.redux.nextStatus({ type: ETipo.WAIT_CALL_ACCEPT});
+
+
+            }
+            else{
+                mServ.sendMsg(m.from,MsgTipo.CALL_NO_DISPONIBLE)
+            }
+
+        }
+        let  cancelarCall = ()  =>{
+            vm.redux.estado.userFrom = null;
+            vm.redux.nextStatus({ type: ETipo.INIT });
+        }
+        let fnMsgCancelCall = function(m :Message)
+        {
+            
+            if(vm.redux.estado.userFrom === m.from)
+            {
+                
+                //cancelamos y vamos a init
+                cancelarCall();
+
+                
+
+            }
+            
+
+        }
+        
+        //action.type
+        let tipo  = action.type;
+        
+        
+        tipo = vm.redux.canGo(vm.estadoLogic, state, tipo);
+
+
+
+        switch (tipo) {
             case ETipo.INIT:
-                return vm.estadoInicio();
+                nextState.ini= function()
+                {
+                
+                let perfil : Perfil =   Meteor.user().profile;
+        
+                if(perfil.disponible)
+                {
+                    //TODO quitar disponible
+                    vm.setDisponible(false)
+                    perfil.disponible = false;
+                    
+                }
+        
+                //esta en una clase?
+                //borramos mensajes
+                vm.borrarMsg()
+                if(perfil.claseId && perfil.claseId !== "")
+                {
+                    //si
+                    
+                    //mandamos mensaje de resconexion
+        
+                    //TODO
+                    let idAlumno : string;
+                        if(vm.clase && vm.clase.alumnoId)
+                        {
+                            idAlumno =  vm.clase.alumnoId;
+                        }
+                        else{
+                            idAlumno = Rooms.findOne(perfil.claseId).alumnoId;
+                        }
+                        
+                        vm.sendMsg(idAlumno, MsgTipo.RECONNECT);
+        
+                        vm.redux.nextStatus({ type: ETipo.GO_CLASS})
+                    
+        
+                }
+                else{
+                        //no está en clase
+                        //ponemos la disponibilidad a true;
+        
+                        vm.setDisponible(true)
+                        vm.redux.nextStatus({ type: ETipo.WAIT_CALL})
+                }
+        
+                }
             break;
             case ETipo.WAIT_CALL:
-                return vm.estadoWaitCall();
+                
+                funciones[MsgTipo.CALL_INI] = fnMsgCallIni;
+                nextState.dispatcher = function()
+                {
+                    
+                    mServ.readMsgs(funciones)
+                }
+
+
+            break;
+            case ETipo.WAIT_CALL_ACCEPT:
+                
+                funciones[MsgTipo.CALL_INI] = fnMsgCallIni;
+                funciones[MsgTipo.CALL_CANCEL] = fnMsgCancelCall;
+                nextState.userFrom = state.userFrom;
+                const time = 10000;
+                let  idAux;
+                nextState.ini =  ()  =>{
+                    idAux= setTimeout(() =>{
+
+                        //si pasa el tiempo y se ejecuta se cancela.
+
+                      
+                        vm.sendMsg(vm.redux.estado.userFrom, MsgTipo.CALL_CANCEL);
+                        //enviar mensaje de cancelacion
+
+                        //goInit
+                        cancelarCall();
+                        
+
+                    }, time)
+                };
+                nextState.dispatcher = function()
+                {
+                    
+                    mServ.readMsgs(funciones)
+                }
+                const idTOut = idAux;
+                nextState.destroy = ()=>{
+
+                    clearTimeout(idTOut)
+                }
+                
             break;
             default:
               return state;
             }
 
+            return nextState;
     }
 
     setDisponible(disponible : Boolean)
@@ -383,4 +407,6 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
     }
   */
 }
-;
+
+
+

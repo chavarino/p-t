@@ -44,7 +44,7 @@ export class MsgClass {
         //send mensaje
         Meteor.call("sendMsg", mensaje, Error.frontHandle);
     }
-    readMsgs(fns : MapN<(m : Message)=>void>) {
+    readMsgs(fns : Map<Number, (m : Message)=>void>) {
         
         let vm = this;
         
