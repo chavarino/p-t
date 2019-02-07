@@ -13,7 +13,8 @@ import { Subscription } from 'rxjs/Subscription';
 
 import {ReduxC, Estado} from "../services/reduxC";
 import { Action } from 'redux';
-import { MsgTipo } from 'imports/models/message';
+import { MsgTipo, Message } from 'imports/models/message';
+import { MsgClass } from 'imports/functions/commonFunctions';
 
 enum ETipo  {
     INIT = 1,
@@ -33,7 +34,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
     existePet : boolean;
     interval : any;
     redux : ReduxC;
-
+    pFlags : Map<string, boolean>;
     constructor( rol : RolesService, private formBuilder: FormBuilder )
     {
         super(1, 1, "Prof", rol);
@@ -41,7 +42,9 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
         let vm =this;
                 // Creamos un store de Redux almacenando el estado de la aplicación.
         // Su API es { subscribe, dispatch, getState }.
-
+        this.pFlags = {
+            cancelar : false
+        }
         vm.redux = new ReduxC(function(state : Estado, action : Action<number>)
         {
             return vm.reducer(state, action);
@@ -93,10 +96,6 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
 
     //BORRAR MENSAJES
 
-    borrarMsg()
-    {
-
-    }
 
 
 
@@ -107,6 +106,30 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
 
         }
 
+        estado.dispatcher = function()
+        {
+            let vm =this;
+            let mServ : MsgClass =  this.msgServ;
+            let mapa : Map<Number, (m :Message)=> void > ;
+            let profile : Perfil=  Meteor.user().profile;
+            mapa[MsgTipo.CALL_INI] = function(m :Message)
+            {
+                
+                if(profile.disponible)
+                {
+                    profile.disponible =false;
+                    vm.setDisponible(false);
+
+
+
+                }
+                else{
+                    mServ.sendMsg(m.from,MsgTipo.CALL_NO_DISPONIBLE)
+                }
+
+            }
+            mServ.readMsgs
+        }
         estado.ini= function()
         {
           
@@ -221,6 +244,9 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
         switch (action.type) {
             case ETipo.INIT:
                 return vm.estadoInicio();
+            break;
+            case ETipo.WAIT_CALL:
+                return vm.estadoWaitCall();
             break;
             default:
               return state;
@@ -357,3 +383,4 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
     }
   */
 }
+;

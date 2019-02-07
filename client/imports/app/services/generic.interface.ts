@@ -152,6 +152,11 @@ export class Generic {
         this.msgServ.sendMsg(to, tipo,cuerpo)
         //send mensaje
     }
+
+    borrarMsg()
+    {
+        this.msgServ.borrarAllMsg();
+    }
  
 
   }

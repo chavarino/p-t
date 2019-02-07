@@ -27,5 +27,6 @@ export enum MsgTipo {
     PING = 8,
     PONG = 9,
     RECONNECT = 10,
+    CALL_NO_DISPONIBLE =11
 
 }

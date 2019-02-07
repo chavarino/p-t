@@ -44,7 +44,7 @@ export class MsgClass {
         //send mensaje
         Meteor.call("sendMsg", mensaje, Error.frontHandle);
     }
-    readMsgs(fns : MapN<()=>void>) {
+    readMsgs(fns : MapN<(m : Message)=>void>) {
         
         let vm = this;
         
@@ -52,10 +52,10 @@ export class MsgClass {
         {
             if(m)
              {
-                 let fn : ()=>void = fns[m.msgTipo]
+                 let fn : (m : Message)=>void = fns[m.msgTipo]
                  if(fn)
                  {
-                    fn();
+                    fn(m);
                     m.readed = true;
                     vm.borrarMsg(m);
                  }
