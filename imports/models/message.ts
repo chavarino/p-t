@@ -1,5 +1,5 @@
 export interface MessageRtc {
-    idClase : string,
+    
     msgTipo : MsgTipo,
     sdp ?: RTCSessionDescription,
     candidate ?: RTCIceCandidate
@@ -27,6 +27,10 @@ export enum MsgTipo {
     PING = 8,
     PONG = 9,
     RECONNECT = 10,
-    CALL_NO_DISPONIBLE =11
+    CALL_NO_DISPONIBLE =11,
+    GO_CLASS = 12,
+    CALL_RECONNECT = 13
+    
+    
 
 }

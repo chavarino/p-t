@@ -28,8 +28,8 @@ function getTexto(room : Room)
 }
 
 Meteor.methods({
-  crearClase(room: Room) {
-
+  crearClase(profId : string) {
+  let room: Room;
     try
     {
       
@@ -45,6 +45,7 @@ Meteor.methods({
               return;
           }
           //console.log("Entra");
+          room.profId = profId;
           room.activo =true;
           room.comenzado = false;
           room.fechaIni  = null;
@@ -57,6 +58,11 @@ Meteor.methods({
          //Rooms.collection.insert
          let _idRoom : string=  Rooms.collection.insert(room);
          let p: Perfil = Meteor.user().profile
+
+         p.claseId = _idRoom;
+         Meteor.call('savePerfil', p);
+
+         p = Users.findOne(profId).profile;
 
          p.claseId = _idRoom;
          Meteor.call('savePerfil', p);

@@ -1,18 +1,19 @@
 import { Injectable } from '@angular/core';
 import {MessageRtc, MsgTipo} from '../../../../imports/models/message'
 import $ from "jquery";
+import { Message } from '@angular/compiler/src/i18n/i18n_ast';
 /*interface Map<T> {
     [key: string]: T;
 }
 */
 
 interface Rtc {
-    localDes : string,
-    remotDes : string,
-    pc : RTCPeerConnection,
-    idClase : string,
-    singalSender : Function,
-    singalGetter : Function,
+    localDes ?: string,
+    remotDes ?: string,
+    pc ?: RTCPeerConnection,
+    
+    singalSender : (MessageRtc) =>void ,
+    singalGetter ?: (MessageRtc) =>void ,
     localVideoId : string,
     remoteVideoId : string,
 }
@@ -21,11 +22,6 @@ function onError(error) {
     console.error(error);
   }
 
-@Injectable({
-  // we declare that this service should be created
-  // by the root application injector.
-  providedIn: 'root',
-})
 export class RtcService {
 
     //roles : Map<Rol>
@@ -43,13 +39,29 @@ export class RtcService {
     {
         
       
-
+        this.rct = {
+          localVideoId : "",
+          remoteVideoId: "",
+          singalSender : null
+        }
         
     }
-    newMsg(idClase :string, tipo:MsgTipo, sdp ?: RTCSessionDescription, candidate ?: RTCIceCandidate) : MessageRtc
+
+    
+    static newRtc(localVideoId : string, remoteVideoId : string, singalSender : (Message) =>void)
+    {
+        let rtc : RtcService = new RtcService();
+        rtc.rct = {
+          localVideoId : localVideoId,
+          remoteVideoId: remoteVideoId,
+          singalSender : singalSender
+        }
+
+       return rtc;
+    }
+    newMsg( tipo:MsgTipo, sdp ?: RTCSessionDescription, candidate ?: RTCIceCandidate) : MessageRtc
     {
         return   {
-            idClase : idClase,
             msgTipo : tipo,
             sdp : sdp,
             candidate : candidate
@@ -71,7 +83,7 @@ export class RtcService {
         function onSuccess() {
 
             vm.rct.localDes = vm.rct.pc.localDescription.sdp;
-            vm.sendMessage(vm.newMsg(vm.rct.idClase, MsgTipo.SDP, vm.rct.pc.localDescription));
+            vm.sendMessage(vm.newMsg(MsgTipo.SDP, vm.rct.pc.localDescription));
 
         };
        
@@ -95,7 +107,7 @@ export class RtcService {
         
         pc.onicecandidate = event => {
           if (event.candidate) {
-            vm.sendMessage(vm.newMsg(vm.rct.idClase, MsgTipo.CANDIDATE, null,event.candidate));
+            vm.sendMessage(vm.newMsg( MsgTipo.CANDIDATE, null,event.candidate));
           }
         };
       
@@ -116,7 +128,7 @@ export class RtcService {
       
         this.mediaUser(localVideo, pc);
       
-        vm.rct.singalGetter = (msg : MessageRtc) => vm.getMsg(msg);
+        //vm.rct.singalGetter = (msg : MessageRtc) => vm.getMsg(msg);
       
        
       }

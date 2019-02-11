@@ -6,7 +6,8 @@ export interface Estado {
     dispatcher?: ()=>void; //Funcion que será llamada para realizar tareas recurrentes (lectura de mensajes, preguntar si ha pasado algo)
     destroy?: ()=>void;
     id ?: number,
-    userFrom ?: string
+    userFrom ?: string,
+    campos ?: any
 }
 
 export interface LogicEstado {
@@ -19,15 +20,22 @@ export class ReduxC {
     store;
     estado : Estado;
     dispatcherId : number;
-    constructor(reducer :  (state: Estado, action: Action<number>) => Estado)
+    constructor()
+    {
+        this.estado = {
+
+        }
+    }
+
+    setReducer(reducer :  (state: Estado, action: Action<number>) => Estado)
     {
         let vm =this;
         vm.store = createStore(reducer);
 
 
         vm.store.subscribe(() => {
-
-            if(vm.estado!=null)
+            let nextStado = vm.store.getState();
+            if(vm.estado!=null && vm.estado.id !== nextStado.id)
             {
                 //paramos anterior
                 vm.stopDispatcher();
@@ -38,7 +46,7 @@ export class ReduxC {
 
                 }
                 //ponemos el nuevo
-                vm.estado = vm.store.getState();
+                vm.estado = nextStado;
                 if(vm.estado.ini)
                 {
                     //configuramos

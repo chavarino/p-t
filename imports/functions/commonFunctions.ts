@@ -58,6 +58,7 @@ export class MsgClass {
                     fn(m);
                     m.readed = true;
                     vm.borrarMsg(m);
+                   
                  }
              }
 

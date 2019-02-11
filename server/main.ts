@@ -4,6 +4,8 @@ import './imports/methods/room';
 import './imports/publications/roles'
 import './imports/publications/user'
 import './imports/publications/room'
+import './imports/publications/msg'
+import './imports/methods/msg'
 /*ServiceConfiguration.configurations.remove({
   service: "facebook"
 });

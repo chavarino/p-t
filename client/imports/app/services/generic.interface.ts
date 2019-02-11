@@ -1,4 +1,5 @@
 import  {RolesService} from "../services/roles.service";
+import {RtcService} from "../services/rtc.service"
 import { Meteor } from 'meteor/meteor';
 import { Rol } from '../../../../imports/models/rol';
 import { Map } from '../../../../imports/models/map';
@@ -17,7 +18,8 @@ export class Generic {
     modulo : string;
     rol : RolesService;
     rolesElemnt : Map<RolesEnt> 
-    msgServ : MsgClass
+    msgServ : MsgClass;
+    rtc : RtcService;
     constructor(minWrite : number,  minRead : number,modulo : string, rol : RolesService)
     {
         let vm = this;
@@ -26,7 +28,7 @@ export class Generic {
         this.modulo = modulo;
         this.msgServ =  new MsgClass();
         this.rol = rol;
-
+        
         this.rolesElemnt = 
         {
             peticion : {
