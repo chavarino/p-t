@@ -195,10 +195,12 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
             
             if(profile.disponible)
             {
-                profile.disponible =false;
-                vm.setDisponible(false);
-                vm.redux.estado.userFrom = m.from;
-                vm.redux.nextStatus({ type: ETipo.WAIT_CALL_ACCEPT});
+                
+                vm.setDisponible(false, ()=>{
+
+                    vm.redux.estado.userFrom = m.from;
+                    vm.redux.nextStatus({ type: ETipo.WAIT_CALL_ACCEPT});
+                });
 
 
             }
@@ -348,8 +350,10 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
                         //no está en clase
                         //ponemos la disponibilidad a true;
         
-                        vm.setDisponible(true)
-                        vm.redux.nextStatus({ type: ETipo.WAIT_CALL})
+                        vm.setDisponible(true, ()=>{
+
+                            vm.redux.nextStatus({ type: ETipo.WAIT_CALL})
+                        })
                 }
         
                 }
@@ -538,17 +542,24 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
         
 
     }
-    setDisponible(disponible : Boolean)
+    setDisponible(disponible : Boolean, fn ?: () =>void)
     {
 
         let  p  : Perfil = Meteor.user().profile
-        p.disponible= false;
+        p.disponible= disponible;
         Meteor.call('setDisponible', disponible, (error, result) => {
                    
             if(error)
             {
                 alert(error);
                 console.error(error);
+            }
+            else{
+                if(fn)
+                {
+                    
+                    fn()
+                }
             }
             
         });
@@ -604,6 +615,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
           } 
 
           vm.setDisponible(false)
+          this.msgServ.cerrar();
     }
 
     isValid()

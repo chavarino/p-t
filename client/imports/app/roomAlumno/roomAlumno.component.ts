@@ -225,6 +225,8 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
         if (this.profesoresSuscription) {
              this.profesoresSuscription.unsubscribe();
         }
+
+        this.msgServ.cerrar();
     }
 
     isValid()
@@ -252,7 +254,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
     {
         let vm =this;
 
-        vm.sendMsg(vm.redux.estado.userFrom, MsgTipo.CALL_CANCEL);
+        vm.sendMsg(vm.profCall._id, MsgTipo.CALL_CANCEL);
         vm.redux.nextStatus({ type: ETipo.INIT });
     }
 
@@ -503,7 +505,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
                         //si pasa el tiempo y se ejecuta se cancela.
 
                        
-                        vm.sendMsg(vm.redux.estado.userFrom, MsgTipo.CALL_CANCEL);
+                        vm.sendMsg(vm.profCall._id, MsgTipo.CALL_CANCEL);
                         //enviar mensaje de cancelacion
 
                         //goInit

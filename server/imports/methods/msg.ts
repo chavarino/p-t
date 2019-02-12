@@ -29,16 +29,28 @@ Meteor.methods({
         {  
             Error.noLogueado();
           }
-
+          
        let message :Message=  Msg.findOne({_id : id});
 
-       if(message ===null || message.to !== Meteor.userId())
+       if(!message || message.to !== Meteor.userId())
        {
             Error.noPermisos();
        }
 
        Msg.remove(id)
     },
+    setReaded(id : string) {
+
+        
+        let filter = {
+          "_id": id
+        };
+        let input : any = {$set : { readed : true}}
+        //validar TODO
+        
+        console.log(filter + ", " + input)
+        Msg.update(filter, input);
+      },
     borrarAllMsg()
     {
         //Borramos todos nuestro mensajes de entrada

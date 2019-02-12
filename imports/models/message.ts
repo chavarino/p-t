@@ -8,7 +8,7 @@ export interface MessageRtc {
 export interface Message  {
     from : string, //id del emisor
     to : string, //id del receptor
-
+    _id ?: string
     msgTipo : MsgTipo,
     cuerpo ?: any,
     readed ?: boolean

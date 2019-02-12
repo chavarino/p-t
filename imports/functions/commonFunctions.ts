@@ -4,11 +4,13 @@ import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import {Msg} from "../collections/msg";
 import {MapN} from "../../imports/models/map";
+import {  OnInit, OnDestroy } from '@angular/core';
 import {Error} from "./errors"
-export class MsgClass {
+export class MsgClass{
 
    
-    private static profs:  Observable<Message>;
+    private  msgIn: Message[]// Observable<Message>;
+    private  sus: Subscription;
     //METER EL OBSERVABLE de  MENSAJES
     constructor()
     {
@@ -17,11 +19,17 @@ export class MsgClass {
     private suscribe()
     {
         let vm =this;
-        if(!MsgClass.profs)
-        {
+        this.msgIn = [];
+        vm.sus = MeteorObservable.subscribe('getMsg').subscribe(() => {
             
-            MsgClass.profs = MeteorObservable.subscribe('allAvalaibleTeacher');
-        }
+            Msg.find().forEach((lista : Message[])=>{
+
+                 vm.msgIn = lista;
+            });
+            //vm.findClass();
+        });;
+        
+        
         
     }
     borrarAllMsg()
@@ -30,7 +38,12 @@ export class MsgClass {
     }
     borrarMsg(msg : Message)
     {
-        Meteor.call("borrarMsg", Error.frontHandle);
+        Meteor.call("borrarMsg", msg._id, Error.frontHandle);
+    }
+
+    setLeido(msg : Message)
+    {
+        Meteor.call("setReaded", msg._id, Error.frontHandle);
     }
     sendMsg(to :string, tipo : MsgTipo, cuerpo ?: any)
     {
@@ -47,28 +60,52 @@ export class MsgClass {
     readMsgs(fns : Map<Number, (m : Message)=>void>) {
         
         let vm = this;
-        
-        MsgClass.profs.forEach(function(m : Message)
+          /*MsgClass.msgIn.forEach(function(m : Message)
         {
-            if(m)
-             {
-                 let fn : (m : Message)=>void = fns[m.msgTipo]
-                 if(fn)
+           
+                if(m)
                  {
-                    fn(m);
-                    m.readed = true;
-                    vm.borrarMsg(m);
-                   
+                     let fn : (m : Message)=>void = fns[m.msgTipo]
+                     if(fn)
+                     {
+                        fn(m);
+                        m.readed = true;
+                        vm.borrarMsg(m);
+                       
+                     }
                  }
-             }
+            
 
 
-        })
+        })*/
+      while(vm.msgIn.length>0)
+        {
+            let m : Message = vm.msgIn.shift()
+
+                if(m && !m.readed)
+                 {
+                     let fn : (m : Message)=>void = fns[m.msgTipo]
+                     if(fn)
+                     {
+                        fn(m);
+                        
+                        m.readed = true;
+    
+                        vm.setLeido(m);
+                    }
+                 }
+           
+
+
+        }
         
     }
 
+
     cerrar()
     {
-        MsgClass.profs = null;
+        if (this.sus) {
+            this.sus.unsubscribe();
+       }
     }
 }
