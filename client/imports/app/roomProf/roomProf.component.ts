@@ -15,9 +15,10 @@ import { Subscription } from 'rxjs/Subscription';
 import {ReduxC, Estado, LogicEstado} from "../services/reduxC";
 import { Action } from 'redux';
 import { MsgTipo, Message, MessageRtc } from 'imports/models/message';
-import { MsgClass } from 'imports/functions/commonFunctions';
+import { MsgClass,FactoryCommon } from 'imports/functions/commonFunctions';
 import { Msg } from 'imports/collections/msg';
-
+import {Error} from "./../../../../imports/functions/errors"
+import { resolve } from 'dns';
 enum ETipo  {
     INIT = 1,
     CLASS = 2,
@@ -196,12 +197,25 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
             if(profile.disponible)
             {
                 
-                vm.setDisponible(false, ()=>{
+                let fn1 = resolve =>{
+                    
+                    vm.setDisponible(false, ()=>{
+    
+                        vm.redux.estado.userFrom = m.from;
+                        vm.redux.nextStatus({ type: ETipo.WAIT_CALL_ACCEPT});
+                        resolve(1)
+                    });
+                }
+                FactoryCommon.promisesAnid(fn1)
+                        .then(function(res)
+                        {
 
-                    vm.redux.estado.userFrom = m.from;
-                    vm.redux.nextStatus({ type: ETipo.WAIT_CALL_ACCEPT});
-                });
-
+                        })
+                        .catch(error =>{
+                        
+                            alert(error);
+                            console.error(error);
+                        });
 
             }
             else{
@@ -310,53 +324,88 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
   
                 nextState.ini= function()
                 {
+                    
+                    let perfil : Perfil =   Meteor.user().profile;
+                    let fn1 = (resolve)=>
+                    {
                 
-                let perfil : Perfil =   Meteor.user().profile;
-        
-                if(perfil.disponible)
-                {
-                    //TODO quitar disponible
-                    vm.setDisponible(false)
-                    perfil.disponible = false;
-                    
-                }
-        
-                //esta en una clase?
-                //borramos mensajes
-                vm.borrarMsg()
-                if(perfil.claseId && perfil.claseId !== "")
-                {
-                    //si
-                    
-                    //mandamos mensaje de resconexion
-        
-                    //TODO
-                    let idAlumno : string;
-                        if(vm.clase && vm.clase.alumnoId)
+                        if(perfil.disponible)
                         {
-                            idAlumno =  vm.clase.alumnoId;
+                            //TODO quitar disponible
+                            vm.setDisponible(false, function()
+                            {
+                                resolve(1);
+                            })
+                            perfil.disponible = false;
+                            
                         }
                         else{
-                            idAlumno = Rooms.findOne(perfil.claseId).alumnoId;
+                            resolve(1);
                         }
-                        
-                        vm.sendMsg(idAlumno, MsgTipo.RECONNECT);
-        
-                        vm.redux.nextStatus({ type: ETipo.CLASS})
-                    
-        
-                }
-                else{
-                        //no está en clase
-                        //ponemos la disponibilidad a true;
-        
-                        vm.setDisponible(true, ()=>{
 
-                            vm.redux.nextStatus({ type: ETipo.WAIT_CALL})
+                    }
+            
+                    //esta en una clase?
+                    //borramos mensajes
+
+                    let fn2 = (resolve) =>
+                    {
+                        vm.borrarMsg(()=>{
+                            resolve(1)
                         })
-                }
-        
-                }
+
+                    }
+
+                    let fn3 = (resolve) =>
+                    {
+                        
+                        if(perfil.claseId && perfil.claseId !== "")
+                        {
+                            //si
+                            
+                            //mandamos mensaje de resconexion
+                
+                            //TODO
+                            let idAlumno : string;
+                                if(vm.clase && vm.clase.alumnoId)
+                                {
+                                    idAlumno =  vm.clase.alumnoId;
+                                }
+                                else{
+                                    idAlumno = Rooms.findOne(perfil.claseId).alumnoId;
+                                }
+                                
+                                vm.sendMsg(idAlumno, MsgTipo.RECONNECT);
+                
+                                vm.redux.nextStatus({ type: ETipo.CLASS})
+                            
+                                resolve(1);
+                        }
+                        else{
+                                //no está en clase
+                                //ponemos la disponibilidad a true;
+                
+                                vm.setDisponible(true, ()=>{
+    
+                                    vm.redux.nextStatus({ type: ETipo.WAIT_CALL})
+                                    resolve(1);
+                                })
+                        }
+
+                    }
+
+                        FactoryCommon.promisesAnid(fn1, fn2, fn3)
+                        .then(function(res)
+                        {
+
+                        })
+                        .catch(error =>{
+                        
+                            alert(error);
+                            console.error(error);
+                        });
+            
+                    }
             break;
             case ETipo.WAIT_CALL:
                 funciones = new Map();
@@ -547,12 +596,13 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
 
         let  p  : Perfil = Meteor.user().profile
         p.disponible= disponible;
-        Meteor.call('setDisponible', disponible, (error, result) => {
+        Meteor.call('setDisponible', disponible, (error) => {
                    
             if(error)
             {
-                alert(error);
-                console.error(error);
+                Error.frontHandle(error,fn)
+              //  alert(error);
+                //console.error(error);
             }
             else{
                 if(fn)
@@ -605,6 +655,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
     ngOnDestroy()
     {
         let vm =this;
+        vm.setDisponible(false)
         if (this.roomProf) {
             this.roomProf.unsubscribe();
           }
@@ -613,8 +664,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
 
               clearInterval(this.interval);
           } 
-
-          vm.setDisponible(false)
+          vm.redux.cerrar();
           this.msgServ.cerrar();
     }
 

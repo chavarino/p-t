@@ -155,9 +155,9 @@ export class Generic {
         //send mensaje
     }
 
-    borrarMsg()
+    borrarMsg(fn ?: (any) =>any)
     {
-        this.msgServ.borrarAllMsg();
+        this.msgServ.borrarAllMsg(fn);
     }
  
 

@@ -16,12 +16,15 @@
                     <span class="alert alert-info">No existe ninguna llamada para dar clase.</span>
             </div>
             <div *ngIf="isEstadoWaitAcceptCall()">
+                <div class="row">
+
                     <span class="alert alert-info">Tiene una llamada de clase:</span>
 
                     (Cuenta a tras)   ¿USuario?
+                </div>
 
                     <div class="row">
-                        <button class="btn btn-primary" (click)="botonAceptarCall()"></button>
+                        <button class="btn btn-primary" (click)="botonAceptarCall()">Aceptar</button>
                     </div>
             </div>
             <div *ngIf="isEstadoWaitClass()">

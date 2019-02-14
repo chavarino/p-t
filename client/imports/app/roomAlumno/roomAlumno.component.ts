@@ -16,10 +16,12 @@ import { Users } from 'imports/collections/users';
 import {ReduxC, Estado, LogicEstado} from "../services/reduxC";
 import { Action } from 'redux';
 import { MsgTipo, Message, MessageRtc } from 'imports/models/message';
-import { MsgClass } from 'imports/functions/commonFunctions';
+import { MsgClass, FactoryCommon } from 'imports/functions/commonFunctions';
 import { Msg } from 'imports/collections/msg';
 import {Perfil} from "../../../../imports/models/perfil"
+import {Error} from "./../../../../imports/functions/errors"
 import {RtcService} from "../services/rtc.service"
+import { resolve } from 'dns';
 enum ETipo  {
     INIT = 1,
     CLASS = 2,
@@ -224,9 +226,11 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
 
         if (this.profesoresSuscription) {
              this.profesoresSuscription.unsubscribe();
-        }
+        }   
+        this.redux.cerrar();
 
         this.msgServ.cerrar();
+        
     }
 
     isValid()
@@ -440,41 +444,62 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
                     let perfil : Perfil =   Meteor.user().profile;
             
                     
-            
+                    
                     //esta en una clase?
                     //borramos mensajes
-                    vm.borrarMsg()
-                    if(perfil.claseId && perfil.claseId !== "")
-                    {
-                        //si
-                        
-                        //mandamos mensaje de resconexion
-            
-                        //TODO
-                        let profId : string;
-                        let idAlumno :string;
-                            if(vm.clase && vm.clase.profId)
-                            {
-                                profId =  vm.clase.profId;
-                            }
-                            else{
-                                vm.clase =  Rooms.findOne(perfil.claseId);
-                                idAlumno = vm.clase.alumnoId;
-                            }
-                            
-                            vm.sendMsg(idAlumno, MsgTipo.RECONNECT);
-            
-                            vm.redux.nextStatus({ type: ETipo.CLASS})
-                        
-            
+                    let fn1 = resolve =>{
+
+                        vm.borrarMsg(()=>{
+                            resolve(1);
+                        })
                     }
-                    else{
-                            //no está en clase
-                            //ponemos la disponibilidad a true;
-            
+                    let fn2 = resolve =>{
+
+                        if(perfil.claseId && perfil.claseId !== "")
+                        {
+                            //si
                             
-                            vm.redux.nextStatus({ type: ETipo.SEL_PROFESOR})
+                            //mandamos mensaje de resconexion
+                
+                            //TODO
+                            let profId : string;
+                            let idAlumno :string;
+                                if(vm.clase && vm.clase.profId)
+                                {
+                                    profId =  vm.clase.profId;
+                                }
+                                else{
+                                    vm.clase =  Rooms.findOne(perfil.claseId);
+                                    idAlumno = vm.clase.alumnoId;
+                                }
+                                
+                                vm.sendMsg(idAlumno, MsgTipo.RECONNECT);
+                
+                                vm.redux.nextStatus({ type: ETipo.CLASS})
+                            
+                
+                        }
+                        else{
+                                //no está en clase
+                                //ponemos la disponibilidad a true;
+                
+                                
+                                vm.redux.nextStatus({ type: ETipo.SEL_PROFESOR})
+                        }
+
+                        resolve(1)
                     }
+
+                    FactoryCommon.promisesAnid(fn1, fn2)
+                        .then(function(res)
+                        {
+
+                        })
+                        .catch(error =>{
+                        
+                            alert(error);
+                            console.error(error);
+                        });
                 
         
                 }

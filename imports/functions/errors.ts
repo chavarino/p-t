@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 export class Error {
 
 
-    static frontHandle(error, result)
+    static frontHandle(error, fn)
     {
         
                    
@@ -10,6 +10,13 @@ export class Error {
             {
                 alert(error);
                 console.error(error);
+                throw new Meteor.Error(error);
+            }
+            else{
+                if(fn)
+                {
+                    fn();
+                }
             }
             
     }

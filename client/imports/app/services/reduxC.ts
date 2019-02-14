@@ -19,7 +19,7 @@ export class ReduxC {
     
     store;
     estado : Estado;
-    dispatcherId : number;
+    dispatcherId : NodeJS.Timer;
     constructor()
     {
         this.estado = {
@@ -59,7 +59,18 @@ export class ReduxC {
             //console.log(store.getState())
         });
     }
+    cerrar()
+    {
+        let vm = this;
+        //paramos anterior
+        vm.stopDispatcher();
+        //borramos anterior
+        if(vm.estado.destroy)
+        {
+            vm.estado.destroy();
 
+        } 
+    }
     canGo(logicas :  LogicEstado[], eActual : Estado, action:number) :  number
     {
 
@@ -100,7 +111,7 @@ export class ReduxC {
         if(this.estado.dispatcher)
         {
             const time = 2000;
-            setInterval(this.estado.dispatcher, time)
+            this.dispatcherId = setInterval(this.estado.dispatcher, time)
 
         }
     }

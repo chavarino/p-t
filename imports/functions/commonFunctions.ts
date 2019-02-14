@@ -32,18 +32,24 @@ export class MsgClass{
         
         
     }
-    borrarAllMsg()
+    borrarAllMsg(fn ?: (any) =>any)
     {
-        Meteor.call("borrarAllMsg", Error.frontHandle);
+        Meteor.call("borrarAllMsg", (error) => {
+            Error.frontHandle(error, fn)
+        });
     }
-    borrarMsg(msg : Message)
+    borrarMsg(msg : Message,fn ?: (any) =>any)
     {
-        Meteor.call("borrarMsg", msg._id, Error.frontHandle);
+        Meteor.call("borrarMsg", msg._id, (error) => {
+            Error.frontHandle(error, fn)
+        });
     }
 
-    setLeido(msg : Message)
+    setLeido(msg : Message, fn ?: (any) =>any)
     {
-        Meteor.call("setReaded", msg._id, Error.frontHandle);
+        Meteor.call("setReaded", msg._id, (error) => {
+            Error.frontHandle(error, fn)
+        });
     }
     sendMsg(to :string, tipo : MsgTipo, cuerpo ?: any)
     {
@@ -89,10 +95,10 @@ export class MsgClass{
                      {
                         fn(m);
                         
-                        m.readed = true;
-    
-                        vm.setLeido(m);
                     }
+                    m.readed = true;
+
+                    vm.setLeido(m);
                  }
            
 
@@ -108,4 +114,40 @@ export class MsgClass{
             this.sus.unsubscribe();
        }
     }
+}
+
+export class FactoryCommon
+{
+    constructor()
+    {
+
+    }
+
+    static promesa(fn : (valor : any)=>any) {
+        return new Promise(fn);
+      }
+    
+      
+      
+     static  promisesAnid(...fn )
+      {
+          let vm=this;
+        async function promesasAnidadas() {
+      
+
+            let array = [];
+            for(let i = 0; i<fn.length; i++)
+          {
+              let res = await FactoryCommon.promesa(fn[i])
+            if(res)
+            {
+                array.push(res);
+            }
+          }
+          
+          return array;
+        } 
+
+        return promesasAnidadas();
+      }
 }
