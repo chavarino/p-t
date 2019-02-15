@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {MessageRtc, MsgTipo} from '../../../../imports/models/message'
-import $ from "jquery";
+import jquery from "jquery";
 import { Message } from '@angular/compiler/src/i18n/i18n_ast';
 /*interface Map<T> {
     [key: string]: T;
@@ -99,7 +99,7 @@ export class RtcService {
         let vm =this;
         let pc = this.rct.pc;
         
-        let remoteVideo = $("#" + vm.rct.remoteVideoId),  localVideo = $("#" + vm.rct.localVideoId)
+        let remoteVideo = jquery.$("#" + vm.rct.remoteVideoId),  localVideo = jquery.$("#" + vm.rct.localVideoId)
         pc = new RTCPeerConnection(this.configuration);
       
         // 'onicecandidate' notifies us whenever an ICE agent needs to deliver a

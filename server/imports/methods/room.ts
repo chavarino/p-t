@@ -29,7 +29,11 @@ function getTexto(room : Room)
 
 Meteor.methods({
   crearClase(profId : string) {
-  let room: Room;
+  let room: Room = {
+    profId : "",
+    alumnoId :"",
+    titulo : ""
+  };
     try
     {
       

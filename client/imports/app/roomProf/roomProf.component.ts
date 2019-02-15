@@ -186,7 +186,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
 
             }
         }
-        const time = 10000;
+        const time = 30000;
         let  idAux;
         let mServ : MsgClass =  this.msgServ;
         let funciones : Map<Number, (m :Message)=> void > ;
@@ -597,20 +597,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
         let  p  : Perfil = Meteor.user().profile
         p.disponible= disponible;
         Meteor.call('setDisponible', disponible, (error) => {
-                   
-            if(error)
-            {
-                Error.frontHandle(error,fn)
-              //  alert(error);
-                //console.error(error);
-            }
-            else{
-                if(fn)
-                {
-                    
-                    fn()
-                }
-            }
+            Error.frontHandle(error,fn);
             
         });
     }

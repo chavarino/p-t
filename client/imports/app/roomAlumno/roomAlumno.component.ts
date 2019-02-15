@@ -313,7 +313,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
 
             }
         }
-        const time = 10000;
+        const time = 30000;
         let  idAux;
         let mServ : MsgClass =  this.msgServ;
         let funciones : Map<Number, (m :Message)=> void > ;
@@ -343,14 +343,39 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
 
                 
                 //crear CLASE
-                Meteor.call("crearClase",vm.profCall._id )
-                claseId = Rooms.findOne({alumnoId : Meteor.userId()})._id;
-                //Asginarse clase
+                let fn1 = resolve =>{
 
-                //enviar mensaje de go clase.
-                vm.sendMsg(m.from, MsgTipo.GO_CLASS, claseId)
+                    Meteor.call("crearClase",vm.profCall._id, (error) => {
+                        Error.frontHandle(error,()=>{
 
-                vm.redux.nextStatus({ type: ETipo.CLASS });
+                            resolve(1);
+                        });
+                        
+                    })
+                }
+
+                let fn2 = resolve =>{
+                    
+                    claseId = Rooms.findOne({alumnoId : Meteor.userId()})._id;
+                    //Asginarse clase
+    
+                    //enviar mensaje de go clase.
+                    vm.sendMsg(m.from, MsgTipo.GO_CLASS, claseId)
+    
+                    vm.redux.nextStatus({ type: ETipo.CLASS });
+                  
+                }
+
+                FactoryCommon.promisesAnid(fn1, fn2)
+                        .then(function(res)
+                        {
+
+                        })
+                        .catch(error =>{
+                        
+                            alert(error);
+                            console.error(error);
+                        });
 
             }
             
