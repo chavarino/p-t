@@ -1,22 +1,27 @@
-<div class="time-counter" *ngIf="isMostrar()">
+<div class="time-counter" >
 
-    <div *ngIf="!isTipoCont()">
+   <!--*ngIf="isMostrar()"
+       <div [hidden]="!isTipoTemp()" >
         <div id="myProgress">
             <div id="myBar"></div>
           </div>
     </div>
+   --> 
+   <div id="temporizador" style="min-width : 100px" >
 
-    <div *ngIf="isTipoCont()">
+   </div>
+    <div [hidden]="!isTipoCont()">
         <div class="row">
-            <span class="col" *ngIf="tView.horas>0">{{tView.horas}} : </span>  
-            <span class="col" *ngIf="tView.minutos>0">{{tView.minutos}} : </span> 
-            <span class="col" *ngIf="tView.segundos>0">{{tView.segundos}}</span>
+            <div class="caja">
+                <span  >{{digitToString(tView.horas)}} : </span>  
+                <span  > {{digitToString(tView.minutos)}} : </span> 
+                <span  >{{digitToString(tView.segundos)}}</span>
+
+            </div>
         </div>
     </div>
 
-<div id="myProgress">
-  <div id="myBar"></div>
-</div>
+
 
 
 

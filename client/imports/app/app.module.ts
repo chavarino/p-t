@@ -8,6 +8,8 @@ import { RouterModule } from '@angular/router';
 
 
 import { LoginComponent } from './login/login.component';
+
+import { TimeCounter } from './timeCounter/timeCounter.component';
 import { InicioComponent } from './inicio/inicio.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { AccountsModule } from 'angular2-meteor-accounts-ui';
@@ -79,6 +81,7 @@ export const ROUTES_PROVIDERS = [{
     InicioComponent,
     PageNotFoundComponent,
     LoginComponent,
+    TimeCounter,
     BarraNavComponent,
     ModalComponent,
     PerfilComponent,

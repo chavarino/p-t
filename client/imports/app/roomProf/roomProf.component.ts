@@ -18,7 +18,9 @@ import { MsgTipo, Message, MessageRtc } from 'imports/models/message';
 import { MsgClass,FactoryCommon } from 'imports/functions/commonFunctions';
 import { Msg } from 'imports/collections/msg';
 import {Error} from "./../../../../imports/functions/errors"
-import { resolve } from 'dns';
+import {Tipo} from "../timeCounter/timeCounter.component"
+import { User } from 'imports/models/User';
+import { Users } from 'imports/collections/users';
 enum ETipo  {
     INIT = 1,
     CLASS = 2,
@@ -39,6 +41,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
     
     clase : Room
     roomProf :Subscription;
+    alumnoSus :Subscription;
     addForm: FormGroup;
     existePet : boolean;
     interval : any;
@@ -47,6 +50,8 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
     localVideoId : string;
     remoteVideoId : string;
     maxPing : number;
+    temp: object;
+    alumnoCall : User;
     constructor( rol : RolesService, private formBuilder: FormBuilder )
     {
         super(1, 1, "Prof", rol);
@@ -57,6 +62,11 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
         vm.localVideoId ="localVideo"
         vm.remoteVideoId ="remoteVideo";
 
+        this.temp = {
+            tipo :Tipo.TEMP,
+            secondsIni : 30,
+            mostrar : true
+        }
         
         vm.estadoLogic =[
             
@@ -202,6 +212,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
                     vm.setDisponible(false, ()=>{
     
                         vm.redux.estado.userFrom = m.from;
+                        vm.alumnoCall = Users.findOne({_id : vm.redux.estado.userFrom});
                         vm.redux.nextStatus({ type: ETipo.WAIT_CALL_ACCEPT});
                         resolve(1)
                     });
@@ -611,6 +622,15 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
     
 
         let vm =this;
+
+        this.alumnoSus =  MeteorObservable.subscribe('alumnoCall').subscribe(() => {
+            
+           // this.rol.setRoles(Roles.findOne().rol);
+          // this.clase = Rooms.findOne({profId : Meteor.userId()});
+          
+
+           
+          });
         this.roomProf =  MeteorObservable.subscribe('getRoomForProf').subscribe(() => {
             
            // this.rol.setRoles(Roles.findOne().rol);
@@ -643,6 +663,10 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
     {
         let vm =this;
         vm.setDisponible(false)
+
+         if (this.alumnoSus) {
+            this.alumnoSus.unsubscribe();
+          }
         if (this.roomProf) {
             this.roomProf.unsubscribe();
           }

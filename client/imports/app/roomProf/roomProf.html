@@ -3,9 +3,11 @@
 
 
         <div class="card-body">
-            <h2 class="bd-title">
-                Dar Clase 
-            </h2>
+            
+                <h2 class="bd-title">
+                    Profesor - Clase
+                </h2>
+
             <div *ngIf="isEstadoIni()">
                 
                     <span class="alert alert-info">
@@ -14,17 +16,51 @@
             </div>
             <div *ngIf="isEstadoWaitCall()">
                     <span class="alert alert-info">No existe ninguna llamada para dar clase.</span>
-            </div>
-            <div *ngIf="isEstadoWaitAcceptCall()">
-                <div class="row">
-
-                    <span class="alert alert-info">Tiene una llamada de clase:</span>
-
-                    (Cuenta a tras)   ¿USuario?
                 </div>
-
+                <div *ngIf="isEstadoWaitAcceptCall()">
                     <div class="row">
-                        <button class="btn btn-primary" (click)="botonAceptarCall()">Aceptar</button>
+                        <div class="col">
+                            <h4>
+                                Tiene una llamada de clase:
+    
+                            </h4>
+
+                        </div>
+                       
+                        
+                        
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                                <img [src]="alumnoCall.profile.foto" id="foto" alt="Foto perfil" height="100" width="auto">
+                        </div>
+                        <div class="col">
+                            <strong>Nombre:</strong>  {{alumnoCall.profile.nombre + " " + alumnoCall.profile.apellidos}}
+                        </div>
+                    </div>
+                    <div class="row">
+                            <div class="col">
+                                <strong>
+                                    Categoria: 
+                                    
+                                </strong>
+                                Matemáticas Mock
+
+                            </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            
+                            <button class="btn btn-primary" (click)="botonAceptarCall()">Aceptar</button>
+                        </div>
+                        
+                        <div class="col">
+                            <timeCounter [tipo]="temp.tipo" [secondsIni]="temp.secondsIni"  [mostrar]="temp.mostrar">
+        
+                            </timeCounter>
+
+                            </div>
+                            
                     </div>
             </div>
             <div *ngIf="isEstadoWaitClass()">

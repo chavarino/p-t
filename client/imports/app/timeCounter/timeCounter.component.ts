@@ -20,10 +20,10 @@ interface TiempoView {
 export class TimeCounter implements OnInit, OnDestroy {
   
     idInterval;
-    _secondsIni: number;
-    _tipo: Tipo;
-    _mostrar :boolean
-   
+    private _secondsIni: number;
+    private  _tipo: Tipo;
+    private _mostrar :boolean
+    comenzado : boolean;
     tView : TiempoView;
     constructor()
     {
@@ -34,6 +34,7 @@ export class TimeCounter implements OnInit, OnDestroy {
 
     @Input()
     set mostrar(mostrar: boolean) {
+      this._mostrar = mostrar;
       if(mostrar===false)
       {
         this.ngOnDestroy();
@@ -41,7 +42,6 @@ export class TimeCounter implements OnInit, OnDestroy {
       else{
         this.comenzar()
       }
-      this._mostrar = mostrar;
     }
    
     
@@ -54,6 +54,7 @@ export class TimeCounter implements OnInit, OnDestroy {
      @Input()
      set secondsIni(seconds: number) {
        this._secondsIni = seconds;
+       this.comenzar()
       }
       
       get secondsIni(): number { 
@@ -64,6 +65,7 @@ export class TimeCounter implements OnInit, OnDestroy {
       @Input()
       set tipo(tipo: Tipo) {
         this._tipo = tipo;
+        this.comenzar()
        }
        
        get tipo(): Tipo { 
@@ -88,7 +90,7 @@ export class TimeCounter implements OnInit, OnDestroy {
       setTimeView() : void
       {
         let vm = this;
-        let seconds //TODO
+        let seconds =vm.secondsIni;
         if(vm.secondsIni >0)
         {
           vm.tView.horas = Math.floor(seconds/3600);
@@ -103,12 +105,24 @@ export class TimeCounter implements OnInit, OnDestroy {
       //  alert(`${horas} - ${minutos} - ${sec}`)
       }
 
-
+      digitToString(numero)
+      {
+         if(numero<10)
+         {
+            return "0"+numero;
+         }
+         else{
+           return numero.toString();
+         }
+      }
       comenzar()
       {
         let vm = this;
       
-
+        if( this.comenzado || !this._mostrar || !this._tipo || !this._secondsIni && this._secondsIni!==0)
+        {
+          return;
+        }
         let  contIntervalFn =() => {
             vm._secondsIni ++;
 
@@ -141,15 +155,45 @@ export class TimeCounter implements OnInit, OnDestroy {
             
           }
           else{
+            vm.crearTemporizador();
             var elem = document.getElementById("myBar");   
-            elem.style.width = '100%'; 
-            var width = 100;
-            let contador = 0;
-            vm.idInterval = setInterval(tempIntervalFn, 10);
-          }
+            if(elem)
+            {
 
+              elem.style.width = '100%'; 
+              var width = 100;
+              let contador = 0;
+              vm.idInterval = setInterval(tempIntervalFn, 10);
+            }
+            else{
+              return;
+            }
+          }
+          this.comenzado =true;
       }
   
+      crearTemporizador()
+      {
+
+        var elem = document.getElementById("myBar");   
+        if(!elem)
+        {
+          var div1 = document.createElement("DIV");
+          div1.setAttribute("id", "myProgress") //myProgress
+          div1.style.cssText ='width: 100%;background-color: #ddd;height: 20px;height: auto;';
+          var div2 = document.createElement("DIV");
+          
+          div2.setAttribute("id", "myBar") //myProgress
+          div2.style.cssText = "width: 100%;background-color: #4CAF50;height: 20px;";
+          div1.appendChild(div2);
+          document.getElementById("temporizador").appendChild(div1);
+
+        }
+        else {
+          elem.style.width = '100%'; 
+        }
+        
+      }
       ngOnInit()
       {
           this.tView = {
@@ -160,6 +204,7 @@ export class TimeCounter implements OnInit, OnDestroy {
       }
       ngOnDestroy()
       {
+        this.comenzado =false;
         if(this.idInterval)
         {
           clearInterval(this.idInterval);

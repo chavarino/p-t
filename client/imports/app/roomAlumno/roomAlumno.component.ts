@@ -21,7 +21,8 @@ import { Msg } from 'imports/collections/msg';
 import {Perfil} from "../../../../imports/models/perfil"
 import {Error} from "./../../../../imports/functions/errors"
 import {RtcService} from "../services/rtc.service"
-import { resolve } from 'dns';
+import {Tipo} from "../timeCounter/timeCounter.component"
+
 enum ETipo  {
     INIT = 1,
     CLASS = 2,
@@ -46,7 +47,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
     ///todos: Observable<Room>;
     flags : BanderasService;
     profesoresSuscription:  Subscription;
-
+    temp: object;
     profesores : Observable<User[]>;
     redux : ReduxC;
     estadoLogic :  LogicEstado[];
@@ -58,7 +59,11 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
     {
 
         super(1, 1, "comun", rol);
-        
+        this.temp = {
+            tipo :Tipo.TEMP,
+            secondsIni : 30,
+            mostrar : true
+        }
         this.inClass = false;
         this.sanitizer = sanitizer;
         this.flags = flags;
@@ -495,6 +500,12 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
                                 }
                                 else{
                                     vm.clase =  Rooms.findOne(perfil.claseId);
+                                    if(!vm.clase)
+                                    {
+                                        //TODO  BORRAR CLASE.
+                                        vm.redux.nextStatus({ type: ETipo.SEL_PROFESOR})
+                                        resolve(1)
+                                    }
                                     idAlumno = vm.clase.alumnoId;
                                 }
                                 
