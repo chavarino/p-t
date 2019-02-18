@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { isFunction, isUndefined } from 'util';
-export class ErrorClass {
+export class MethodsClass {
 
 
 
@@ -11,7 +11,7 @@ export class ErrorClass {
         let fn = undefined;
         let input = undefined;
         let args2 : any[] = [(error) => {
-            ErrorClass.frontHandle(error, fn)
+            MethodsClass.frontHandle(error, fn)
         }]
         
         if(args.length==1)

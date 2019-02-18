@@ -17,7 +17,7 @@ import { Action } from 'redux';
 import { MsgTipo, Message, MessageRtc } from 'imports/models/message';
 import { MsgClass,FactoryCommon } from 'imports/functions/commonFunctions';
 import { Msg } from 'imports/collections/msg';
-import {Error} from "./../../../../imports/functions/errors"
+import {MethodsClass} from "../../../../imports/functions/methodsClass"
 import {Tipo} from "../timeCounter/timeCounter.component"
 import { User } from 'imports/models/User';
 import { Users } from 'imports/collections/users';
@@ -123,23 +123,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
             return vm.reducer(state, action);
         });
         
-       /* this.interval =setInterval(function(){ 
-
-            if(!vm.clase || !vm.clase.alumnoId ||vm.clase.alumnoId==="")
-            {
-                Meteor.call('bindProf', (error, result) => {
-                   
-                    if(error)
-                    {
-                        alert(error);
-                        console.error(error);
-                    }
-                    
-                });
-
-            }
-        
-         }, 2000);*/
+    
 
          vm.redux.nextStatus({ type: ETipo.INIT });
     }
@@ -369,25 +353,35 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
                         
                         if(perfil.claseId && perfil.claseId !== "")
                         {
-                            //si
                             
-                            //mandamos mensaje de resconexion
-                
-                            //TODO
+
+                            
                             let idAlumno : string;
-                                if(vm.clase && vm.clase.alumnoId)
+                            let clase = vm.clase
+                                if(!vm.clase)
                                 {
-                                    idAlumno =  vm.clase.alumnoId;
+                                   clase = Rooms.findOne(perfil.claseId)
+                                    
+                                }
+
+                                if(clase)
+                                {
+                                    idAlumno = clase.alumnoId;
+                                    vm.sendMsg(idAlumno, MsgTipo.RECONNECT);
+                    
+                                    vm.redux.nextStatus({ type: ETipo.CLASS})
+                                
+                                    resolve(1);
                                 }
                                 else{
-                                    idAlumno = Rooms.findOne(perfil.claseId).alumnoId;
+                                    this.terminarClase(()=>{
+    
+                                        vm.redux.nextStatus({ type: ETipo.WAIT_CALL})
+                                        resolve(1);
+                                    });
                                 }
                                 
-                                vm.sendMsg(idAlumno, MsgTipo.RECONNECT);
-                
-                                vm.redux.nextStatus({ type: ETipo.CLASS})
-                            
-                                resolve(1);
+                                
                         }
                         else{
                                 //no está en clase
@@ -604,10 +598,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
 
         let  p  : Perfil = Meteor.user().profile
         p.disponible= disponible;
-        Meteor.call('setDisponible', disponible, (error) => {
-            Error.frontHandle(error,fn);
-            
-        });
+        MethodsClass.call("setDisponible", disponible, fn);
     }
     isInClass()
     {
@@ -681,29 +672,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
         return this.addForm.valid;
     }
 
-    comenzar()
-    {
-       let vm = this;
-       //this.addForm.
-       if (this.addForm.valid) {
-          
-           Meteor.call('comenzar', this.clase, (error, result) => {
-               
-               if(error)
-               {
-                   alert(error);
-               }
-               else {
-                   alert("Guardado")
-                   //vm.findClass()
-                   //window.location.reload();
-               }
-           });
-       }
-      else  {
-         alert("Invalido")
-       }
-    }
+ 
  
 /*    loggedIn() {
         return !!Meteor.user() ;

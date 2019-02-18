@@ -3,7 +3,7 @@ import { Meteor } from 'meteor/meteor';
 import { Rooms } from '../../../imports/collections/room';
 import { Users } from '../../../imports/collections/users';
 import { Room } from '../../../imports/models/room';
-import { Error } from '../../../imports/functions/errors'
+import { MethodsClass } from '../../../imports/functions/methodsClass'
 
 import { User } from 'imports/models/User';
 import { Perfil } from 'imports/models/perfil';
@@ -39,7 +39,7 @@ Meteor.methods({
       
           if(!Meteor.user())
           {  
-              Error.noLogueado();
+              MethodsClass.noLogueado();
             }
           let claseAnt : Room = Rooms.findOne({ alumnoId : Meteor.userId(), activo : true});
             //evitamos que cree mas de una
@@ -82,12 +82,12 @@ Meteor.methods({
 
     
   },
-  empezar() {
+  empezarClase() {
     
     //PUEDE EMPEZAR SOLO EL ALUMNO
     if(!Meteor.user())
     {  
-          Error.noLogueado();
+          MethodsClass.noLogueado();
     }
     let perfil : Perfil = Meteor.user().profile;
     if(!perfil || !perfil.claseId || perfil.claseId=== "")
@@ -118,12 +118,12 @@ Meteor.methods({
    // console.log("insertando " + room);
    Rooms.update({_id: room._id}, room,{ upsert: false });
   },
-  terminar() {
+  terminarClase() {
     
     //console.log("Entra");
     if(!Meteor.user())
     {  
-          Error.noLogueado();
+          MethodsClass.noLogueado();
     }
     let perfil : Perfil = Meteor.user().profile;
     if(!perfil.claseId || perfil.claseId=== "")
@@ -133,7 +133,7 @@ Meteor.methods({
 
     let claseId : string  = perfil.claseId;
     perfil.claseId = "";
-
+    perfil.disponible =true;
     Meteor.call("savePerfil", perfil);
 
 

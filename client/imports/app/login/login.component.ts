@@ -5,6 +5,7 @@ import { Accounts } from 'meteor/accounts-base';
 import { Roles } from '../../../../imports/collections/rol';
 import { User } from 'imports/models/User';
 import { FormGroup, FormBuilder,Validators,FormControl } from '@angular/forms';
+import {MethodsClass} from "../../../../imports/functions/MethodsClass"
 @Component({
   selector: 'login',
   templateUrl: 'login.html',
@@ -68,15 +69,9 @@ export class LoginComponent implements OnInit{
   {
      
     if (this.addForm.valid) {
-        Meteor.call("unirse", this.userLogin, (error, result) => {
-                    
-          if(error)
-          {
-              alert(error);
-              console.error(error);
-          }
-          
-      });
+
+      MethodsClass.call("unirse", this.userLogin);
+      
     }
     
   }

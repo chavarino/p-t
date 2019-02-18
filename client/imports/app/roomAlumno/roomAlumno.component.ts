@@ -19,7 +19,7 @@ import { MsgTipo, Message, MessageRtc } from 'imports/models/message';
 import { MsgClass, FactoryCommon } from 'imports/functions/commonFunctions';
 import { Msg } from 'imports/collections/msg';
 import {Perfil} from "../../../../imports/models/perfil"
-import {Error} from "./../../../../imports/functions/errors"
+import {MethodsClass} from "../../../../imports/functions/methodsClass"
 import {RtcService} from "../services/rtc.service"
 import {Tipo} from "../timeCounter/timeCounter.component"
 
@@ -118,51 +118,10 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
         //const party = Parties.findOne(this.partyId);
         return this.canRead() && this.loggedIn();
       }
-    save()
-    {
-        let vm =this;
-        //this.addForm.
-        if (this.addForm.valid) {
-           
-            Meteor.call('savePeticion', this.clase, (error, result) => {
-                
-                if(error)
-                {
-                    alert(error);
-                }
-                else {
-                    alert("Guardado")
-                    vm.findClass()
-                   // window.location.reload();
-                }
-            });
-        }
-       else  {
-          alert("Invalido")
-        }
-    }
+
 
 
  
-    terminar()
-    {
-        let vm =this;
-        
-           
-            Meteor.call('terminar', this.clase._id, (error, result) => {
-                
-                if(error)
-                {
-                    alert(error);
-                }
-                else {
-                    alert("Clase terminada")
-                    vm.findClass()
-                   // window.location.reload();
-                }
-            });
-        
-    }
 
 
 
@@ -349,13 +308,9 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
                 
                 //crear CLASE
                 let fn1 = resolve =>{
+                    MethodsClass.call("crearClase", vm.profCall._id, ()=>{
 
-                    Meteor.call("crearClase",vm.profCall._id, (error) => {
-                        Error.frontHandle(error,()=>{
-
-                            resolve(1);
-                        });
-                        
+                        resolve(1);
                     })
                 }
 
@@ -493,25 +448,30 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
                 
                             //TODO
                             let profId : string;
-                            let idAlumno :string;
-                                if(vm.clase && vm.clase.profId)
+                            
+                            let clase = vm.clase
+                                if(!vm.clase)
                                 {
-                                    profId =  vm.clase.profId;
+                                   clase = Rooms.findOne(perfil.claseId)
+                                    
+                                }
+
+                                if(clase)
+                                {
+                                    profId = clase.profId;
+                                    vm.sendMsg(profId, MsgTipo.RECONNECT);
+                    
+                                    vm.redux.nextStatus({ type: ETipo.CLASS})
+                                
+                                    resolve(1);
                                 }
                                 else{
-                                    vm.clase =  Rooms.findOne(perfil.claseId);
-                                    if(!vm.clase)
-                                    {
-                                        //TODO  BORRAR CLASE.
+                                    this.terminarClase(()=>{
+    
                                         vm.redux.nextStatus({ type: ETipo.SEL_PROFESOR})
-                                        resolve(1)
-                                    }
-                                    idAlumno = vm.clase.alumnoId;
+                                        resolve(1);
+                                    });
                                 }
-                                
-                                vm.sendMsg(idAlumno, MsgTipo.RECONNECT);
-                
-                                vm.redux.nextStatus({ type: ETipo.CLASS})
                             
                 
                         }

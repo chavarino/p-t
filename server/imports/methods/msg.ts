@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import { Error } from '../../../imports/functions/errors'
+import { MethodsClass } from '../../../imports/functions/methodsClass'
 import { Msg } from '../../../imports/collections/msg';
 import { Message } from '../../../imports/models/message';
 
@@ -10,12 +10,12 @@ Meteor.methods({
 
         if(!Meteor.user())
         {  
-            Error.noLogueado();
+            MethodsClass.noLogueado();
           }
 
         if(!msg || msg ===null || msg.to === null || msg.from === null || msg.msgTipo ===null)
         {
-            Error.camposInsuficientes();
+            MethodsClass.camposInsuficientes();
         }
 
 
@@ -27,14 +27,14 @@ Meteor.methods({
 
         if(!Meteor.user())
         {  
-            Error.noLogueado();
+            MethodsClass.noLogueado();
           }
           
        let message :Message=  Msg.findOne({_id : id});
 
        if(!message || message.to !== Meteor.userId())
        {
-            Error.noPermisos();
+            MethodsClass.noPermisos();
        }
 
        Msg.remove(id)
@@ -57,7 +57,7 @@ Meteor.methods({
 
         if(!Meteor.user())
         {  
-            Error.noLogueado();
+            MethodsClass.noLogueado();
           }
 
        

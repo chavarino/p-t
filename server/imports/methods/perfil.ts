@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import { Error } from '../../../imports/functions/errors'
+import { MethodsClass } from '../../../imports/functions/methodsClass'
 import { Users } from '../../../imports/collections/users';
 import { Perfil } from '../../../imports/models/perfil';
 import { User } from 'imports/models/User';
@@ -32,7 +32,7 @@ Meteor.methods({
       }
       catch(e)
       {
-        Error.errorSetDisponible()
+        MethodsClass.errorSetDisponible()
       }
 
 

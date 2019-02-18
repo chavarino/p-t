@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs/Subscription';
 import {Msg} from "../collections/msg";
 import {MapN} from "../../imports/models/map";
 import {  OnInit, OnDestroy } from '@angular/core';
-import {Error} from "./errors"
+import {MethodsClass} from "./MethodsClass"
 export class MsgClass{
 
    
@@ -34,22 +34,18 @@ export class MsgClass{
     }
     borrarAllMsg(fn ?: (any) =>any)
     {
-        Meteor.call("borrarAllMsg", (error) => {
-            Error.frontHandle(error, fn)
-        });
+        
+        MethodsClass.call("borrarAllMsg", fn);
+        
     }
     borrarMsg(msg : Message,fn ?: (any) =>any)
     {
-        Meteor.call("borrarMsg", msg._id, (error) => {
-            Error.frontHandle(error, fn)
-        });
+        MethodsClass.call("borrarMsg", msg._id, fn);
     }
 
     setLeido(msg : Message, fn ?: (any) =>any)
     {
-        Meteor.call("setReaded", msg._id, (error) => {
-            Error.frontHandle(error, fn)
-        });
+        MethodsClass.call("setReaded", msg._id, fn);
     }
     sendMsg(to :string, tipo : MsgTipo, cuerpo ?: any)
     {
@@ -61,7 +57,7 @@ export class MsgClass{
             readed :false
         } 
         //send mensaje
-        Meteor.call("sendMsg", mensaje, Error.frontHandle);
+        MethodsClass.call("sendMsg", mensaje);
     }
     readMsgs(fns : Map<Number, (m : Message)=>void>) {
         

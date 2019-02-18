@@ -7,6 +7,7 @@ import { Users } from '../../../../imports/collections/users';
 import { MeteorObservable } from 'meteor-rxjs';
 import { CanActivate } from '@angular/router';
 import { FormGroup, FormBuilder,Validators,FormControl } from '@angular/forms';
+import {MethodsClass} from "../../../../imports/functions/MethodsClass"
 @Component({
   selector: 'perfilC',
   templateUrl: 'perfil.html',
@@ -41,7 +42,9 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy, CanAc
         //this.addForm.
         if (this.addForm.valid) {
             alert("Guardado")
-            Meteor.call('savePerfil', this.perfil);
+
+            MethodsClass.call("savePerfil", this.perfil);
+            
         }
        else  {
         alert("Invalido")

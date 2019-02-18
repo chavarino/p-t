@@ -6,6 +6,7 @@ import { Map } from '../../../../imports/models/map';
 import $ from "jquery";
 import {Message, MessageRtc, MsgTipo} from "../../../../imports/models/message"
 import {MsgClass} from "../../../../imports/functions/commonFunctions"
+import {MethodsClass} from "../../../../imports/functions/MethodsClass"
 interface RolesEnt {
     module : string,
     min : Rol,
@@ -161,4 +162,14 @@ export class Generic {
     }
  
 
+    empezarClase(fn : (any) =>any)
+    {
+        MethodsClass.call("empezarClase", fn)
+    }
+
+    terminarClase (fn?: (any) =>any)
+    {
+        
+        MethodsClass.call("terminarClase", fn)
+    }
   }
