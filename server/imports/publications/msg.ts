@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 
 import { Msg } from '../../../imports/collections/msg';
 
-import { Error } from '../../../imports/functions/errors'
+import {MethodsClass} from "../../../imports/functions/methodsClass"
 
 Meteor.publish('getMsg', function() {
     //1 sin logueo solo acceso a common
@@ -14,7 +14,7 @@ Meteor.publish('getMsg', function() {
 
     if(!Meteor.user())
     {  
-        Error.noLogueado();
+        MethodsClass.noLogueado();
       }
 
 

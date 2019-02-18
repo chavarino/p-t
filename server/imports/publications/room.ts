@@ -1,7 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import { Room} from "../../../imports/models/room"
 import { Rooms } from '../../../imports/collections/room';
-import { Error } from '../../../imports/functions/errors'
+
+import {MethodsClass} from "../../../imports/functions/methodsClass"
 
 
 
@@ -9,7 +10,7 @@ Meteor.publish('getRoomForAlumno', function() {
 
   if(!Meteor.user())
   {  
-     Error.noLogueado();
+     MethodsClass.noLogueado();
   }
   return Rooms.find({ alumnoId : Meteor.userId(), activo : true});
 });
