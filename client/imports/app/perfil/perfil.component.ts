@@ -7,7 +7,8 @@ import { Users } from '../../../../imports/collections/users';
 import { MeteorObservable } from 'meteor-rxjs';
 import { CanActivate } from '@angular/router';
 import { FormGroup, FormBuilder,Validators,FormControl } from '@angular/forms';
-import {MethodsClass} from "../../../../imports/functions/MethodsClass"
+
+import {MethodsClass} from "../../../../imports/functions/methodsClass"
 @Component({
   selector: 'perfilC',
   templateUrl: 'perfil.html',

@@ -6,7 +6,10 @@ import { Map } from '../../../../imports/models/map';
 import $ from "jquery";
 import {Message, MessageRtc, MsgTipo} from "../../../../imports/models/message"
 import {MsgClass} from "../../../../imports/functions/commonFunctions"
-import {MethodsClass} from "../../../../imports/functions/MethodsClass"
+
+
+import {MethodsClass} from "../../../../imports/functions/methodsClass"
+
 interface RolesEnt {
     module : string,
     min : Rol,

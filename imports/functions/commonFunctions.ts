@@ -5,7 +5,9 @@ import { Subscription } from 'rxjs/Subscription';
 import {Msg} from "../collections/msg";
 import {MapN} from "../../imports/models/map";
 import {  OnInit, OnDestroy } from '@angular/core';
-import {MethodsClass} from "./MethodsClass"
+
+
+import {MethodsClass} from "./methodsClass"
 export class MsgClass{
 
    

@@ -19,10 +19,10 @@ import { MsgTipo, Message, MessageRtc } from 'imports/models/message';
 import { MsgClass, FactoryCommon } from 'imports/functions/commonFunctions';
 import { Msg } from 'imports/collections/msg';
 import {Perfil} from "../../../../imports/models/perfil"
-import {MethodsClass} from "../../../../imports/functions/methodsClass"
+
 import {RtcService} from "../services/rtc.service"
 import {Tipo} from "../timeCounter/timeCounter.component"
-
+import {MethodsClass} from "../../../../imports/functions/methodsClass"
 enum ETipo  {
     INIT = 1,
     CLASS = 2,

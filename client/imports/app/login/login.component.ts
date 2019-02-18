@@ -5,7 +5,9 @@ import { Accounts } from 'meteor/accounts-base';
 import { Roles } from '../../../../imports/collections/rol';
 import { User } from 'imports/models/User';
 import { FormGroup, FormBuilder,Validators,FormControl } from '@angular/forms';
-import {MethodsClass} from "../../../../imports/functions/MethodsClass"
+
+
+import {MethodsClass} from "../../../../imports/functions/methodsClass"
 @Component({
   selector: 'login',
   templateUrl: 'login.html',
