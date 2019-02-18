@@ -144,10 +144,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
          vm.redux.nextStatus({ type: ETipo.INIT });
     }
 
-    //TODO crear lector de mensajes.
-
-
-    //BORRAR MENSAJES
+ 
 
 
     
@@ -342,7 +339,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
                 
                         if(perfil.disponible)
                         {
-                            //TODO quitar disponible
+                            
                             vm.setDisponible(false, function()
                             {
                                 resolve(1);

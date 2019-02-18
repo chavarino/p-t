@@ -36,7 +36,7 @@ Meteor.methods({
       }
 
 
-  },
+  }/*,
 
   unirse(user: User)
   {
@@ -69,5 +69,5 @@ Meteor.methods({
       //throw e;
       Error.creacionUserYaExiste();
     }
-  }
+  }*/
 })
