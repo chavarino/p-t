@@ -166,7 +166,7 @@ export class Generic {
     }
  
 
-    empezarClase(fn : (any) =>any)
+    empezarClase(fn ?: (any) =>any)
     {
         MethodsClass.call("empezarClase", fn)
     }

@@ -618,7 +618,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
                     vm.redux.estado.campos.ping ++;
                 }
             }
-            
+
             nextState.ini =  ()  =>{
 
                 vm.rtc =  RtcService.newRtc(vm.localVideoId,vm.remoteVideoId,sendMsgRtc );
@@ -626,6 +626,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
                 setTimeout(() => {
                     
                     vm.rtc.startWebRTC();
+                    vm.empezarClase();
                 }, 500);
 
                 vm.redux.estado.campos.idIntervalPing= setInterval(fnInterval, time)
