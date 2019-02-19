@@ -94,7 +94,7 @@
             </div>
         </div>
         
-        <div  [hidden]="!isEstadoClass()">
+        <div  *ngIf="isEstadoClass()">
             <div class="row">
                <h3>
                    Clase:
@@ -102,7 +102,7 @@
             </div>
             <div class="row">
                 <div class="col-sm">
-                    <videCall [secondsIni]="secondsIniClass" [rtc]="rtc" >Video</videCall>
+                    <videoCall [secondsIni]="secondsIniClass" [rtc]="rtc" >Video</videoCall>
                 </div>
                 
             </div>

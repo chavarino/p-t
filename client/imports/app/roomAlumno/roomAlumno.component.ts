@@ -162,8 +162,15 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
         this.roomAlumno =  MeteorObservable.subscribe('getRoomForAlumno').subscribe(() => {
             
                 Rooms.find({alumnoId : Meteor.userId(), activo : true}).subscribe((data) => { 
-                    this.clase = data[0];
-                    vm.findClass();
+                    vm.clase = data[0];
+                    if(vm.clase && vm.clase.comenzado)
+                    {
+                        let current = new Date();
+                        vm.secondsIniClass = Math.floor(((current.getTime() - vm.clase.fechaCom.getTime()) /1000));
+                    }
+                    else{
+                        vm.secondsIniClass = 0; 
+                    }
             });
            // this.rol.setRoles(Roles.findOne().rol);
           
@@ -307,7 +314,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
 
             if(vm.clase && vm.clase._id)
             {
-                this.terminarClase(()=>{
+                vm.terminarClase(()=>{
                     vm.clase = null;
                     
                     fnGoInit();
@@ -500,7 +507,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
                                     resolve(1);
                                 }
                                 else{
-                                    this.terminarClase(()=>{
+                                    vm.terminarClase(()=>{
     
                                         vm.redux.nextStatus({ type: ETipo.SEL_PROFESOR})
                                         resolve(1);

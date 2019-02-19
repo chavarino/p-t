@@ -227,7 +227,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
 
             if(vm.clase && vm.clase._id)
             {
-                this.terminarClase(()=>{
+                vm.terminarClase(()=>{
                     vm.clase = null;
                     
                     fnGoInit();
@@ -394,7 +394,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
                                     resolve(1);
                                 }
                                 else{
-                                    this.terminarClase(()=>{
+                                    vm.terminarClase(()=>{
     
                                         vm.redux.nextStatus({ type: ETipo.WAIT_CALL})
                                         resolve(1);
@@ -648,7 +648,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
 
            Rooms.find({profId : Meteor.userId(), activo : true}).subscribe((data) => { 
                     vm.clase = data[0];
-                    if(vm.clase.comenzado)
+                    if(vm.clase && vm.clase.comenzado)
                     {
                         let current = new Date();
                         vm.secondsIniClass = Math.floor(((current.getTime() - vm.clase.fechaCom.getTime()) /1000));

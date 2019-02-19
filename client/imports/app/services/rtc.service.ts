@@ -99,7 +99,7 @@ export class RtcService {
         let vm =this;
         let pc = this.rct.pc;
         
-        let remoteVideo = jquery.$("#" + vm.rct.remoteVideoId),  localVideo = jquery.$("#" + vm.rct.localVideoId)
+        let remoteVideo = jquery.$("#remoteId"),  localVideo = jquery.$("#localId")
         pc = new RTCPeerConnection(this.configuration);
       
         // 'onicecandidate' notifies us whenever an ICE agent needs to deliver a

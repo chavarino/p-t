@@ -10,56 +10,71 @@ export class MethodsClass {
 
         let fn = undefined;
         let input = undefined;
-        let args2 : any[] = [(error) => {
-            MethodsClass.frontHandle(error, fn)
-        }]
         
-        if(args.length==1)
+        
+        /*if(args.length==1)
         {
-
-            if(isFunction(args[0]))
-            {
-
-                fn = args[0];
-
-            }
-            else if(!isUndefined(args[0])){
-                input = args[0]
-            }
-
+            
+            
+            
         }
         else if(args.length==2)
         {
-            if(isFunction(args[0]) && !isUndefined(args[0]))
+            if(isFunction(args[1]) && !isUndefined(args[1]))
             {
-
-                fn = args[0];
-
+                
+                fn = args[1];
+                
             }
-
-            if( !isUndefined(args[1]))
+            
+            if( !isUndefined(args[0]))
             {
-
+                
                 input = args[1];
-
+                
             }
-
+            
+            
+        } */
+        
+        for (let i = 0; i < 2; i++) {
+            const element = args[i];
+            if(isFunction(element))
+            {
+                
+                fn = element;
+                
+            }
+            else if(!isUndefined(element)){
+                input = element
+            }
+            
+        }
+        
+        let args2 : any[] = [(error) => {
+            MethodsClass.frontHandle(error, fn)
+        }]
+        if(!isUndefined(input))
+        {
+            args2.unshift(input);
+        }
+        
+        
+        if(args2.length===0 || args2.length===1)
+        {
+            Meteor.call(method, args[0] );
 
         }
+        else if(args2.length===2)
+        {
+            Meteor.call(method, args[0], args[1] );
 
-            if(!isUndefined(input))
-            {
-                args2.unshift(input);
-            }
-        
-            
-
-        Meteor.call(method, args2 );
+        }
     }
     static frontHandle(error, fn)
     {
         
-                   
+        
             if(error)
             {
                 alert(error);

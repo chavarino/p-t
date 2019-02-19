@@ -68,13 +68,13 @@
 
                 
            </div>
-           <div  [hidden]="!isEstadoClass()">
+           <div  *ngIf="isEstadoClass()">
                 <div class="row">
                    <h3>
                        En clase.
                    </h3>
                 </div>
-                <videCall [secondsIni]="secondsIniClass" [rtc]="rtc" ></videCall>
+                <videoCall [secondsIni]="secondsIniClass" [rtc]="rtc" ></videoCall>
                 
                 
            </div>

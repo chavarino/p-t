@@ -10,7 +10,7 @@ Meteor.methods({
 
     profile.rol = Meteor.user().profile.rol;
     let filter = {
-      "_id": Meteor.userId
+      "_id": Meteor.userId()
     };
     let input : any = {$set : { profile : profile}}
     //validar TODO
