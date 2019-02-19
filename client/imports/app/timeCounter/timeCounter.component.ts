@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, Input,Output,EventEmitter } from '@angular/core';
 
 import  {RolesService} from "../services/roles.service";
+import { isUndefined } from 'util';
 
 export enum Tipo
 {
@@ -148,7 +149,11 @@ export class TimeCounter implements OnInit, OnDestroy {
               minutos : 0,
               horas : 0
             }
-            vm._secondsIni = 0;
+            if(isUndefined(vm._secondsIni) || vm._secondsIni<0)
+            {
+              vm._secondsIni = 0;
+
+            }
 
 
            vm.idInterval = setInterval(contIntervalFn, 1000)

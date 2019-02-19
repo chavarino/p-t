@@ -24,6 +24,7 @@ export class Generic {
     rolesElemnt : Map<RolesEnt> 
     msgServ : MsgClass;
     rtc : RtcService;
+    secondsIniClass : number
     constructor(minWrite : number,  minRead : number,modulo : string, rol : RolesService)
     {
         let vm = this;

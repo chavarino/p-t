@@ -25,6 +25,7 @@ import { BarraNavComponent } from './barraNav/barraNav.component';
 import { PerfilComponent } from './perfil/perfil.component';
 import { RoomAlumnoComponent } from './roomAlumno/roomAlumno.component';
 import { RoomProfComponent } from './roomProf/roomProf.component';
+import { VideoCall } from './videoCall/videoCall';
 import { AppComponent } from './app.component';
 //import { MdButtonModule} from "@angular/material/button";
 
@@ -82,6 +83,7 @@ export const ROUTES_PROVIDERS = [{
     PageNotFoundComponent,
     LoginComponent,
     TimeCounter,
+    VideoCall,
     BarraNavComponent,
     ModalComponent,
     PerfilComponent,

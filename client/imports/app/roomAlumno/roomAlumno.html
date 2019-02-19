@@ -105,30 +105,18 @@
         <div  [hidden]="!isEstadoClass()">
             <div class="row">
                <h3>
-                   En clase.
+                   Clase:
                </h3>
             </div>
             <div class="row">
-                <!--
-                    muted
-                -->
+                <videCall [secondsIni]="secondsIniClass" [rtc]="rtc" >Video</videCall>
                 <div class="row">
-                    <video id="{{remoteVideoId}}" autoplay></video>
-
-                </div>
-                <div class="row">
-
-                    <video id="{{localVideoId}}"   autoplay ></video>
-                </div>
-                <div class="row">
-                        <div class="col-sm">
-                            CONTADOR
-                        </div>
+                        
                         <div class="col-sm">
                             
                             <button class="btn btn-primary" (click)="colgarCall()"> Colgar</button>
                         </div>
-                    </div>
+                </div>
 
             </div>
             

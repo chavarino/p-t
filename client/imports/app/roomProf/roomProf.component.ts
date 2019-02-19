@@ -52,6 +52,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
     maxPing : number;
     temp: object;
     alumnoCall : User;
+    
     constructor( rol : RolesService, private formBuilder: FormBuilder )
     {
         super(1, 1, "Prof", rol);
@@ -216,9 +217,28 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
 
         }
         let  cancelarCall = ()  =>{
-            vm.redux.estado.userFrom = null;
-            vm.redux.nextStatus({ type: ETipo.INIT });
+
+
+            let fnGoInit = ()=> {
+                vm.redux.estado.userFrom = null;
+                vm.redux.nextStatus({ type: ETipo.INIT });
+            }
+
+
+            if(vm.clase && vm.clase._id)
+            {
+                this.terminarClase(()=>{
+                    vm.clase = null;
+                    
+                    fnGoInit();
+                });
+            }
+            else{
+
+                fnGoInit();
+            }
         }
+        
         let fnMsgCancelCall = function(m :Message)
         {
             
@@ -514,32 +534,33 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
                     ping : 0,
                     idIntervalPing : -1
                 }
-                nextState.ini =  ()  =>{
 
+                let fnInterval = () =>{
+
+                    //si pasa el tiempo y se ejecuta se cancela.
+                    //ping
+                    if(vm.redux.estado.campos.ping === vm.maxPing)//time out
+                    {
+                        //TODO COLGAR
+                        cancelarCall();
+                    }
+                    else{
+
+                        vm.sendMsg(vm.redux.estado.userFrom, MsgTipo.PING, profile.claseId);
+                        vm.redux.estado.campos.ping ++;
+                    }
+                }
+
+                nextState.ini =  ()  =>{
 
                     vm.rtc =  RtcService.newRtc(vm.localVideoId,vm.remoteVideoId,sendMsgRtc );
 
-
-                    vm.rtc.startWebRTC();
-
-                    vm.redux.estado.campos.idIntervalPing= setInterval(() =>{
-
-                        //si pasa el tiempo y se ejecuta se cancela.
-                        //ping
-                        if(vm.redux.estado.campos.ping === vm.maxPing)//time out
-                        {
-                            //TODO COLGAR
-                            cancelarCall();
-                        }
-                        else{
-
-                            vm.sendMsg(vm.redux.estado.userFrom, MsgTipo.PING, profile.claseId);
-                            vm.redux.estado.campos.ping ++;
-                        }
+                    setTimeout(() => {
                         
-                        
+                        vm.rtc.startWebRTC();
+                    }, 500);
 
-                    }, time)
+                    vm.redux.estado.campos.idIntervalPing= setInterval(fnInterval, time)
                 };
 
 
@@ -559,8 +580,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
 
                     clearInterval(vm.redux.estado.campos.idIntervalPing);
 
-                    //TODO CERRAR CONEXION (CERRAR CLASE)
-
+                    
                 }
                 
             break;
@@ -626,8 +646,16 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
           
 
            Rooms.find({profId : Meteor.userId(), activo : true}).subscribe((data) => { 
-                    this.clase = data[0];
-                    vm.findClass();
+                    vm.clase = data[0];
+                    if(vm.clase.comenzado)
+                    {
+                        let current = new Date();
+                        vm.secondsIniClass = Math.floor(((current.getTime() - vm.clase.fechaCom.getTime()) /1000));
+                    }
+                    else{
+                        vm.secondsIniClass = 0; 
+                    }
+                    //vm.findClass();
             });
           });
           

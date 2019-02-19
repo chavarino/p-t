@@ -229,9 +229,23 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
     colgarCall()
     {
         let vm =this;
-
-        vm.sendMsg(vm.redux.estado.userFrom, MsgTipo.CALL_COLGAR);
-        vm.redux.nextStatus({ type: ETipo.INIT });
+        let fnGoInit = ()=> {
+            vm.redux.estado.userFrom = null;
+            vm.sendMsg(vm.redux.estado.userFrom, MsgTipo.CALL_COLGAR);
+            vm.redux.nextStatus({ type: ETipo.INIT });
+        }
+        if(vm.clase && vm.clase._id)
+        {
+                this.terminarClase(()=>{
+                    vm.clase = null;
+                    fnGoInit();
+                   
+                });
+        }
+        else{
+            fnGoInit();
+        }
+        
     }
     tryCallProfesor(profesor  : User )
     {   
@@ -284,8 +298,28 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
         let profile : Perfil=  Meteor.user().profile;
         
         let  cancelarCall = ()  =>{
-            vm.redux.estado.userFrom = null;
-            vm.redux.nextStatus({ type: ETipo.INIT });
+
+            let fnGoInit = ()=> {
+                vm.redux.estado.userFrom = null;
+                vm.redux.nextStatus({ type: ETipo.INIT });
+            }
+
+
+            if(vm.clase && vm.clase._id)
+            {
+                this.terminarClase(()=>{
+                    vm.clase = null;
+                    
+                    fnGoInit();
+                });
+            }
+            else{
+
+                fnGoInit();
+            }
+
+           // vm.redux.estado.userFrom = null;
+           // vm.redux.nextStatus({ type: ETipo.INIT });
         }
         let fnMsgCancelCall = function(m :Message)
         {
@@ -568,34 +602,34 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
                 ping : 0,
                 idIntervalPing : -1
             }
-            nextState.ini =  ()  =>{
+            
+            let fnInterval = () =>{
 
+                //si pasa el tiempo y se ejecuta se cancela.
+                //ping
+                if(vm.redux.estado.campos.ping === vm.maxPing)//time out
+                {
+                    //TODO COLGAR
+                    cancelarCall();
+                }
+                else{
+
+                    vm.sendMsg(vm.profCall._id, MsgTipo.PING, profile.claseId);
+                    vm.redux.estado.campos.ping ++;
+                }
+            }
+            
+            nextState.ini =  ()  =>{
 
                 vm.rtc =  RtcService.newRtc(vm.localVideoId,vm.remoteVideoId,sendMsgRtc );
 
-
-                vm.rtc.startWebRTC();
-
-                vm.redux.estado.campos.idIntervalPing= setInterval(() =>{
-
-                    //si pasa el tiempo y se ejecuta se cancela.
-                    //ping
-                    if(vm.redux.estado.campos.ping === vm.maxPing)//time out
-                    {
-                        //TODO COLGAR
-                        cancelarCall();
-                    }
-                    else{
-
-                        vm.sendMsg(vm.redux.estado.userFrom, MsgTipo.PING, profile.claseId);
-                        vm.redux.estado.campos.ping ++;
-                    }
+                setTimeout(() => {
                     
-                    
+                    vm.rtc.startWebRTC();
+                }, 500);
 
-                }, time)
+                vm.redux.estado.campos.idIntervalPing= setInterval(fnInterval, time)
             };
-
 
 
             nextState.dispatcher = function()

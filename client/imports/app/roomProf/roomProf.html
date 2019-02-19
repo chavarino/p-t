@@ -74,21 +74,7 @@
                        En clase.
                    </h3>
                 </div>
-                <div class="row">
-                    <!--
-                        muted
-                    -->
-                    <div class="row">
-                        <video id="{{remoteVideoId}}" autoplay></video>
-
-                    </div>
-                    <div class="row">
-
-                        <video id="{{localVideoId}}"   autoplay ></video>
-                    </div>
-
-
-                </div>
+                <videCall [secondsIni]="secondsIniClass" [rtc]="rtc" ></videCall>
                 
                 
            </div>
