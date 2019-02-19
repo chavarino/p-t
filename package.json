@@ -6,7 +6,8 @@
     "test": "TEST_BROWSER_DRIVER=phantomjs meteor test --driver-package=ardatan:mocha",
     "test:ci": "TEST_BROWSER_DRIVER=phantomjs meteor test --driver-package=ardatan:mocha --once",
     "updateAll": "meteor update --all-packages",
-    "seeVulnera": "npm audit"
+    "seeVulnera": "npm audit",
+    "meteorDb" : "MONGO_URL='mongodb://username:PASSWORD@hatch.mongohq.com:27017/test' meteor"
   },
   "dependencies": {
     "@angular/animations": "^6.0.5",
