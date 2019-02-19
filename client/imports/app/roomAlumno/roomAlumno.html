@@ -109,18 +109,20 @@
                </h3>
             </div>
             <div class="row">
-                <videCall [secondsIni]="secondsIniClass" [rtc]="rtc" >Video</videCall>
-                <div class="row">
-                        
-                        <div class="col-sm">
-                            
-                            <button class="btn btn-primary" (click)="colgarCall()"> Colgar</button>
-                        </div>
-                </div>
+                <div class="col-sm">
 
+                    <videCall [secondsIni]="secondsIniClass" [rtc]="rtc" >Video</videCall>
+                </div>
+                
             </div>
             
-            
+            <div class="row">
+                    
+                    <div class="col-sm">
+                        
+                        <button class="btn btn-primary" (click)="colgarCall()"> Colgar</button>
+                    </div>
+            </div>
        </div>
     </div>
 </div>
