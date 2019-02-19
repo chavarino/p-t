@@ -1,6 +1,4 @@
 <div class="container room-alumno card">
-
-
     <div class="card-body">
         <h2 class="bd-title">
             Consulta profesor 
@@ -26,32 +24,26 @@
                             </div>
                         </div>
                         
-                        <div  class="row">
-                            
+                        <div  class="row">    
                             <div class="col">
                                     <strong>Categoria: </strong>Profesor Matematicas
 
                             </div>
-                            
-                                
-                            
-
                         </div>
+                        
                         <div  class="row">
                             
-                                <div class="col">
-                                        <span >
-                                                <i class="material-icons iconos" data-toggle="modal" (click)="setModalConfig(prof)" data-target="#m-confirm" style="cursor: pointer" > 
-                                                        call
-                                                </i>
-                                                
-                                        </span>
-                                    
-                                </div>
-                                    
-                                
-    
+                            <div class="col">
+                                    <span >
+                                            <i class="material-icons iconos" data-toggle="modal" (click)="setModalConfig(prof)" data-target="#m-confirm" style="cursor: pointer" > 
+                                                    call
+                                            </i>
+                                            
+                                    </span>
                             </div>
+
+                        </div>
+
                       <!--
                           <a href="#" class="btn btn-primary">Go somewhere</a>
 
@@ -110,16 +102,12 @@
             </div>
             <div class="row">
                 <div class="col-sm">
-
                     <videCall [secondsIni]="secondsIniClass" [rtc]="rtc" >Video</videCall>
                 </div>
                 
             </div>
-            
-            <div class="row">
-                    
+            <div class="row">  
                     <div class="col-sm">
-                        
                         <button class="btn btn-primary" (click)="colgarCall()"> Colgar</button>
                     </div>
             </div>
