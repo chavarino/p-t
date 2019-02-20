@@ -61,12 +61,12 @@
             <div class="row">
 
                 <div class="col-sm-2">
-                    <img [src]="profCall.profile.foto" id="foto" alt="Foto perfil" height="100" width="auto">
+                    <img [src]="getUserCall().profile.foto" id="foto" alt="Foto perfil" height="100" width="auto">
 
                 </div>
 
                 <div class="col-sm-10">
-                   <strong>Nombre: </strong> {{profCall.profile.nombre + " " + profCall.profile.apellidos}}
+                   <strong>Nombre: </strong> {{getUserCall().profile.nombre + " " + getUserCall().profile.apellidos}}
                 </div>
             </div>
             

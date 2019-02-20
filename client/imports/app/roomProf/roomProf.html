@@ -32,10 +32,10 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                                <img [src]="alumnoCall.profile.foto" id="foto" alt="Foto perfil" height="100" width="auto">
+                                <img [src]="getUserCall().profile.foto" id="foto" alt="Foto perfil" height="100" width="auto">
                         </div>
                         <div class="col">
-                            <strong>Nombre:</strong>  {{alumnoCall.profile.nombre + " " + alumnoCall.profile.apellidos}}
+                            <strong>Nombre:</strong>  {{getUserCall().profile.nombre + " " + getUserCall().profile.apellidos}}
                         </div>
                     </div>
                     <div class="row">

@@ -1,8 +1,21 @@
+
+export interface sdpMsg {
+    sdp: string;
+    type: string;
+}
+
+
+export interface candidateMsg {
+    candidate?: string;
+    sdpMLineIndex?: number | null;
+    sdpMid?: string | null;
+    usernameFragment?: string;
+}
 export interface MessageRtc {
     
     msgTipo : MsgTipo,
-    sdp ?: RTCSessionDescription,
-    candidate ?: RTCIceCandidate
+    sdp ?: sdpMsg,
+    candidate ?: candidateMsg
 }
 
 export interface Message  {

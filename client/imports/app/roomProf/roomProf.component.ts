@@ -51,7 +51,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
     remoteVideoId : string;
     maxPing : number;
     temp: object;
-    alumnoCall : User;
+    
     
     constructor( rol : RolesService, private formBuilder: FormBuilder )
     {
@@ -194,7 +194,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
                     vm.setDisponible(false, ()=>{
     
                         vm.redux.estado.userFrom = m.from;
-                        vm.alumnoCall = Users.findOne({_id : vm.redux.estado.userFrom});
+                        vm.setUserCall(Users.findOne({_id : vm.redux.estado.userFrom}));
                         vm.redux.nextStatus({ type: ETipo.WAIT_CALL_ACCEPT});
                         resolve(1)
                     });
@@ -220,7 +220,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
 
 
             let fnGoInit = ()=> {
-                vm.redux.estado.userFrom = null;
+                vm.setUserCall(null);
                 vm.redux.nextStatus({ type: ETipo.INIT });
             }
 
@@ -242,7 +242,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
         let fnMsgCancelCall = function(m :Message)
         {
             
-            if(vm.redux.estado.userFrom === m.from)
+            if(vm.getUserCall()._id === m.from)
             {
                 
                 //cancelamos y vamos a init
@@ -258,7 +258,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
         let fnMsgGoClassCall = function(m :Message)
         {
             
-            if(vm.redux.estado.userFrom === m.from)
+            if(vm.getUserCall()._id === m.from)
             {
                 
                
@@ -275,7 +275,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
         let fnMsgPing = function(m :Message)
         {
             
-            if(vm.redux.estado.userFrom === m.from)
+            if(vm.getUserCall()._id === m.from)
             {
                 
                 mServ.sendMsg(m.from,MsgTipo.PONG)
@@ -287,7 +287,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
         let fnMsgPong = function(m :Message)
         {
             
-            if(vm.redux.estado.userFrom === m.from)
+            if(vm.getUserCall()._id === m.from)
             {
                 
                 vm.redux.estado.campos.ping =0;
@@ -299,7 +299,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
         let fnMsgRtc = function(m :Message)
         {
             
-            if(vm.redux.estado.userFrom === m.from)
+            if(vm.getUserCall()._id === m.from)
             {
                 //en el cuerpo lleva el mensaje RTC
                 vm.rtc.getMsg(m.cuerpo);
@@ -311,7 +311,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
         let fnMsgReconnect = function(m :Message)
         {
             
-            if(vm.redux.estado.userFrom === m.from)
+            if(vm.getUserCall()._id === m.from)
             {
                 //en el cuerpo lleva el mensaje RTC
                 vm.redux.estado.campos.ping = 0;
@@ -456,7 +456,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
                         //si pasa el tiempo y se ejecuta se cancela.
 
                        
-                        vm.sendMsg(vm.redux.estado.userFrom, MsgTipo.CALL_CANCEL);
+                        vm.sendMsg(vm.getUserCall()._id, MsgTipo.CALL_CANCEL);
                         //enviar mensaje de cancelacion
 
                         //goInit
@@ -494,7 +494,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
                             //si pasa el tiempo y se ejecuta se cancela.
 
                         
-                            vm.sendMsg(vm.redux.estado.userFrom, MsgTipo.CALL_CANCEL);
+                            vm.sendMsg(vm.getUserCall()._id, MsgTipo.CALL_CANCEL);
                             //enviar mensaje de cancelacion
                             //COLGAR
                             //goInit
@@ -519,7 +519,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
                 case ETipo.CLASS:
                 funciones = new Map();   
                 let sendMsgRtc =(msgRtc :MessageRtc) =>{
-                    vm.sendMsg(vm.redux.estado.userFrom, MsgTipo.RTC, msgRtc)
+                    vm.sendMsg(vm.getUserCall()._id, MsgTipo.RTC, msgRtc)
                 }
                 funciones[MsgTipo.CALL_COLGAR] = fnMsgCancelCall;
                 funciones[MsgTipo.RTC] = fnMsgRtc;
@@ -546,7 +546,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
                     }
                     else{
 
-                        vm.sendMsg(vm.redux.estado.userFrom, MsgTipo.PING, profile.claseId);
+                        vm.sendMsg(vm.getUserCall()._id, MsgTipo.PING, profile.claseId);
                         vm.redux.estado.campos.ping ++;
                     }
                 }
@@ -570,10 +570,10 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
                 {
 
                     //MIRAR LOS STATUS DE RTC TODO
-                    if(!profile.claseId ||profile.claseId === "")
+                   /* if(!profile.claseId ||profile.claseId === "")
                         {
                             cancelarCall();
-                        }
+                        }*/
                     mServ.readMsgs(funciones)
                 }
                 
@@ -606,7 +606,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
 
         
         */
-        vm.sendMsg(vm.redux.estado.userFrom, MsgTipo.CALL_OK);
+        vm.sendMsg(vm.getUserCall()._id, MsgTipo.CALL_OK);
         vm.redux.nextStatus({ type: ETipo.WAIT_CLASS });
 
 

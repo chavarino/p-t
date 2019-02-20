@@ -6,7 +6,7 @@ import { Map } from '../../../../imports/models/map';
 import $ from "jquery";
 import {Message, MessageRtc, MsgTipo} from "../../../../imports/models/message"
 import {MsgClass} from "../../../../imports/functions/commonFunctions"
-
+import { User } from 'imports/models/User';
 
 import {MethodsClass} from "../../../../imports/functions/methodsClass"
 
@@ -25,6 +25,7 @@ export class Generic {
     msgServ : MsgClass;
     rtc : RtcService;
     secondsIniClass : number
+    userCall : User;
     constructor(minWrite : number,  minRead : number,modulo : string, rol : RolesService)
     {
         let vm = this;
@@ -175,5 +176,14 @@ export class Generic {
     {
         
         MethodsClass.call("terminarClase", fn)
+    }
+
+    getUserCall() : User {
+        return this.userCall;
+    }
+
+    setUserCall (userCall :User)
+    {
+        this.userCall = userCall;
     }
   }
