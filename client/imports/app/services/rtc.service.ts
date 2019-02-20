@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import {MessageRtc, MsgTipo} from '../../../../imports/models/message'
-import jquery from "jquery";
-import { Message } from '@angular/compiler/src/i18n/i18n_ast';
+
+import * as $ from "jquery/dist/jquery.min.js"//'jquery';
+//import { Message } from '@angular/compiler/src/i18n/i18n_ast';
 /*interface Map<T> {
     [key: string]: T;
 }
@@ -16,6 +17,8 @@ interface Rtc {
     singalGetter ?: (MessageRtc) =>void ,
     localVideoId : string,
     remoteVideoId : string,
+
+   
 }
 
 function onError(error) {
@@ -34,7 +37,7 @@ export class RtcService {
     
 
     rct :  Rtc
-
+    mostrarCont : boolean;
     contructor()
     {
         
@@ -44,7 +47,7 @@ export class RtcService {
           remoteVideoId: "",
           singalSender : null
         }
-        
+        this.mostrarCont = false;
     }
 
     
@@ -98,8 +101,11 @@ export class RtcService {
 
         let vm =this;
         let pc = this.rct.pc;
-        
-        let remoteVideo = jquery.$("#remoteId"),  localVideo = jquery.$("#localId")
+        //document.getElementById("demo")
+        /*
+        document.getElementById("remoteId"),
+        localVideo =  document.getElementById("localId") ;//*/
+        let remoteVideo =  $("#remoteId"),  localVideo = $("#localId")
         pc = new RTCPeerConnection(this.configuration);
       
         // 'onicecandidate' notifies us whenever an ICE agent needs to deliver a
@@ -130,7 +136,7 @@ export class RtcService {
       
         //vm.rct.singalGetter = (msg : MessageRtc) => vm.getMsg(msg);
       
-       
+       this.mostrarCont = true;
       }
 
 
