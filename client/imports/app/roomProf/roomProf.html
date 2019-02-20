@@ -64,17 +64,41 @@
                     </div>
             </div>
             <div *ngIf="isEstadoWaitClass()">
-                   <span class="alert alert-info">Esperando a una clase (CONTADOR)</span>
+
+                <div class="row">
+                    <div class="col">
+                        
+                        <h3>
+                                Esperando a una clase
+                        </h3>
+                    </div>
+
+                </div>
+                <div class="row">
+                        <div class="col">
+                            <timeCounter [tipo]="temp.tipo" [secondsIni]="temp.secondsIni"  [mostrar]="temp.mostrar">
+                
+                            </timeCounter>
+                        </div>
+                </div>
 
                 
            </div>
            <div  *ngIf="isEstadoClass()">
                 <div class="row">
-                   <h3>
-                       En clase.
-                   </h3>
+                    <div class="col">
+                        <h3>
+                            En clase.
+                        </h3>
+
+                    </div>
                 </div>
-                <videoCall [secondsIni]="secondsIniClass" [rtc]="rtc" ></videoCall>
+                <div class="row">
+                    <div class="col">
+                        <videoCall [secondsIni]="secondsIniClass" [rtc]="rtc" ></videoCall>
+
+                    </div>
+                </div>
                 
                 
            </div>
