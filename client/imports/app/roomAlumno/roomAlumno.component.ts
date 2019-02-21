@@ -31,7 +31,7 @@ enum ETipo  {
     
 }
 
-
+//bug https://stackoverflow.com/questions/53029708/how-to-set-remote-description-for-a-webrtc-caller-in-chrome-without-errors
 @Component({
   selector: 'roomA',
   templateUrl: 'roomAlumno.html',
