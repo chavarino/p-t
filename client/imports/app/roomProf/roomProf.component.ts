@@ -580,7 +580,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
                 nextState.destroy = ()=>{
 
                     clearInterval(vm.redux.estado.campos.idIntervalPing);
-
+                    vm.rtc.close();
                     
                 }
                 

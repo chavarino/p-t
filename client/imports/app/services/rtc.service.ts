@@ -35,9 +35,11 @@ export class RtcService {
         }]
     }
     
-
+    negotiating :boolean;
     rct :  Rtc
     mostrarCont : boolean;
+    remoteVideo;
+    localVideo;
     contructor()
     {
         
@@ -75,7 +77,7 @@ export class RtcService {
     {
         this.rct.singalSender(msg)
     }
-    localDescCreated(desc  :RTCSessionDescriptionInit) {
+    async localDescCreated(desc  :RTCSessionDescriptionInit) {
 
       /*  this.rct.pc.setLocalDescription(
           desc,
@@ -83,17 +85,12 @@ export class RtcService {
           onError
         );*/
         let vm =this;
-        function onSuccess() {
 
-            vm.rct.localDes = vm.rct.pc.localDescription.sdp;
-            vm.sendMessage(vm.newMsg(MsgTipo.SDP, vm.rct.pc.localDescription.toJSON()));
-
-        };
-       
-        this.rct.pc.setLocalDescription(desc)
-        .then(onSuccess,
-        onError)
-
+        
+        await  this.rct.pc.setLocalDescription(desc)
+        vm.rct.localDes = vm.rct.pc.localDescription.sdp;
+        vm.sendMessage(vm.newMsg(MsgTipo.SDP, vm.rct.pc.localDescription.toJSON()));
+          
       }
 
 
@@ -102,13 +99,16 @@ export class RtcService {
         let vm =this;
         this.rct.pc = new RTCPeerConnection(this.configuration);
         let pc = this.rct.pc;
+
+        
         //document.getElementById("demo")
         /*
         document.getElementById("remoteId"),
         localVideo =  document.getElementById("localId") ;//*/
         let remoteVideo =  $("#remoteId")[0],  localVideo = $("#localId")[0]
-         
-      
+        vm.remoteVideo = remoteVideo ;
+        vm.localVideo =  localVideo;
+       
         // 'onicecandidate' notifies us whenever an ICE agent needs to deliver a
         // message to the other peer through the signaling server
         
@@ -120,8 +120,22 @@ export class RtcService {
       
         // If user is offerer let the 'negotiationneeded' event create the offer
           
-          pc.onnegotiationneeded = () => {
-            pc.createOffer().then((desc  :RTCSessionDescriptionInit) => vm.localDescCreated(desc)).catch(onError);
+          pc.onnegotiationneeded = async () => {
+
+            if (vm.negotiating) return;
+            if (pc.signalingState != "stable") return;
+            vm.negotiating = true;
+
+
+            //pc.createOffer().then((desc  :RTCSessionDescriptionInit) => vm.localDescCreated(desc)).catch(onError);
+            try {
+              await pc.setLocalDescription(await pc.createOffer());
+              vm.localDescCreated(pc.localDescription)
+            } catch (err) {
+              console.error(err);
+            } finally {
+              vm.negotiating = false;
+            }
           }
         
       
@@ -133,8 +147,8 @@ export class RtcService {
           }
         };
       
-        this.mediaUser(localVideo, pc);
-      
+       
+        this.mediaUser(vm.localVideo, pc);
         //vm.rct.singalGetter = (msg : MessageRtc) => vm.getMsg(msg);
       
        this.mostrarCont = true;
@@ -142,39 +156,56 @@ export class RtcService {
 
 
 
-    getMsg(msg : MessageRtc)
+   async getMsg(msg : MessageRtc)
     {
 
         let vm=this;
         let pc = vm.rct.pc;
-        if (msg.msgTipo === MsgTipo.SDP) {
-            // This is called after receiving an offer or answer from another peer
-//msg.sdp as RTCSessionDescriptionInit
-            let type : RTCSdpType = msg.sdp.type as RTCSdpType; 
-            let inicio : RTCSessionDescriptionInit = {
-              sdp : msg.sdp.sdp,
-              type : type
-            }
-            vm.rct.pc.setRemoteDescription(new RTCSessionDescription( inicio))
-            .then(() => {
-              // When receiving an offer lets answer it
-              if (pc.remoteDescription.type === 'offer') {
-                pc.createAnswer().then((desc  :RTCSessionDescriptionInit) =>vm.localDescCreated(desc)).catch(onError);
+
+          try {
+            if (msg.msgTipo === MsgTipo.SDP) {
+              
+              // if we get an offer, we need to reply with an answer
+              if (msg.sdp.type === 'offer') {
+                await pc.setRemoteDescription(msg.sdp as RTCSessionDescriptionInit);
+
+                this.mediaUser(vm.localVideo, pc);
+               // 
+               /* pc.createAnswer()
+                .then((desc  :RTCSessionDescriptionInit) =>
+                vm.localDescCreated(desc)).catch(onError);*/
+//              
+                vm.localDescCreated(await pc.createAnswer())
+               // await pc.setLocalDescription(await pc.createAnswer());
+                //console.log(pc.localDescription);
+               
+              } else if (msg.sdp.type === 'answer') {
+                await pc.setRemoteDescription(msg.sdp as RTCSessionDescriptionInit).catch(err => console.log(err));
+              } else {
+                console.log('Unsupported SDP type.');
               }
-            }, onError);
-          } else if (msg.msgTipo === MsgTipo.CANDIDATE) {
-            let inicio :RTCIceCandidateInit = msg.candidate as RTCIceCandidateInit;
-            
-            // Add the new ICE candidate to our connections remote description
-            pc.addIceCandidate(
-              new RTCIceCandidate(inicio))
-              .then(() =>{}, onError
-            );
+            } else if (msg.msgTipo === MsgTipo.CANDIDATE) {
+              await pc.addIceCandidate(new RTCIceCandidate(msg.candidate )).catch(err => console.log(err));
+            }
+          } catch (err) {
+            console.error(err);
           }
     }
 
-     mediaUser(localVideo: any, pc: RTCPeerConnection) {
-        navigator.mediaDevices.getUserMedia({
+   async  mediaUser(localVideo: any, pc: RTCPeerConnection) {
+     
+
+     const stream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: true,
+      });
+     localVideo.srcObject = stream;
+     stream.getTracks().forEach((track) => {
+       console.log(`adding ${track.kind} track`);
+       pc.addTrack(track, stream)
+     });
+
+        /*navigator.mediaDevices.getUserMedia({
             audio: true,
             video: true,
         }).then(stream => {
@@ -182,9 +213,14 @@ export class RtcService {
             localVideo.srcObject = stream;
             // Add your stream to be sent to the conneting peer
             stream.getTracks().forEach(track => pc.addTrack(track, stream));
-        }, onError);
+        }, onError);*/
     }
 
+    close()
+    {
+      let vm=this;
+      vm.rct.pc.close();
+    }
 
 
 }

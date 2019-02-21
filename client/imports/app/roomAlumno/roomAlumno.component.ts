@@ -653,9 +653,10 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
             
             nextState.destroy = ()=>{
 
+                vm.rtc.close();
                 clearInterval(vm.redux.estado.campos.idIntervalPing);
 
-                //TODO CERRAR CONEXION (CERRAR CLASE)
+               
 
             }
             
