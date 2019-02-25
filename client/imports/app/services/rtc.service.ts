@@ -16,7 +16,8 @@ interface Rtc {
     singalSender : (MessageRtc) =>void ,
     singalGetter ?: (MessageRtc) =>void ,
     localVideoId : string,
-    remoteVideoId : string,
+    remoteVideoId : string
+    
 
    
 }
@@ -28,8 +29,12 @@ function onError(error) {
 export class RtcService {
 
     //roles : Map<Rol>
-
-    configuration :object = {
+   private offerOptions : RTCOfferOptions = {
+    iceRestart : true,
+    offerToReceiveAudio : true,
+    offerToReceiveVideo : true
+    }
+    private configuration :object = {
         iceServers: [{
           urls: 'stun:stun.l.google.com:19302'
         }]
@@ -40,6 +45,8 @@ export class RtcService {
     mostrarCont : boolean;
     remoteVideo;
     localVideo;
+    stream : MediaStream
+    caller : boolean;
     contructor()
     {
         
@@ -53,7 +60,7 @@ export class RtcService {
     }
 
     
-    static newRtc(localVideoId : string, remoteVideoId : string, singalSender : (Message) =>void)
+    static newRtc(localVideoId : string, remoteVideoId : string, singalSender : (Message) =>void, caller:boolean)
     {
         let rtc : RtcService = new RtcService();
         rtc.rct = {
@@ -61,7 +68,7 @@ export class RtcService {
           remoteVideoId: remoteVideoId,
           singalSender : singalSender
         }
-
+        rtc.caller = caller;
        return rtc;
     }
     newMsg( tipo:MsgTipo, sdp ?: object, candidate ?: object) : MessageRtc
@@ -77,7 +84,7 @@ export class RtcService {
     {
         this.rct.singalSender(msg)
     }
-    async localDescCreated(desc  :RTCSessionDescriptionInit) {
+    async localDescCreated(desc : RTCSessionDescriptionInit) {
 
       /*  this.rct.pc.setLocalDescription(
           desc,
@@ -85,10 +92,11 @@ export class RtcService {
           onError
         );*/
         let vm =this;
-
-        
-        await  this.rct.pc.setLocalDescription(desc)
-        vm.rct.localDes = vm.rct.pc.localDescription.sdp;
+        console.log("setLocalDescription - type: " + desc.type);
+        await vm.rct.pc.setLocalDescription(desc);
+        //await  this.rct.pc.setLocalDescription(desc)
+        console.log("send MSG local Description");
+       // vm.rct.localDes = vm.rct.pc.localDescription.sdp;
         vm.sendMessage(vm.newMsg(MsgTipo.SDP, vm.rct.pc.localDescription.toJSON()));
           
       }
@@ -97,6 +105,7 @@ export class RtcService {
       startWebRTC() {
 
         let vm =this;
+        console.log("Inicia RTCPeerConection");
         this.rct.pc = new RTCPeerConnection(this.configuration);
         let pc = this.rct.pc;
 
@@ -114,23 +123,26 @@ export class RtcService {
         
         pc.onicecandidate = event => {
           if (event.candidate) {
+            console.log("Send Candidate");
             vm.sendMessage(vm.newMsg( MsgTipo.CANDIDATE, null,event.candidate.toJSON()));
           }
         };
       
         // If user is offerer let the 'negotiationneeded' event create the offer
-          
+        vm.negotiating = this.caller ?  false : true;
           pc.onnegotiationneeded = async () => {
 
+            console.log(`signalingState : ${vm.rct.pc.signalingState}, conectionState: ${vm.rct.pc.connectionState}, iceConnectionState: ${vm.rct.pc.iceConnectionState},`);
             if (vm.negotiating) return;
             if (pc.signalingState != "stable") return;
             vm.negotiating = true;
-
+            console.log("stable-TRUE");
 
             //pc.createOffer().then((desc  :RTCSessionDescriptionInit) => vm.localDescCreated(desc)).catch(onError);
             try {
-              await pc.setLocalDescription(await pc.createOffer());
-              vm.localDescCreated(pc.localDescription)
+              
+              //EL CALLER GENERA OFERTA => have-local-offer espera un respuesta.
+              vm.localDescCreated(await vm.rct.pc.createOffer(vm.offerOptions))
             } catch (err) {
               console.error(err);
             } finally {
@@ -141,10 +153,11 @@ export class RtcService {
       
         // When a remote stream arrives display it in the #remoteVideo element
         pc.ontrack = event => {
-          const stream = event.streams[0];
-          if (!remoteVideo.srcObject || remoteVideo.srcObject.id !== stream.id) {
-            remoteVideo.srcObject = stream;
-          }
+          if (remoteVideo.srcObject) return;
+          
+          console.log("Remote Stream");
+          remoteVideo.srcObject = event.streams[0];
+          
         };
       
        
@@ -161,30 +174,40 @@ export class RtcService {
 
         let vm=this;
         let pc = vm.rct.pc;
-
+        console.log(`signalingState : ${vm.rct.pc.signalingState}, conectionState: ${vm.rct.pc.connectionState}, iceConnectionState: ${vm.rct.pc.iceConnectionState},`);
           try {
             if (msg.msgTipo === MsgTipo.SDP) {
               
+              console.log(`SDP ${msg.sdp.type}`);
               // if we get an offer, we need to reply with an answer
               if (msg.sdp.type === 'offer') {
-                await pc.setRemoteDescription(msg.sdp as RTCSessionDescriptionInit);
 
-                this.mediaUser(vm.localVideo, pc);
+       
+                //EL CALLEr Obtiene una oferta set remote with offer => genera una respuesta y se pone el local have-remote-offer =>> estable
+                  await pc.setRemoteDescription(msg.sdp as RTCSessionDescriptionInit);
+                  vm.localDescCreated(await pc.createAnswer())
+                
+
+               //this.mediaUser(vm.localVideo, pc);
                // 
                /* pc.createAnswer()
                 .then((desc  :RTCSessionDescriptionInit) =>
                 vm.localDescCreated(desc)).catch(onError);*/
 //              
-                vm.localDescCreated(await pc.createAnswer())
                // await pc.setLocalDescription(await pc.createAnswer());
                 //console.log(pc.localDescription);
                
               } else if (msg.sdp.type === 'answer') {
-                await pc.setRemoteDescription(msg.sdp as RTCSessionDescriptionInit).catch(err => console.log(err));
+                
+                  //CALLER esta en have-local-offer = obtiene anserr para set remote => estable
+                  await pc.setRemoteDescription(msg.sdp as RTCSessionDescriptionInit).catch(err => console.log(err));
+
+                
               } else {
                 console.log('Unsupported SDP type.');
               }
             } else if (msg.msgTipo === MsgTipo.CANDIDATE) {
+              console.log(`CANDIDATE `);
               await pc.addIceCandidate(new RTCIceCandidate(msg.candidate )).catch(err => console.log(err));
             }
           } catch (err) {
@@ -194,11 +217,14 @@ export class RtcService {
 
    async  mediaUser(localVideo: any, pc: RTCPeerConnection) {
      
-
+    let vm=this;
+    console.log("User Media Stream");
      const stream = await navigator.mediaDevices.getUserMedia({
         audio: true,
         video: true,
       });
+
+    vm.stream = stream;
      localVideo.srcObject = stream;
      stream.getTracks().forEach((track) => {
        console.log(`adding ${track.kind} track`);
@@ -216,10 +242,17 @@ export class RtcService {
         }, onError);*/
     }
 
-    close()
+     close()
     {
       let vm=this;
+      console.log("Close");
+      vm.negotiating = false;
+      
+     // await vm.rct.pc.setRemoteDescription(null);
+    // await vm.rct.pc.setLocalDescription(null);
+      vm.stream.getTracks().forEach(function (track) { track.stop(); });
       vm.rct.pc.close();
+      
     }
 
 

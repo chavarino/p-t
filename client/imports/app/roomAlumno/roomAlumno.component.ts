@@ -243,7 +243,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
         }
         if(vm.clase && vm.clase._id)
         {
-                this.terminarClase(()=>{
+                this.terminarClase(false,()=>{
                     vm.clase = null;
                     fnGoInit();
                    
@@ -314,7 +314,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
 
             if(vm.clase && vm.clase._id)
             {
-                vm.terminarClase(()=>{
+                vm.terminarClase(false,()=>{
                     vm.clase = null;
                     
                     fnGoInit();
@@ -507,7 +507,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
                                     resolve(1);
                                 }
                                 else{
-                                    vm.terminarClase(()=>{
+                                    vm.terminarClase(false,()=>{
     
                                         vm.redux.nextStatus({ type: ETipo.SEL_PROFESOR})
                                         resolve(1);
@@ -628,7 +628,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
 
             nextState.ini =  ()  =>{
 
-                vm.rtc =  RtcService.newRtc(vm.localVideoId,vm.remoteVideoId,sendMsgRtc );
+                vm.rtc =  RtcService.newRtc(vm.localVideoId,vm.remoteVideoId,sendMsgRtc, false );
 
                 setTimeout(() => {
                     

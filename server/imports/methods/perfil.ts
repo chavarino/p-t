@@ -6,17 +6,21 @@ import { User } from 'imports/models/User';
 import {Accounts} from 'meteor/accounts-base';
 
 Meteor.methods({
-  savePerfil(profile: Perfil) {
+  savePerfilById(id :string, profile: Perfil) {
 
     profile.rol = Meteor.user().profile.rol;
     let filter = {
-      "_id": Meteor.userId()
+      "_id": id
     };
     let input : any = {$set : { profile : profile}}
     //validar TODO
     
     console.log(filter + ", " + input)
     Users.update(filter, input);
+  },
+  savePerfil(profile: Perfil) {
+
+    Meteor.call("savePerfilById", Meteor.userId(), profile)
   },
   setDisponible(disponible : Boolean)
   {

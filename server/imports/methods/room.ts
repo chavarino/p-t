@@ -28,6 +28,7 @@ function getTexto(room : Room)
 }
 
 Meteor.methods({
+  //la clase la crea el alumno
   crearClase(profId : string) {
   let room: Room = {
     profId : "",
@@ -64,12 +65,14 @@ Meteor.methods({
          let p: Perfil = Meteor.user().profile
 
          p.claseId = _idRoom;
+         //esta bien , es guardar el mio.
          Meteor.call('savePerfil', p);
 
          p = Users.findOne(profId).profile;
 
+          
          p.claseId = _idRoom;
-         Meteor.call('savePerfil', p);
+         Meteor.call('savePerfilById',profId, p);
 
     }
     catch(e) {
@@ -118,14 +121,19 @@ Meteor.methods({
    // console.log("insertando " + room);
    Rooms.update({_id: room._id}, room,{ upsert: false });
   },
-  terminarClase() {
+  terminarClase(profesor : boolean) {
     
+    let userId =Meteor.userId();
     //console.log("Entra");
-    if(!Meteor.user())
+    if(!userId)
     {  
           MethodsClass.noLogueado();
     }
-    let perfil : Perfil = Meteor.user().profile;
+    
+    let perfil : Perfil = Meteor.users.findOne({_id : userId}).profile;
+
+    console.log(JSON.stringify(perfil))
+
     if(!perfil.claseId || perfil.claseId=== "")
     {
        return;
@@ -133,14 +141,21 @@ Meteor.methods({
 
     let claseId : string  = perfil.claseId;
     perfil.claseId = "";
-    perfil.disponible =true;
+    if(profesor)
+    {
+
+      perfil.disponible =true;
+    }
+    else{
+      perfil.disponible=false;
+    }
     Meteor.call("savePerfil", perfil);
 
 
     let room : Room = Rooms.findOne({ _id : claseId});
 
       //Nos aseguramos que tenga permisos para cerrar  la clase (Que sea el creador.)
-    if(room ==null || room.alumnoId != Meteor.userId() && room.profId != Meteor.userId()  || !room.activo)
+    if(room ==null || room.alumnoId != userId && room.profId != userId  || !room.activo)
     {
         //Error.noPermisos();
         return;

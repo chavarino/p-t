@@ -227,7 +227,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
 
             if(vm.clase && vm.clase._id)
             {
-                vm.terminarClase(()=>{
+                vm.terminarClase(true,()=>{
                     vm.clase = null;
                     
                     fnGoInit();
@@ -394,7 +394,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
                                     resolve(1);
                                 }
                                 else{
-                                    vm.terminarClase(()=>{
+                                    vm.terminarClase(true,()=>{
     
                                         vm.redux.nextStatus({ type: ETipo.WAIT_CALL})
                                         resolve(1);
@@ -553,7 +553,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
 
                 nextState.ini =  ()  =>{
 
-                    vm.rtc =  RtcService.newRtc(vm.localVideoId,vm.remoteVideoId,sendMsgRtc );
+                    vm.rtc =  RtcService.newRtc(vm.localVideoId,vm.remoteVideoId,sendMsgRtc, true );
 
                     setTimeout(() => {
                         

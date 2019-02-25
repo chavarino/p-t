@@ -172,10 +172,10 @@ export class Generic {
         MethodsClass.call("empezarClase", fn)
     }
 
-    terminarClase (fn?: (any) =>any)
+    terminarClase (profesor : boolean, fn?: (any) =>any)
     {
         
-        MethodsClass.call("terminarClase", fn)
+        MethodsClass.call("terminarClase",profesor, fn)
     }
 
     getUserCall() : User {
