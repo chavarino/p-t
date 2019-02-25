@@ -14,6 +14,7 @@ export class VideoCall implements OnInit, OnDestroy {
   
     private _rtc: RtcService;
     private contador;
+    
     constructor()
     {
        this.contador = {
@@ -58,6 +59,19 @@ export class VideoCall implements OnInit, OnDestroy {
      {
        return this._rtc.isConnected();
      }
+
+    shareDesk()
+    {
+        let vm = this;
+        vm._rtc.setVideoTypeScreen();
+        vm._rtc.mediaUser();
+    }
+    cam()
+    {
+        let vm = this;
+        vm._rtc.setVideoTypeCam();
+        vm._rtc.mediaUser();
+    }
     ngOnInit()
     {
         

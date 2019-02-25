@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {MessageRtc, MsgTipo,sdpMsg, candidateMsg} from '../../../../imports/models/message'
 
 import * as $ from "jquery/dist/jquery.min.js"//'jquery';
+import { v } from '@angular/core/src/render3';
 //import { Message } from '@angular/compiler/src/i18n/i18n_ast';
 /*interface Map<T> {
     [key: string]: T;
@@ -23,6 +24,10 @@ interface Rtc {
    
 }
 
+enum VideoType {
+  CAM = 1,
+  SCREEN = 2
+}
 function onError(error) {
     console.error(error);
   }
@@ -40,7 +45,7 @@ export class RtcService {
           urls: 'stun:stun.l.google.com:19302'
         }]
     }
-    
+    private videoType : VideoType = VideoType.CAM;
     negotiating :boolean;
     rct :  Rtc
     
@@ -48,6 +53,7 @@ export class RtcService {
     localVideo;
     stream : MediaStream
     caller : boolean;
+    videoSender : RTCRtpSender;
     contructor()
     {
         
@@ -121,6 +127,7 @@ export class RtcService {
 
         let vm =this;
         console.log("Inicia RTCPeerConection");
+        //this.setVideoTypeScreen();
         this.rct.pc = new RTCPeerConnection(this.configuration);
         let pc = this.rct.pc;
 
@@ -182,7 +189,7 @@ export class RtcService {
         };
       
        
-        this.mediaUser(vm.localVideo, pc);
+        this.mediaUser();
         //vm.rct.singalGetter = (msg : MessageRtc) => vm.getMsg(msg);
       
        
@@ -236,24 +243,66 @@ export class RtcService {
           }
     }
 
-   async  mediaUser(localVideo: any, pc: RTCPeerConnection) {
+    setVideoTypeScreen()
+    {
+        this.videoType = VideoType.SCREEN
+    }
+    setVideoTypeCam()
+    {
+      this.videoType =VideoType.CAM;
+    }
+   async  mediaUser() {
      
     let vm=this;
     console.log("User Media Stream");
 
     // TODO   meterle compartir pantalla : https://webrtc.github.io/samples/src/content/getusermedia/getdisplaymedia/
     // https://webrtc.github.io/samples/src/content/devices/multi/
-     const stream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-        video: true,
-      });
+    let  stream;
+    if(this.videoType === VideoType.SCREEN)
+    {
+        if (navigator.getDisplayMedia) {
+          stream = await navigator.getDisplayMedia({video: true});
+        } else if (navigator.mediaDevices.getDisplayMedia) {
+          stream = await navigator.mediaDevices.getDisplayMedia({video: true});
+        } else {
+          stream = await navigator.mediaDevices.getUserMedia({video: {mediaSource: 'screen'},});
+        }
+    }
+    else if(this.videoType === VideoType.CAM)
+    {
+      stream  = await navigator.mediaDevices.getUserMedia({
+         audio: true,
+         video: true,
+       });
 
-    vm.stream = stream;
-     localVideo.srcObject = stream;
-     stream.getTracks().forEach((track) => {
-       console.log(`adding ${track.kind} track`);
-       pc.addTrack(track, stream)
-     });
+    }
+    
+    if(vm.stream)
+    {
+      //GUARDAR LOS DOS STREAM PARA NO TENER QUE IR CAMBIANDO CADA VEZ.
+
+      //GENERAR EL MUTE.
+      //INSERTAR EL STREAM EN EL OBJECT DEL VIDEO
+      //NO PERDER EL STREAM y CERRARLO.
+      let video = stream.getVideoTracks()[0]
+      vm.videoSender.replaceTrack(video);
+     
+
+    }
+    else{
+      vm.stream = stream;
+      vm.localVideo.srcObject = stream;
+      vm.stream.getTracks().forEach((track) => {
+         console.log(`adding ${track.kind} track`);
+         let sender =vm.rct.pc.addTrack(track, vm.stream)
+         if(track.kind=="video")
+         {
+           vm.videoSender = sender;
+         }
+       });
+
+    }
 
         /*navigator.mediaDevices.getUserMedia({
             audio: true,
@@ -266,6 +315,11 @@ export class RtcService {
         }, onError);*/
     }
 
+    setActiveTracks(flag :boolean)
+    {
+      let vm=this;
+      vm.stream.getTracks().forEach(function (track) { track.enabled = flag; });
+    }
      close()
     {
       let vm=this;
@@ -274,12 +328,17 @@ export class RtcService {
       
      // await vm.rct.pc.setRemoteDescription(null);
     // await vm.rct.pc.setLocalDescription(null);
-      vm.stream.getTracks().forEach(function (track) { track.stop(); });
+      this.closeTracks();
       vm.rct.pc.close();
       
     }
 
 
+
+  private closeTracks() {
+    let vm=this;
+    vm.stream.getTracks().forEach(function (track) { track.stop(); });
+  }
 }
 
 
