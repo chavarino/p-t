@@ -54,9 +54,9 @@ export class VideoCall implements OnInit, OnDestroy {
        return this._rtc; 
      
      }
-     mostrarContador() :boolean
+     mostrar() :boolean
      {
-       return this._rtc.mostrarCont;
+       return this._rtc.isConnected();
      }
     ngOnInit()
     {

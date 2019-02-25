@@ -165,8 +165,14 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
                     vm.clase = data[0];
                     if(vm.clase && vm.clase.comenzado)
                     {
-                        let current = new Date();
-                        vm.secondsIniClass = Math.floor(((current.getTime() - vm.clase.fechaCom.getTime()) /1000));
+                        
+
+                        
+
+                        MethodsClass.call("getDiffTimeInSeconds", vm.clase.fechaCom,(result)=>{
+                            vm.secondsIniClass = result;
+
+                        })
                     }
                     else{
                         vm.secondsIniClass = 0; 
@@ -628,12 +634,14 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
 
             nextState.ini =  ()  =>{
 
-                vm.rtc =  RtcService.newRtc(vm.localVideoId,vm.remoteVideoId,sendMsgRtc, false );
+                vm.rtc =  RtcService.newRtc(vm.localVideoId,vm.remoteVideoId,sendMsgRtc, false, ()=>{
+                    vm.empezarClase();
+                }  );
 
                 setTimeout(() => {
                     
                     vm.rtc.startWebRTC();
-                    vm.empezarClase();
+                   
                 }, 500);
 
                 vm.redux.estado.campos.idIntervalPing= setInterval(fnInterval, time)

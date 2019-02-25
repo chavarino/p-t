@@ -1,13 +1,13 @@
-<div class="video-call">
+<div class="video-call" [hidden]="!mostrar()">
     <div class="row">
         <div class="col">
-            <timeCounter *ngIf="mostrarContador()" [tipo]="contador.tipo" [secondsIni]="contador.secondsIni"  [mostrar]="contador.mostrar">
+            <timeCounter  [tipo]="contador.tipo" [secondsIni]="contador.secondsIni"  [mostrar]="mostrar()">
 
             </timeCounter>
         </div>
     </div>
     <div class="row">
-        <video id="remoteId" autoplay></video>
+        <video  id="remoteId" autoplay></video>
 
     </div>
     <div class="row">

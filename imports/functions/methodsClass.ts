@@ -51,8 +51,8 @@ export class MethodsClass {
             
         }
         
-        let args2 : any[] = [(error) => {
-            MethodsClass.frontHandle(error, fn)
+        let args2 : any[] = [(error,result) => {
+            MethodsClass.frontHandle(error, fn, result)
         }]
         if(!isUndefined(input))
         {
@@ -71,7 +71,7 @@ export class MethodsClass {
 
         }
     }
-    static frontHandle(error, fn)
+    static frontHandle(error, fn, result)
     {
         
         
@@ -84,7 +84,7 @@ export class MethodsClass {
             else{
                 if(fn)
                 {
-                    fn();
+                    fn(result);
                 }
             }
             

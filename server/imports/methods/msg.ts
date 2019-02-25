@@ -18,7 +18,7 @@ Meteor.methods({
             MethodsClass.camposInsuficientes();
         }
 
-
+        
         Msg.insert(msg);
     },
     borrarMsg(id : string)

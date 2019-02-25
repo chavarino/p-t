@@ -15,6 +15,7 @@ interface Rtc {
     
     singalSender : (MessageRtc) =>void ,
     singalGetter ?: (MessageRtc) =>void ,
+    handlerConnected ?: () => void,
     localVideoId : string,
     remoteVideoId : string
     
@@ -42,7 +43,7 @@ export class RtcService {
     
     negotiating :boolean;
     rct :  Rtc
-    mostrarCont : boolean;
+    
     remoteVideo;
     localVideo;
     stream : MediaStream
@@ -56,19 +57,33 @@ export class RtcService {
           remoteVideoId: "",
           singalSender : null
         }
-        this.mostrarCont = false;
+        
     }
 
-    
-    static newRtc(localVideoId : string, remoteVideoId : string, singalSender : (Message) =>void, caller:boolean)
+    isConnected() :boolean
+    {
+      let vm= this;
+      if(!vm.rct || !vm.rct.pc)
+      {
+        return false;
+      }
+      else
+      {
+        return vm.rct.pc.connectionState === "connected";
+
+      }
+    }
+    static newRtc(localVideoId : string, remoteVideoId : string, singalSender : (Message) =>void, caller:boolean, handlerConnected : ()=>void)
     {
         let rtc : RtcService = new RtcService();
         rtc.rct = {
           localVideoId : localVideoId,
           remoteVideoId: remoteVideoId,
-          singalSender : singalSender
+          singalSender : singalSender,
+          handlerConnected : handlerConnected
         }
         rtc.caller = caller;
+      
        return rtc;
     }
     newMsg( tipo:MsgTipo, sdp ?: object, candidate ?: object) : MessageRtc
@@ -121,6 +136,12 @@ export class RtcService {
         // 'onicecandidate' notifies us whenever an ICE agent needs to deliver a
         // message to the other peer through the signaling server
         
+        pc.onconnectionstatechange  = function(event) {
+          if (vm.isConnected() && vm.rct.handlerConnected) {
+            // Handle the failure
+            vm.rct.handlerConnected();
+          }
+        };
         pc.onicecandidate = event => {
           if (event.candidate) {
             console.log("Send Candidate");
@@ -164,7 +185,7 @@ export class RtcService {
         this.mediaUser(vm.localVideo, pc);
         //vm.rct.singalGetter = (msg : MessageRtc) => vm.getMsg(msg);
       
-       this.mostrarCont = true;
+       
       }
 
 
@@ -219,6 +240,9 @@ export class RtcService {
      
     let vm=this;
     console.log("User Media Stream");
+
+    // TODO   meterle compartir pantalla : https://webrtc.github.io/samples/src/content/getusermedia/getdisplaymedia/
+    // https://webrtc.github.io/samples/src/content/devices/multi/
      const stream = await navigator.mediaDevices.getUserMedia({
         audio: true,
         video: true,
