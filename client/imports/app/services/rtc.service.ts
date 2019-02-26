@@ -4,6 +4,7 @@ import {MessageRtc, MsgTipo,sdpMsg, candidateMsg} from '../../../../imports/mode
 import * as $ from "jquery/dist/jquery.min.js"//'jquery';
 import { v } from '@angular/core/src/render3';
 import { isUndefined } from 'util';
+import { forEach } from '@angular/router/src/utils/collection';
 //import { Message } from '@angular/compiler/src/i18n/i18n_ast';
 /*interface Map<T> {
     [key: string]: T;
@@ -64,7 +65,7 @@ export class RtcService {
     contructor()
     {
         
-      
+        
         this.rct = {
           localVideoId : "",
           remoteVideoId: "",
@@ -96,7 +97,8 @@ export class RtcService {
           handlerConnected : handlerConnected
         }
         rtc.caller = caller;
-      
+        
+        rtc.switchVideo = new Map();;
        return rtc;
     }
     newMsg( tipo:MsgTipo, sdp ?: object, candidate ?: object) : MessageRtc
@@ -137,7 +139,7 @@ export class RtcService {
         //this.setVideoTypeScreen();
         this.rct.pc = new RTCPeerConnection(this.configuration);
         let pc = this.rct.pc;
-
+        
         
         //document.getElementById("demo")
         /*
@@ -268,6 +270,7 @@ export class RtcService {
     //let  stream;
     
     let stream;
+   
     let videoTrackAux :MediaStreamTrack  =  vm.switchVideo[this.videoType];
 
 
@@ -306,6 +309,7 @@ export class RtcService {
           {
             vm.videoSender = sender;
           }
+          vm.localVideo.srcObject = vm.stream;
         });
       }
 
@@ -338,6 +342,8 @@ export class RtcService {
       {
         vm.setActiveTracks(false);
         await vm.videoSender.replaceTrack(videoTrackAux);
+        vm.stream.removeTrack(vm.stream.getVideoTracks()[0])
+        vm.stream.addTrack(videoTrackAux);
         vm.setActiveTracks(true);
         vm.localVideo.srcObject = vm.stream;
       }
@@ -392,10 +398,19 @@ export class RtcService {
   private closeTracks() {
     let vm=this;
     vm.stream.getTracks().forEach(function (track) { track.stop(); });
-    vm.switchVideo.forEach((e :MediaStreamTrack) =>
-    {
-        e.stop();
+
+    Object.keys(VideoType).forEach((e :string) =>{
+
+      let i = parseInt(e);
+      if(isUndefined(i) || !vm.switchVideo[i] )
+      {
+       return;
+      }
+        vm.switchVideo[i].stop();
+        vm.switchVideo[i] = null;
+
     })
+  
     vm.switchVideo = null;
   }
 }

@@ -72,6 +72,18 @@ export class VideoCall implements OnInit, OnDestroy {
         vm._rtc.setVideoTypeCam();
         vm._rtc.mediaUser();
     }
+
+    switchSonido()
+    { 
+
+      let vm = this;
+      vm._rtc.switchAudioMute();
+    }
+    switchVideo()
+    {
+      let vm = this;
+      vm._rtc.switchVideoMute();
+    }
     ngOnInit()
     {
         
