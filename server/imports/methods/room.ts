@@ -51,12 +51,12 @@ Meteor.methods({
           }
           //console.log("Entra");
           room.profId = profId;
+          room.alumnoId = Meteor.userId();
           room.activo =true;
           room.comenzado = false;
-          room.fechaIni  = null;
+          room.fechaIni  = new Date();
           room.fechaCom = null;
           room.fechaFin = null;
-          room.alumnoId = Meteor.userId();
           room.estadoText = getTexto(room);
           //VALIDACIONES
          // console.log("insertando " + room);

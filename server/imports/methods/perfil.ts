@@ -8,10 +8,14 @@ import {Accounts} from 'meteor/accounts-base';
 Meteor.methods({
   savePerfilById(id :string, profile: Perfil) {
 
-    profile.rol = Meteor.user().profile.rol;
+    if(Meteor.isClient)
+    {
+      id = Meteor.userId();
+    }
     let filter = {
       "_id": id
     };
+    profile.rol = Users.findOne(filter).profile.rol;
     let input : any = {$set : { profile : profile}}
     //validar TODO
     

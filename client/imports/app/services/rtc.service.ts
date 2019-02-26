@@ -3,6 +3,7 @@ import {MessageRtc, MsgTipo,sdpMsg, candidateMsg} from '../../../../imports/mode
 
 import * as $ from "jquery/dist/jquery.min.js"//'jquery';
 import { v } from '@angular/core/src/render3';
+import { isUndefined } from 'util';
 //import { Message } from '@angular/compiler/src/i18n/i18n_ast';
 /*interface Map<T> {
     [key: string]: T;
@@ -28,6 +29,10 @@ enum VideoType {
   CAM = 1,
   SCREEN = 2
 }
+enum SoundType {
+  MICRO = 1
+ 
+}
 function onError(error) {
     console.error(error);
   }
@@ -52,6 +57,8 @@ export class RtcService {
     remoteVideo;
     localVideo;
     stream : MediaStream
+    switchVideo : Map<VideoType, MediaStreamTrack>;
+    
     caller : boolean;
     videoSender : RTCRtpSender;
     contructor()
@@ -255,65 +262,112 @@ export class RtcService {
      
     let vm=this;
     console.log("User Media Stream");
-
+ 
     // TODO   meterle compartir pantalla : https://webrtc.github.io/samples/src/content/getusermedia/getdisplaymedia/
     // https://webrtc.github.io/samples/src/content/devices/multi/
-    let  stream;
-    if(this.videoType === VideoType.SCREEN)
-    {
-        if (navigator.getDisplayMedia) {
-          stream = await navigator.getDisplayMedia({video: true});
-        } else if (navigator.mediaDevices.getDisplayMedia) {
-          stream = await navigator.mediaDevices.getDisplayMedia({video: true});
-        } else {
-          stream = await navigator.mediaDevices.getUserMedia({video: {mediaSource: 'screen'},});
-        }
-    }
-    else if(this.videoType === VideoType.CAM)
-    {
-      stream  = await navigator.mediaDevices.getUserMedia({
-         audio: true,
-         video: true,
-       });
+    //let  stream;
+    
+    let stream;
+    let videoTrackAux :MediaStreamTrack  =  vm.switchVideo[this.videoType];
 
+
+    //guardar trak.
+    let fnGuardarTrack = ()=>
+    {
+        videoTrackAux = stream.getVideoTracks()[0];
+        videoTrackAux.onended = ()=>
+        {
+          videoTrackAux.stop();
+          videoTrackAux = null;
+        }
+
+        //se rellena el switch de videos.
+        vm.switchVideo[this.videoType] = videoTrackAux;
+
+      }
+    //si es la primera vez o se a roto el trak de video de cam  => genera el estream base de cam
+    if(!vm.stream || 
+      this.videoType === VideoType.CAM && (!videoTrackAux || videoTrackAux.readyState === "ended"))
+    {
+      //se genera el stream user media.
+      stream  = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: true,
+      });
+
+      //si es la primera vez se inserta el stream base.
+      if(!vm.stream)
+      {
+        vm.stream = stream;
+        vm.stream.getTracks().forEach((track) => {
+          console.log(`adding ${track.kind} track`);
+          let sender =vm.rct.pc.addTrack(track, vm.stream)
+          if(track.kind=="video")
+          {
+            vm.videoSender = sender;
+          }
+        });
+      }
+
+      //guarda el trak.
+      fnGuardarTrack();
+      
     }
     
-    if(vm.stream)
+    if(this.videoType !== VideoType.CAM && (!videoTrackAux || videoTrackAux.readyState === "ended"))
     {
-      //GUARDAR LOS DOS STREAM PARA NO TENER QUE IR CAMBIANDO CADA VEZ.
-
+      if(this.videoType === VideoType.SCREEN )
+      {
+          
+            if (navigator.getDisplayMedia) {
+              stream = await navigator.getDisplayMedia({video: true});
+            } else if (navigator.mediaDevices.getDisplayMedia) {
+              stream = await navigator.mediaDevices.getDisplayMedia({video: true});
+            } else {
+              stream = await navigator.mediaDevices.getUserMedia({video: {mediaSource: 'screen'},});
+            }
+            
+      }
+      fnGuardarTrack();
+          
+    }
       //GENERAR EL MUTE.
-      //INSERTAR EL STREAM EN EL OBJECT DEL VIDEO
+      
       //NO PERDER EL STREAM y CERRARLO.
-      let video = stream.getVideoTracks()[0]
-      vm.videoSender.replaceTrack(video);
+      if(vm.videoSender.track.id !== videoTrackAux.id)
+      {
+        vm.setActiveTracks(false);
+        await vm.videoSender.replaceTrack(videoTrackAux);
+        vm.setActiveTracks(true);
+        vm.localVideo.srcObject = vm.stream;
+      }
      
-
-    }
-    else{
-      vm.stream = stream;
-      vm.localVideo.srcObject = stream;
-      vm.stream.getTracks().forEach((track) => {
-         console.log(`adding ${track.kind} track`);
-         let sender =vm.rct.pc.addTrack(track, vm.stream)
-         if(track.kind=="video")
-         {
-           vm.videoSender = sender;
-         }
-       });
-
+      
     }
 
-        /*navigator.mediaDevices.getUserMedia({
-            audio: true,
-            video: true,
-        }).then(stream => {
-            // Display your local video in #localVideo element
-            localVideo.srcObject = stream;
-            // Add your stream to be sent to the conneting peer
-            stream.getTracks().forEach(track => pc.addTrack(track, stream));
-        }, onError);*/
+
+    switchVideoMute(flag ?: boolean)
+    {
+      let  vm= this;
+      let trackVideo = vm.stream.getVideoTracks()[0];
+      if(isUndefined(flag))
+      {
+         flag  = !trackVideo.enabled;
+      }
+      trackVideo.enabled =  flag; 
     }
+
+    switchAudioMute(flag ?: boolean)
+    {
+      let  vm= this;
+      let trackAudio = vm.stream.getAudioTracks()[0];
+      if(isUndefined(flag))
+      {
+         flag  = !trackAudio.enabled;
+      }
+      trackAudio.enabled =  flag; 
+    }
+
 
     setActiveTracks(flag :boolean)
     {
@@ -338,6 +392,11 @@ export class RtcService {
   private closeTracks() {
     let vm=this;
     vm.stream.getTracks().forEach(function (track) { track.stop(); });
+    vm.switchVideo.forEach((e :MediaStreamTrack) =>
+    {
+        e.stop();
+    })
+    vm.switchVideo = null;
   }
 }
 
