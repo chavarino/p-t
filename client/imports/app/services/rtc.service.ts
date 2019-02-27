@@ -287,7 +287,7 @@ export class RtcService {
         //se rellena el switch de videos.
         vm.switchVideo[this.videoType] = videoTrackAux;
 
-      }
+    }
     //si es la primera vez o se a roto el trak de video de cam  => genera el estream base de cam
     if(!vm.stream || 
       this.videoType === VideoType.CAM && (!videoTrackAux || videoTrackAux.readyState === "ended"))
@@ -301,8 +301,8 @@ export class RtcService {
       //si es la primera vez se inserta el stream base.
       if(!vm.stream)
       {
-        vm.stream = stream;
-        vm.stream.getTracks().forEach((track) => {
+          vm.stream = stream;
+          vm.stream.getTracks().forEach((track) => {
           console.log(`adding ${track.kind} track`);
           let sender =vm.rct.pc.addTrack(track, vm.stream)
           if(track.kind=="video")

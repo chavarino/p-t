@@ -1,12 +1,5 @@
 <div class="time-counter" >
 
-   <!--*ngIf="isMostrar()"
-       <div [hidden]="!isTipoTemp()" >
-        <div id="myProgress">
-            <div id="myBar"></div>
-          </div>
-    </div>
-   --> 
    <div id="temporizador" style="min-width : 100px" >
 
    </div>
@@ -14,16 +7,10 @@
         <div class="row">
             <div class="caja">
                 <span  >{{digitToString(tView.horas)}} : </span>  
-                <span  > {{digitToString(tView.minutos)}} : </span> 
+                <span  >{{digitToString(tView.minutos)}} : </span> 
                 <span  >{{digitToString(tView.segundos)}}</span>
 
             </div>
         </div>
     </div>
-
-
-
-
-
-
 </div>
