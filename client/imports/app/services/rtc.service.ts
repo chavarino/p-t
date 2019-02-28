@@ -42,13 +42,14 @@ export class RtcService {
 
     //roles : Map<Rol>
    private offerOptions : RTCOfferOptions = {
-    iceRestart : true,
+    //iceRestart : true,
     offerToReceiveAudio : true,
     offerToReceiveVideo : true
     }
     private configuration :object = {
         iceServers: [{
           urls: 'stun:stun.l.google.com:19302'
+          //TODO AÑADIR SERVIDOR TURN.
         }]
     }
     private videoType : VideoType = VideoType.CAM;
