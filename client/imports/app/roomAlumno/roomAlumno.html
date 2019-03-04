@@ -1,5 +1,5 @@
-<div class="container room-alumno card">
-    <div class="card-body">
+<div class=" room-alumno">
+
         <h2 class="bd-title">
             Consulta profesor 
         </h2>
@@ -100,19 +100,20 @@
                    Clase:
                </h3>
             </div>
-            <div class="row">
+            <videoCall  [secondsIni]="secondsIniClass" [rtc]="rtc" >Video</videoCall>
+           <!-- 
+               <div class="row">
                 <div class="col-sm">
-                    <videoCall  [secondsIni]="secondsIniClass" [rtc]="rtc" >Video</videoCall>
                 </div>
                 
-            </div>
+            </div>-->
             <div class="row">  
                     <div class="col-sm">
                         <button class="btn btn-primary" (click)="colgarCall()"> Colgar</button>
                     </div>
             </div>
        </div>
-    </div>
+    
 </div>
 
 

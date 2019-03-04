@@ -21,21 +21,28 @@ video {
         position: fixed !important;
     }
     video#remoteId {
+        top: 0px;
+        left: 0px;
         max-width: 100% !important;
         width: 100% !important;
+        z-index: 50;
     }
     .box-local-video{
         bottom: 1%;
         left: 1%;
+       
     }
     video#localId {
         max-width: 300px;
-        
+       
     }
     .box-full-screen
     {
         bottom: 1%;
         right: 1%;
+    }
+    .box-local-video, .box-full-screen {
+        z-index: 55;
     }
 }
 
