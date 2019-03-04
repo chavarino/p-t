@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, Input,Output,EventEmitter } from '@angular/core';
-import {RtcService} from "../services/rtc.service"
+import {RtcService, VideoType} from "../services/rtc.service"
 import {Tipo} from "../timeCounter/timeCounter.component"
 import { isUndefined } from 'util';
 
@@ -15,6 +15,25 @@ export class VideoCall implements OnInit, OnDestroy {
     private _rtc: RtcService;
     private contador;
     
+    private videos ={
+      remote : {
+        isFullScreen : false
+      },
+      local : 
+      {
+        1: { //CAM
+          isOnVideo: true,
+
+        },
+        2 : //SCREEN
+        {
+          isOnVideo: true,
+        },
+        isOnMicro: true,
+        videoType : 1 
+      }
+    }
+
     constructor()
     {
        this.contador = {
@@ -60,30 +79,83 @@ export class VideoCall implements OnInit, OnDestroy {
        return this._rtc.isConnected();
      }
 
-    shareDesk()
+
+     async shareDesk()
     {
         let vm = this;
         vm._rtc.setVideoTypeScreen();
-        vm._rtc.mediaUser();
+        await vm._rtc.mediaUser();
+        vm.restablecerConfigAfterSwitchSource()
     }
-    cam()
+    async cam()
     {
         let vm = this;
         vm._rtc.setVideoTypeCam();
-        vm._rtc.mediaUser();
+       await vm._rtc.mediaUser();
+
+       vm.restablecerConfigAfterSwitchSource()
     }
 
-    switchSonido()
+    restablecerConfigAfterSwitchSource()
+    {
+      let vm=this;
+      vm.switchMicro(vm.videos.local.isOnMicro);
+      vm.switchVideo(vm.videos.local[vm._rtc.getVideoType()].isOnVideo);
+    }
+    switchMicro(flag)
     { 
 
       let vm = this;
-      vm._rtc.switchAudioMute();
+      
+       vm.videos.local.isOnMicro = vm._rtc.switchAudioMute(flag);
     }
-    switchVideo()
+    switchVideo(flag)
     {
       let vm = this;
-      vm._rtc.switchVideoMute();
+      
+      vm.videos.local[vm._rtc.getVideoType()].isOnVideo = vm._rtc.switchVideoMute(flag);
     }
+    
+    isSonidoOn() :boolean
+    {
+      let vm=this;
+      return vm.videos.local.isOnMicro;
+    }
+    isVideoOn() :boolean
+    {
+      let vm=this;
+        return  vm.videos.local[vm._rtc.getVideoType()].isOnVideo;
+    }
+
+    isModeCam()
+    {
+      let vm =this;
+      return vm._rtc.getVideoType() === VideoType.CAM;
+    }
+    switchFullScreen()
+    {
+      this.videos.remote.isFullScreen = !this.videos.remote.isFullScreen;
+    }
+    isFullScreen() :boolean
+    {
+      return this.videos.remote.isFullScreen;
+    }
+
+    switchVideoSource()
+    {
+        let vm =this;
+        if(vm._rtc.getVideoType() === VideoType.CAM)
+        {
+          vm.shareDesk()
+
+        }
+        else if(vm._rtc.getVideoType() === VideoType.SCREEN){
+          vm.cam();
+
+        }
+    }
+
+
     ngOnInit()
     {
         

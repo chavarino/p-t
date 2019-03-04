@@ -11,6 +11,8 @@ import { forEach } from '@angular/router/src/utils/collection';
 }
 */
 
+
+
 interface Rtc {
     localDes ?: string,
     remotDes ?: string,
@@ -26,7 +28,7 @@ interface Rtc {
    
 }
 
-enum VideoType {
+export enum VideoType {
   CAM = 1,
   SCREEN = 2
 }
@@ -46,6 +48,13 @@ export class RtcService {
     offerToReceiveAudio : true,
     offerToReceiveVideo : true
     }
+    private videoConfig =     {
+      width: { min: 640, ideal: 1920, max: 1920 },
+      height: { min: 400, ideal: 1080 },
+      //aspectRatio: 1.777777778,
+      frameRate: { max: 30 },
+      //facingMode: { exact: "user" }
+    };
     private configuration :object = {
         iceServers: [{
           urls: 'stun:stun.l.google.com:19302'
@@ -63,6 +72,7 @@ export class RtcService {
     
     caller : boolean;
     videoSender : RTCRtpSender;
+    remoteVideoTrack : MediaStreamTrack;
     contructor()
     {
         
@@ -195,7 +205,7 @@ export class RtcService {
           
           console.log("Remote Stream");
           remoteVideo.srcObject = event.streams[0];
-          
+          vm.remoteVideoTrack = event.streams[0].getVideoTracks()[0]
         };
       
        
@@ -252,7 +262,10 @@ export class RtcService {
             console.error(err);
           }
     }
-
+    getVideoType()
+    {
+      return this.videoType;
+    }
     setVideoTypeScreen()
     {
         this.videoType = VideoType.SCREEN
@@ -308,6 +321,8 @@ export class RtcService {
           let sender =vm.rct.pc.addTrack(track, vm.stream)
           if(track.kind=="video")
           {
+           
+            vm.changeTrackConfig(track, vm.videoConfig);
             vm.videoSender = sender;
           }
           vm.localVideo.srcObject = vm.stream;
@@ -353,7 +368,7 @@ export class RtcService {
     }
 
 
-    switchVideoMute(flag ?: boolean)
+    switchVideoMute(flag ?: boolean) :boolean
     {
       let  vm= this;
       let trackVideo = vm.stream.getVideoTracks()[0];
@@ -362,9 +377,10 @@ export class RtcService {
          flag  = !trackVideo.enabled;
       }
       trackVideo.enabled =  flag; 
+      return trackVideo.enabled;
     }
 
-    switchAudioMute(flag ?: boolean)
+    switchAudioMute(flag ?: boolean) :boolean
     {
       let  vm= this;
       let trackAudio = vm.stream.getAudioTracks()[0];
@@ -373,6 +389,8 @@ export class RtcService {
          flag  = !trackAudio.enabled;
       }
       trackAudio.enabled =  flag; 
+
+      return trackAudio.enabled;
     }
 
 
@@ -394,6 +412,31 @@ export class RtcService {
       
     }
 
+
+  private async changeTrackConfig(track : MediaStreamTrack, constraints)
+  {
+    let vm =this;
+    if(!track || !constraints)
+    {
+      return ;
+    }
+    /*if (aspectLock.checked) {
+      };
+    } else {
+      constraints = {width: {exact: e.target.value}};
+    } */
+   // clearErrorMessage();
+    console.log('applying ' + JSON.stringify(constraints));
+    try{
+      await track.applyConstraints(constraints)
+      console.log("applied Ttrack config")
+    }
+    catch(e)
+    {
+      console.log("Error:" + e)    
+
+    }
+  }
 
 
   private closeTracks() {

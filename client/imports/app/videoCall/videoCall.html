@@ -1,4 +1,4 @@
-<div class="video-call" [hidden]="!mostrar()">
+<div class="video-call" [hidden]="!mostrar()" [ngClass]="{'full-screen': isFullScreen()}">
     <div class="row">
         <div class="col">
             <timeCounter  [tipo]="contador.tipo" [secondsIni]="contador.secondsIni"  [mostrar]="mostrar()">
@@ -7,26 +7,93 @@
         </div>
     </div>
     <div class="row">
-        <video  id="remoteId" autoplay></video>
+
+        <div class="col-8">
+            
+            <video  id="remoteId" autoplay>
+
+            </video>
+            <div class="row box-full-screen">
+                    <div class="col " (click)="switchFullScreen()">
+                            <i class="material-icons fullscreen-on" *ngIf="!isFullScreen()">
+                                    fullscreen
+                            </i>
+                            <i class="material-icons fullscreen-exit" *ngIf="isFullScreen()">
+                                    fullscreen_exit
+                                    </i>
+                    </div>
+            </div>
+        </div>
+        <div class="col-4">
+
+        </div>
 
     </div>
     <div class="row">
 
-        <video id="localId"   autoplay ></video>
+        <div class="col-8">
+            
+            
+        </div>
+        <div class="col-4">
+            <div class="box-local-video" >
+                <!--[ngClass]="{'no-video': !isVideoOn()}"-->
+                <video id="localId"   autoplay >
+
+                </video>
+                <!--md-24-->
+                <div class="row">
+
+                        
+                    <div class="col">
+                            <i class="material-icons" (click)="switchVideoSource()">
+                                  {{isModeCam()? "screen_share" : "switch_video"}}  
+                            </i>      
+                    </div>
+                    <div class="col" (click)="switchMicro()">
+                        <i class="material-icons micro-on">
+                                {{isSonidoOn() ? "mic" : "mic_off" }}
+                        </i>
+                        <!--
+                            <i *ngIf="!isSonidoOn()" class="material-icons micro-off">
+                                    mic_off
+                            </i>
+                        -->
+                    </div>
+                    <div class="col" (click)="cam()">
+                        <i *ngIf="isVideoOn()" class="material-icons videocam-on">
+                                {{isVideoOn() ? "videocam" : "videocam_off" }}             
+                        </i>
+                       <!--
+                           <i *ngIf="!isVideoOn()" class="material-icons videocam-off">
+                                    
+                            </i>
+
+                       --> 
+
+                    </div>
+                </div>
+                
+            </div>
+        
+        </div>
     </div>
 
-    <div class="row">
-        <button (click)="shareDesk()">
-            Compartir Escritorio.
-        </button>
-        <button (click)="cam()">
-            WebCam
-        </button>
-        <button (click)="switchSonido()">
-            switchSonido
-        </button>
-        <button (click)="switchVideo()">
-            switchVideo
-        </button>
-    </div>
+    <!--
+        <div class="row">
+    
+            <button (click)="shareDesk()" *ngIf="isModeCam()">
+                    <i class="material-icons md-48">
+                            screen_share
+                    </i>
+            </button>
+            <button (click)="cam()" *ngIf="!isModeCam()">
+                    <i class="material-icons md-48">
+                            switch_video
+                    </i>
+            </button>
+            
+        </div>
+
+    -->
 </div>

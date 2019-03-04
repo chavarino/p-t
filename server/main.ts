@@ -114,6 +114,14 @@ Accounts.emailTemplates.verifyEmail = {
    }
 };
 
+//MAIL_URL=smtp://your-address%40gmail.com:your-password@smtp.gmail.com:465/
+//https://docs.meteor.com/api/email.html
+//https://developers.google.com/gmail/api/quickstart/nodejs
+//https://developers.google.com/gmail/api/auth/web-server  ---autorizacion
+
+//https://www.hostinger.es/tutoriales/como-usar-el-servidor-smtp-gmail-gratuito/
+
+
 
 /*import { Accounts } from 'meteor/accounts-base';
 

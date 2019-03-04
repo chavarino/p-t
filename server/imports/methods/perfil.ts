@@ -44,7 +44,7 @@ Meteor.methods({
       }
 
 
-  }/*,
+  },
 
   unirse(user: User)
   {
@@ -58,7 +58,7 @@ Meteor.methods({
     if(!user ||!user.username || user.username === ""  || !patt.test(user.username) || user.password.length>20 || user.password.length<5 )
     {
         console.log("ERROR : CAMPOS MAL INTRODUCIDOS")
-        Error.creacionUserGeneral();
+        MethodsClass.creacionUserGeneral();
     }
     try{
     
@@ -75,7 +75,7 @@ Meteor.methods({
     {
       console.log(e);
       //throw e;
-      Error.creacionUserYaExiste();
+      MethodsClass.creacionUserYaExiste();
     }
-  }*/
+  }
 })

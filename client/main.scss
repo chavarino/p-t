@@ -2,3 +2,11 @@
 .row {
     margin-bottom: 1%;
   }
+
+
+video {
+  -webkit-transition: all 1s ease-out;
+  -moz-transition: all 1s ease-out;
+  -o-transition: all 1s ease-out;
+  transition: all 1s ease-out;
+}
