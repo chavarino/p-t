@@ -43,7 +43,7 @@ if(Meteor.isServer)
 {
   Meteor.startup(()=>{
     //smtps , poner lista
-    process.env.MAIL_URL="smtp://your-address%40gmail.com:your-password@smtp.gmail.com:465/";
+    process.env.MAIL_URL="smtp://javier.chavarino.martinez@gmail.com:Albaricoke91@smtp.gmail.com:587/";
   });
   
 }

@@ -16,12 +16,18 @@ video {
 
 .full-screen {
 
+    timeCounter{
+        left: 10px;
+    top: 65px;
+    z-index: 55;
+    opacity: 0.5;
+    }
     
-    video#remoteId, .box-local-video, .box-full-screen {
+    video#remoteId, .box-local-video, .box-full-screen,timeCounter {
         position: fixed !important;
     }
     video#remoteId {
-        top: 0px;
+        top: -14%;
         left: 0px;
         max-width: 100% !important;
         width: 100% !important;
@@ -43,6 +49,11 @@ video {
     }
     .box-local-video, .box-full-screen {
         z-index: 55;
+    }
+
+    .material-icons{
+        color: #ffffff;
+    opacity: 0.9;
     }
 }
 

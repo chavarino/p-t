@@ -44,7 +44,7 @@ export class RtcService {
 
     //roles : Map<Rol>
    private offerOptions : RTCOfferOptions = {
-    //iceRestart : true,
+    iceRestart : true,
     offerToReceiveAudio : true,
     offerToReceiveVideo : true
     }
