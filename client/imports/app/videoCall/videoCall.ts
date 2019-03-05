@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, Input,Output,EventEmitter } from '@angula
 import {RtcService, VideoType} from "../services/rtc.service"
 import {Tipo} from "../timeCounter/timeCounter.component"
 import { isUndefined } from 'util';
-
+import {MethodsClass} from "../../../../imports/functions/methodsClass"
 
 @Component({
   selector: 'videoCall',
@@ -34,6 +34,7 @@ export class VideoCall implements OnInit, OnDestroy {
       }
     }
 
+   
     constructor()
     {
        this.contador = {
@@ -91,9 +92,11 @@ export class VideoCall implements OnInit, OnDestroy {
     {
         let vm = this;
         vm._rtc.setVideoTypeCam();
+        
        await vm._rtc.mediaUser();
 
        vm.restablecerConfigAfterSwitchSource()
+        
     }
 
     restablecerConfigAfterSwitchSource()
@@ -144,14 +147,30 @@ export class VideoCall implements OnInit, OnDestroy {
     switchVideoSource()
     {
         let vm =this;
-        if(vm._rtc.getVideoType() === VideoType.CAM)
-        {
-          vm.shareDesk()
+        
+        let tipoAnterior = vm._rtc.getVideoType();
+
+        
+        try{
+          if(vm._rtc.getVideoType() === VideoType.CAM)
+          {
+            vm.shareDesk()
+  
+          }
+          else if(vm._rtc.getVideoType() === VideoType.SCREEN){
+            vm.cam();
+  
+          }
 
         }
-        else if(vm._rtc.getVideoType() === VideoType.SCREEN){
-          vm.cam();
-
+        catch(e)
+        { 
+          //restablecer
+          //COMPROBAR
+          vm._rtc.setVideoTypeTo(tipoAnterior);
+          vm.restablecerConfigAfterSwitchSource();
+          MethodsClass.errorAsignarSource();
+          
         }
     }
 

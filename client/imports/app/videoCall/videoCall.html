@@ -15,12 +15,10 @@
             </video>
             <div class="row box-full-screen">
                     <div class="col " (click)="switchFullScreen()">
-                            <i class="material-icons fullscreen-on" *ngIf="!isFullScreen()">
-                                    fullscreen
+                            <i class="material-icons fullscreen-on">
+                                    {{ isFullScreen() ? "fullscreen_exit" : "fullscreen"}}
                             </i>
-                            <i class="material-icons fullscreen-exit" *ngIf="isFullScreen()">
-                                    fullscreen_exit
-                                    </i>
+                            
                     </div>
             </div>
         </div>
@@ -46,32 +44,17 @@
 
                         
                     <div class="col">
-                            <i class="material-icons" (click)="switchVideoSource()">
+                            <i  class="material-icons mr-2" (click)="switchVideoSource()">
                                   {{isModeCam()? "screen_share" : "switch_video"}}  
                             </i>      
-                    </div>
-                    <div class="col" (click)="switchMicro()">
-                        <i class="material-icons micro-on">
-                                {{isSonidoOn() ? "mic" : "mic_off" }}
-                        </i>
-                        <!--
-                            <i *ngIf="!isSonidoOn()" class="material-icons micro-off">
-                                    mic_off
+                            <i class="material-icons micro-on  mr-2" (click)="switchMicro()">
+                                    {{isSonidoOn() ? "mic" : "mic_off" }}
                             </i>
-                        -->
-                    </div>
-                    <div class="col" (click)="cam()">
-                        <i *ngIf="isVideoOn()" class="material-icons videocam-on">
-                                {{isVideoOn() ? "videocam" : "videocam_off" }}             
-                        </i>
-                       <!--
-                           <i *ngIf="!isVideoOn()" class="material-icons videocam-off">
-                                    
+                            <i *ngIf="isVideoOn()" (click)="switchVideo()" class="material-icons videocam-on mr-2">
+                                    {{isVideoOn() ? "videocam" : "videocam_off" }}             
                             </i>
-
-                       --> 
-
                     </div>
+                    
                 </div>
                 
             </div>

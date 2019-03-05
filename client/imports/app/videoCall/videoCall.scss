@@ -60,3 +60,18 @@ video {
     width: calc(20% - 100px);
     min-width: 200px;
   }
+
+
+  .video-call
+  {
+
+        .material-icons{
+            cursor: pointer;
+        }
+
+        .material-icons:hover{
+            opacity: 0.8;
+        }
+
+
+  }

@@ -2,7 +2,14 @@ import { Meteor } from 'meteor/meteor';
 import { isFunction, isUndefined } from 'util';
 export class MethodsClass {
 
-
+    static msg = {
+        rtc :{
+          error:{
+  
+            sourceVideo : "Error al establecer medio, asegurese de dar permisos para compartir camara o escritorio."
+          }
+        }
+      }
 
 
     static call(method : string , ...args: any[])
@@ -138,5 +145,12 @@ export class MethodsClass {
     {
         
         throw new Meteor.Error('Error', 'Usuario ya existente');
+    }
+
+    static errorAsignarSource()
+    {
+        let vm =this;
+        console.log(vm.msg.rtc.error.sourceVideo)
+        alert(vm.msg.rtc.error.sourceVideo)
     }
 }

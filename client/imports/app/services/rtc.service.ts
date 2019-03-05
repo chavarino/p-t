@@ -266,6 +266,11 @@ export class RtcService {
     {
       return this.videoType;
     }
+
+    setVideoTypeTo(type : VideoType)
+    {
+      this.videoType = type;
+    }
     setVideoTypeScreen()
     {
         this.videoType = VideoType.SCREEN
