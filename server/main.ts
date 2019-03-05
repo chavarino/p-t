@@ -6,6 +6,7 @@ import './imports/publications/user'
 import './imports/publications/room'
 import './imports/publications/msg'
 import './imports/methods/msg'
+
 /*ServiceConfiguration.configurations.remove({
   service: "facebook"
 });
@@ -37,6 +38,15 @@ ServiceConfiguration.configurations.insert({
   secret: "COov_-wK-IkGBkWTCuwtpWBd"
 });
 
+
+if(Meteor.isServer)
+{
+  Meteor.startup(()=>{
+    //smtps , poner lista
+    process.env.MAIL_URL="smtp://your-address%40gmail.com:your-password@smtp.gmail.com:465/";
+  });
+  
+}
 
 
 Accounts.onCreateUser(function (options, user) {
@@ -114,7 +124,7 @@ Accounts.emailTemplates.verifyEmail = {
    }
 };
 
-//MAIL_URL=smtp://your-address%40gmail.com:your-password@smtp.gmail.com:465/
+//
 //https://docs.meteor.com/api/email.html
 //https://developers.google.com/gmail/api/quickstart/nodejs
 //https://developers.google.com/gmail/api/auth/web-server  ---autorizacion
