@@ -5,12 +5,43 @@ import { Perfil } from '../../../imports/models/perfil';
 import { User } from 'imports/models/User';
 import {Accounts} from 'meteor/accounts-base';
 
+enum RolesEnum {
+
+  ALUMNO = 1,
+  PROFFESOR = 2
+}
+
 Meteor.methods({
+
+  changePerfilToProfesor()
+  {
+
+      let profile : Perfil=  Meteor.user().profile;
+      
+      if(profile.rol === RolesEnum.ALUMNO)
+      {
+        profile.rol = RolesEnum.PROFFESOR;
+      }
+      try{
+        Meteor.call("savePerfil", profile);
+
+      }
+      catch(e)
+      {
+        MethodsClass.noPermisos();
+      }
+
+
+  },
   savePerfilById(id :string, profile: Perfil) {
 
     if(Meteor.isClient)
     {
       id = Meteor.userId();
+    }
+    if(!id)
+    {
+        MethodsClass.noLogueado();
     }
     let filter = {
       "_id": id

@@ -5,6 +5,8 @@ export interface Perfil {
     nombre : string,
     apellidos : string,
     disponible : Boolean,
-    claseId ?: string
+    claseId ?: string,
+    categorias : Array<string>,
+    descripcion : string
 
 }

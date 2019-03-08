@@ -128,15 +128,17 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
     setModalConfig(prof : User)
     {
         let vm =this;
-        this.flags.setModalConfig({config: {title: "Confirmacion", msg : "Quieres llamar  aeste profesor?", tipo : 1}, fn : function(evento){
+        let msg =  MethodsClass.msg.modal.confirm;
+        this.flags.setModalConfig(MethodsClass.getConfigConfirm(msg.title, msg.bProfCall,function(evento){
 
             if(evento)
             {
                 vm.tryCallProfesor(prof)
             }
             
-        }})
+        } ));
     }
+
     getUrl()
     {
         if(this.clase.urlVideo === "")

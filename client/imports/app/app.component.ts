@@ -44,8 +44,12 @@ export class AppComponent implements OnInit, OnDestroy {
 
     this.rolSubs = MeteorObservable.subscribe('rolByUser').subscribe(() => {
       //this.todos = Todos.findOne();
-      let  jaleo = Roles.findOne();
-      this.rol.setRoles(jaleo.rol);
+      Roles.find().subscribe((data)=>{
+
+        
+        this.rol.setRoles(data[0].rol);
+      })
+      
     });
       
   }

@@ -7,7 +7,7 @@ import { Users } from '../../../../imports/collections/users';
 import { MeteorObservable } from 'meteor-rxjs';
 import { CanActivate } from '@angular/router';
 import { FormGroup, FormBuilder,Validators,FormControl } from '@angular/forms';
-
+import  {BanderasService} from "../services/flags.service";
 import {MethodsClass} from "../../../../imports/functions/methodsClass"
 @Component({
   selector: 'perfilC',
@@ -19,7 +19,8 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy, CanAc
     perfil : Perfil
     userSuscripcion :Subscription;
     addForm: FormGroup;
-    constructor( rol : RolesService, private formBuilder: FormBuilder)
+    flags : BanderasService;
+    constructor( rol : RolesService, private formBuilder: FormBuilder,flags : BanderasService)
     {
 
         super(1, 1, "comun", rol);
@@ -31,7 +32,7 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy, CanAc
             apellidos : "",
             disponible: false
         }
-        
+        this.flags = flags;
     }
     
     canActivate() {
@@ -93,6 +94,23 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy, CanAc
     isValid()
     {
         return this.addForm.valid;
+    }
+
+    setModalConfig()
+    {
+        let vm =this;
+        let msg =  MethodsClass.msg.modal.confirm;
+        this.flags.setModalConfig(MethodsClass.getConfigConfirm(msg.title, msg.bSetProfesor,  function(evento){
+
+            if(evento)
+            {
+                MethodsClass.call("changePerfilToProfesor", ()=>{
+                    
+                })
+                //vm.tryCallProfesor(prof)
+            }
+            
+        }));
     }
     
     

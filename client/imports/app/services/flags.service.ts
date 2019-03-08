@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import {Map} from "../../../../imports/models/map";
 
 
-interface modalObj {
+export interface modalObj {
     config : Map<any>,
 
     fn : Function

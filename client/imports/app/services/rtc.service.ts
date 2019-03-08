@@ -11,7 +11,7 @@ import { forEach } from '@angular/router/src/utils/collection';
 }
 */
 
-
+//https://developers.google.com/web/fundamentals/media/recording-video/?hl=es
 
 interface Rtc {
     localDes ?: string,

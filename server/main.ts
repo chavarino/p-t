@@ -47,7 +47,8 @@ if(Meteor.isServer)
   });
   
 }
-
+//https://docs.mongodb.com/manual/reference/operator/query/regex/
+//https://docs.mongodb.com/manual/tutorial/query-arrays/
 
 Accounts.onCreateUser(function (options, user) {
 

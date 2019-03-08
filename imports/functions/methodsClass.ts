@@ -1,8 +1,16 @@
 import { Meteor } from 'meteor/meteor';
 import { isFunction, isUndefined } from 'util';
+import  { modalObj} from "../../client/imports/app/services/flags.service"
 export class MethodsClass {
 
     static msg = {
+        modal :{
+            confirm : {
+                title : "Confirmacion",
+                bProfCall : "¿Quieres llamar  aeste profesor?",
+                bSetProfesor : "¿Seguro que quieres ser profesor?"
+            }
+        },
         rtc :{
           error:{
   
@@ -147,6 +155,10 @@ export class MethodsClass {
         throw new Meteor.Error('Error', 'Usuario ya existente');
     }
 
+    static getConfigConfirm(title: string, body :string, fn : (evento)=> void) : modalObj
+    {
+        return {config: {title: title, msg : body, tipo : 1}, fn : fn};
+    }
     static errorAsignarSource()
     {
         let vm =this;
