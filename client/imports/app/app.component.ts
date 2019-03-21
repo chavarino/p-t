@@ -46,8 +46,14 @@ export class AppComponent implements OnInit, OnDestroy {
       //this.todos = Todos.findOne();
       Roles.find().subscribe((data)=>{
 
-        
-        this.rol.setRoles(data[0].rol);
+        if(!data[0])
+        {
+            this.rol.setIniRoles();
+        }
+        else{
+          this.rol.setRoles(data[0].rol);
+
+        }
       })
       
     });

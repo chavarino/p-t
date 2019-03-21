@@ -30,7 +30,9 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy, CanAc
             email : "",
             nombre : "",
             apellidos : "",
-            disponible: false
+            disponible: false,
+            categorias : [],
+            descripcion : ""
         }
         this.flags = flags;
     }

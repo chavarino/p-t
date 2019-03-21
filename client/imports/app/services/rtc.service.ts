@@ -98,6 +98,22 @@ export class RtcService {
 
       }
     }
+
+    static async getPermisos(fn : (boolean)=>void)
+    {
+        try{
+           await navigator.mediaDevices.getUserMedia({
+            audio: true,
+            video: true,
+          });
+          fn(true);
+        }
+        catch(e)
+        {
+          console.log(e);
+          fn(false);
+        }
+    }
     static newRtc(localVideoId : string, remoteVideoId : string, singalSender : (Message) =>void, caller:boolean, handlerConnected : ()=>void)
     {
         let rtc : RtcService = new RtcService();
@@ -279,6 +295,10 @@ export class RtcService {
     {
       this.videoType =VideoType.CAM;
     }
+
+  
+  
+    
    async  mediaUser() {
      
     let vm=this;

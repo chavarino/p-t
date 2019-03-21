@@ -119,6 +119,8 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
         };
         
         vm.redux = new ReduxC()
+
+        // setTimeout()
         vm.redux.setReducer( function(state : Estado, action : Action<number>)
         {
             return vm.reducer(state, action);

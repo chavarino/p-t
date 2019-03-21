@@ -19,6 +19,11 @@ export class RolesService {
     
     contructor()
     {
+        this.setIniRoles();
+    }
+
+    setIniRoles()
+    {
         this.roles = {
 
             comun : {
@@ -27,10 +32,17 @@ export class RolesService {
             }
         };
     }
-
+    
     setRoles(roles: Map<Rol>)
     {
-        this.roles =  roles;
+        if(!roles)
+        {
+            this.setIniRoles();
+        }
+        else{
+            this.roles =  roles;
+
+        }
     }
 
     canWrite(modulo: string,min: number)
