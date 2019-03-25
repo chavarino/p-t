@@ -5,3 +5,10 @@
   .ng-invalid:not(form)  {
     border-left: 5px solid #a94442; /* red */
   }
+
+  .t-a-desc {
+
+    max-height: 169px;
+    height: 169px;
+    min-height: 169px;
+  }

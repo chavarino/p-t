@@ -51,6 +51,13 @@ export class Generic {
                     write: 1
                 }
             },
+            prof : {
+                module : "prof",
+                min : {
+                    read : 1,
+                    write: 1
+                }
+            },
             login : {
                 module : "comun",
                 min : {

@@ -44,7 +44,51 @@
                     </div>
                   
                 </div>
-                
+                <div class="row  mt-3">
+                    <div class="col">
+                        <div *ngIf="canReadC('prof')"> 
+                            
+                            <div class="card col">
+                                <div class="card-body">
+                                    <h5 class="card-title">!Eres profesor!</h5>
+                                    
+                                    <!-- <h6 class="card-subtitle mb-2 text-muted">¡Comienza a ser profesor con nosotros!</h6> -->
+                                    <div>
+                                            <label for="nombre">Categorias</label>
+                                            <input  formControlName="nombre" type="text" class="form-control" id="nombre" name="nombre" required placeholder="Nombre..." [(ngModel)]="perfil.nombre">
+                                            
+                                        </div>
+                                        <p class="card-text text-muted"> * Para que puedas ser categorizado de alguna forma debes introducir las etiquetas categoricen tus caracteristicas de conocimiento</p>
+                                   
+                                     <!-- <button type="button" (click)="setModalConfig()" class="btn btn-outline-dark">¡Comenzar!</button>
+                                       <a href="#" class="card-link">Card link</a>
+                                      <a href="#" class="card-link">Another link</a>  --> 
+                                    </div>
+                                  </div>
+                        </div>
+                        <div *ngIf="!canReadC('prof')">
+                            
+                            <div class="card col">
+                                    <div class="card-body">
+                                      <h5 class="card-title">¿Quieres ser profesor?</h5>
+                                     
+                                         <h6 class="card-subtitle mb-2 text-muted">¡Comienza a ser profesor con nosotros!</h6>
+
+                                   
+                                      <p class="card-text"> ¿Quieres empezar a participar como profesor y ganar dinero con ello?</p>
+                                      <button type="button" (click)="setModalConfig()" class="btn btn-outline-dark">¡Comenzar!</button>
+                                      <!-- <a href="#" class="card-link">Card link</a>
+                                      <a href="#" class="card-link">Another link</a>  --> 
+                                    </div>
+                                  </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <label for="descripcion">Descripción</label>
+                        <textarea  formControlName="descripcion" class="form-control t-a-desc" id="descripcion" name="descripcion" placeholder="Soy profesor de ..." [(ngModel)]="perfil.descripcion"></textarea>
+                    </div>
+                  
+                </div>
                 <div class="row  mt-3">
                     <div class="col">
 

@@ -37,6 +37,7 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy, CanAc
         this.flags = flags;
     }
     
+
     canActivate() {
         //const party = Parties.findOne(this.partyId);
         return this.canRead() && this.loggedIn();
@@ -73,6 +74,11 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy, CanAc
                         Validators.minLength(1),
                         Validators.maxLength(70),
                         Validators.pattern('^[A-Za-zñÑáéíóúÁÉÍÓÚ ]+$')
+                        ]),
+                    'descripcion': new FormControl(this.perfil.descripcion, [
+                        
+                        Validators.maxLength(500)
+                        
                         ])
                     
                 });
@@ -102,17 +108,18 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy, CanAc
     {
         let vm =this;
         let msg =  MethodsClass.msg.modal.confirm;
+        MethodsClass.call("changePerfilToProfesor", ()=>{
+            location.reload();
+        })
+      /*
         this.flags.setModalConfig(MethodsClass.getConfigConfirm(msg.title, msg.bSetProfesor,  function(evento){
 
             if(evento)
             {
-                MethodsClass.call("changePerfilToProfesor", ()=>{
-                    
-                })
                 //vm.tryCallProfesor(prof)
             }
             
-        }));
+        }));*/
     }
     
     

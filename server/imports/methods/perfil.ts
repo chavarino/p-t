@@ -8,7 +8,7 @@ import {Accounts} from 'meteor/accounts-base';
 enum RolesEnum {
 
   ALUMNO = 1,
-  PROFFESOR = 2
+  PROFFESOR = 5
 }
 
 Meteor.methods({
@@ -17,12 +17,15 @@ Meteor.methods({
   {
 
       let profile : Perfil=  Meteor.user().profile;
-      
+      console.log("rol actual: " + profile.rol)
       if(profile.rol === RolesEnum.ALUMNO)
       {
+
+        console.log("entra:")
         profile.rol = RolesEnum.PROFFESOR;
       }
       try{
+        console.log("rol actual: " + profile.rol)
         Meteor.call("savePerfil", profile);
 
       }
@@ -46,7 +49,12 @@ Meteor.methods({
     let filter = {
       "_id": id
     };
-    profile.rol = Users.findOne(filter).profile.rol;
+
+    if(Meteor.isClient)
+    {
+      console.log("Cliente")
+      profile.rol = Users.findOne(filter).profile.rol;
+    }
     let input : any = {$set : { profile : profile}}
     //validar TODO
     
