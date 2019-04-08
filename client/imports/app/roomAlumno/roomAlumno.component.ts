@@ -18,11 +18,16 @@ import { Action } from 'redux';
 import { MsgTipo, Message, MessageRtc } from 'imports/models/message';
 import { MsgClass, FactoryCommon } from 'imports/functions/commonFunctions';
 import { Msg } from 'imports/collections/msg';
-import {Perfil} from "../../../../imports/models/perfil"
+import {Perfil, AutoCompleteModel} from "../../../../imports/models/perfil"
 
 import {RtcService} from "../services/rtc.service"
 import {Tipo} from "../timeCounter/timeCounter.component"
 import {MethodsClass} from "../../../../imports/functions/methodsClass"
+import { ConfigTags } from '../categorias/categorias.component';
+
+import { Tracker } from 'meteor/tracker'
+import { of } from 'rxjs/internal/observable/of';
+import { from } from 'rxjs';
 enum ETipo  {
     INIT = 1,
     CLASS = 2,
@@ -55,6 +60,19 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
     remoteVideoId : string;
     maxPing : number;
     userCall : User;
+
+    configTags : ConfigTags = {
+        listCat : [],
+        listCatBusc : []
+    }
+
+    getCategorias(categorias : Array<string>) : ConfigTags
+    {
+        return { 
+            listCat : categorias,
+         listCatBusc : []
+        }
+    }
     constructor( rol : RolesService, private formBuilder: FormBuilder, sanitizer : DomSanitizer,flags : BanderasService)
     {
 
@@ -147,6 +165,40 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
         }
         return this.sanitizer.bypassSecurityTrustResourceUrl(`https://www.youtube-nocookie.com/embed/${this.clase.urlVideo}?autoplay=1&controls=0&disablekb=1&modestbranding=1&iv_load_policy=3`);
     }
+
+
+    findProf()
+    {
+
+        let vm =this;
+       
+       /* let input = {
+            $and : [
+                {_id: { $ne: Meteor.userId() }},
+                ...vm.configTags.listCatBusc
+
+            ]
+        }
+ if(vm.configTags.listCatBusc 
+            && vm.configTags.listCatBusc.length>0)
+        {
+            input["$and"] =vm.configTags.listCatBusc;
+            }
+           */
+        //Meteor.subscribe('allAvalaibleTeacher', vm.configTags.listCatBusc);
+
+        let p = new Promise<User[]>((resolve, reject) => {
+      
+   
+            MethodsClass.call("callAvalaibleTeacher", vm.configTags.listCatBusc, (result)=>{
+              resolve(result); 
+            })
+          });
+              
+          
+     
+        vm.profesores =  from(p);
+    }
     ngOnInit()
     {
 
@@ -154,12 +206,29 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
 
         let vm =this;
         
-            
-        this.profesoresSuscription =  MeteorObservable.subscribe('allAvalaibleTeacher').subscribe(() => {
-            
-            vm.profesores = Users.find({_id: { $ne: Meteor.userId() }});
+        let fnFind = () => {
+          
+                vm.findProf();
             //vm.findClass();
-        });
+        };
+        
+            
+        //this.profesoresSuscription =  MeteorObservable.subscribe('allAvalaibleTeacher').subscribe(fnFind);
+      
+       
+        Tracker.autorun(()=>{
+            let p = new Promise<User[]>((resolve, reject) => {
+      
+   
+                MethodsClass.call("callAvalaibleTeacher", vm.configTags.listCatBusc, (result)=>{
+                  resolve(result); 
+                })
+              });
+                  
+              
+         
+            vm.profesores =  from(p);
+        })
         
         this.roomAlumno =  MeteorObservable.subscribe('getRoomForAlumno').subscribe(() => {
             
@@ -180,6 +249,9 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
                         vm.secondsIniClass = 0; 
                     }
             });
+
+
+            
            // this.rol.setRoles(Roles.findOne().rol);
           
           });

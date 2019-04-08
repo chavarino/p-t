@@ -77,12 +77,12 @@ export class MethodsClass {
         
         if(args2.length===0 || args2.length===1)
         {
-            Meteor.call(method, args[0] );
+            Meteor.call(method, args2[0] );
 
         }
         else if(args2.length===2)
         {
-            Meteor.call(method, args[0], args[1] );
+            Meteor.call(method, args2[0], args2[1] );
 
         }
     }

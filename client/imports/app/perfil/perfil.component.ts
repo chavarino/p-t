@@ -9,6 +9,7 @@ import { CanActivate } from '@angular/router';
 import { FormGroup, FormBuilder,Validators,FormControl } from '@angular/forms';
 import  {BanderasService} from "../services/flags.service";
 import {MethodsClass} from "../../../../imports/functions/methodsClass"
+import {ConfigTags} from  "../categorias/categorias.component"
 @Component({
   selector: 'perfilC',
   templateUrl: 'perfil.html',
@@ -20,6 +21,10 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy, CanAc
     userSuscripcion :Subscription;
     addForm: FormGroup;
     flags : BanderasService;
+    configTags : ConfigTags = {
+        listCat : [],
+        listCatBusc : []
+    }
     constructor( rol : RolesService, private formBuilder: FormBuilder,flags : BanderasService)
     {
 
@@ -45,6 +50,7 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy, CanAc
     save()
     {
         //this.addForm.
+        this.perfil.categorias = this.configTags.listCat;
         if (this.addForm.valid) {
             alert("Guardado")
 
@@ -87,7 +93,7 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy, CanAc
 
         this.userSuscripcion =  MeteorObservable.subscribe('usersProfile').subscribe(() => {
             this.perfil = Users.findOne({_id:Meteor.userId()}).profile;
-            
+            this.configTags.listCat = this.perfil.categorias || [];
            // this.rol.setRoles(Roles.findOne().rol);
 
           });

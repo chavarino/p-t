@@ -7,7 +7,7 @@
     "test:ci": "TEST_BROWSER_DRIVER=phantomjs meteor test --driver-package=ardatan:mocha --once",
     "updateAll": "meteor update --all-packages",
     "seeVulnera": "npm audit",
-    "setDb" : "SET MONGO_URL=mongodb://fasmos:javier88@ds253243.mlab.com:53243/meteor"
+    "setDb": "SET MONGO_URL=mongodb://fasmos:javier88@ds253243.mlab.com:53243/meteor"
   },
   "dependencies": {
     "@angular/animations": "^6.0.5",
@@ -37,6 +37,7 @@
     "meteor-node-stubs": "0.4.1",
     "meteor-rxjs": "0.4.11",
     "ng2-material": "^0.8.1",
+    "ngx-chips": "^2.0.0-beta.0",
     "redux": "^4.0.1",
     "rxjs": "6.1.0",
     "rxjs-compat": "6.1.0",

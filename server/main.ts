@@ -59,7 +59,9 @@ Accounts.onCreateUser(function (options, user) {
     email : "",
     nombre : "",
     apellidos : "",
-    disponible : false
+    disponible : false,
+    categorias : [],
+    descripcion : ""
   };
   
    if (user.services.facebook) {

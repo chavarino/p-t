@@ -1,0 +1,18 @@
+<div class="tags-c">
+<!--
+    
+    [autocompleteItems]="autoComplete"
+-->
+    <div>
+        <tag-input [disable]="_readOnly" [onAdding]="onAdding" [ngModel]="_config.listCat"  [secondaryPlaceholder]="'Categorias*'"  [placeholder]="'+Categoria'"  (onTextChange)="onTextChange($event)"
+         (onRemove)="onRemoveTag($event)" (onAdd)="onAddTag($event)">
+            <tag-input-dropdown
+          
+            [autocompleteObservable]='requestAutocompleteItems'
+              
+            >
+            </tag-input-dropdown>
+          </tag-input>
+    </div>
+    
+</div>

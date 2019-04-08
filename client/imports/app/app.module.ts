@@ -8,7 +8,7 @@ import { RouterModule } from '@angular/router';
 
 
 import { LoginComponent } from './login/login.component';
-
+import { Categorias } from './categorias/categorias.component';
 import { TimeCounter } from './timeCounter/timeCounter.component';
 import { InicioComponent } from './inicio/inicio.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
@@ -28,6 +28,8 @@ import { RoomProfComponent } from './roomProf/roomProf.component';
 import { VideoCall } from './videoCall/videoCall';
 import { AppComponent } from './app.component';
 //import { MdButtonModule} from "@angular/material/button";
+import { TagInputModule } from 'ngx-chips';
+
 
 export const ROUTES_PROVIDERS = [{
   provide: 'canActivateForLoggedIn',
@@ -36,10 +38,11 @@ export const ROUTES_PROVIDERS = [{
 @NgModule({
   imports: [
     BrowserModule,
+    TagInputModule,
+    BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
     
-    BrowserAnimationsModule,
     //MatButtonModule,
    // MatCheckboxModule,
     RouterModule.forRoot([
@@ -83,6 +86,7 @@ export const ROUTES_PROVIDERS = [{
     PageNotFoundComponent,
     LoginComponent,
     TimeCounter,
+    Categorias,
     VideoCall,
     BarraNavComponent,
     ModalComponent,

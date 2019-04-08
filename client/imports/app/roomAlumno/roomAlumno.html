@@ -7,7 +7,12 @@
             Iniciando...
         </div>
         <div  *ngIf="isEstadoSelProf()">
+            <div class="row">
+                <div class="col-sm-12">
+                    <categorias (ondAdd)="findProf()" [config]="configTags"></categorias>  
 
+                </div>
+            </div>
             <div class="row" >
                 <div class="col-sm-12" *ngFor="let prof of profesores | async">
                   <div class="card">
@@ -25,8 +30,16 @@
                         </div>
                         
                         <div  class="row">    
-                            <div class="col">
-                                    <strong>Categoria: </strong>Profesor Matematicas
+                            <div class="col-6">
+                                    <strong>Descripción: </strong>
+                                    <br/>
+                                    {{prof.profile.descripcion}}
+
+                            </div>
+                            <div class="col-6">
+                                    <strong>Categorias: </strong>
+                                    <br/>
+                                    <categorias [readOnly] ="true"  [array]="prof.profile.categorias"></categorias>
 
                             </div>
                         </div>

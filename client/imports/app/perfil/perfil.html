@@ -52,12 +52,21 @@
                                 <div class="card-body">
                                     <h5 class="card-title">!Eres profesor!</h5>
                                     
-                                    <!-- <h6 class="card-subtitle mb-2 text-muted">¡Comienza a ser profesor con nosotros!</h6> -->
-                                    <div>
-                                            <label for="nombre">Categorias</label>
-                                            <input  formControlName="nombre" type="text" class="form-control" id="nombre" name="nombre" required placeholder="Nombre..." [(ngModel)]="perfil.nombre">
-                                            
-                                        </div>
+                                    <!-- <h6 class="card-subtitle mb-2 text-muted">¡Comienza a ser profesor con nosotros!</h6>
+                                    <tag-input [placeholder]="Categorias" [ngModel]="['hardocoded-item']">
+                                                <tag-input-dropdown
+                                                  [autocompleteItems]="items"
+                                                  [showDropdownIfEmpty]="true"
+                                                  [dynamicUpdate]="false"
+                                                  
+                                                >
+                                                </tag-input-dropdown>
+                                              </tag-input>
+                                              <label for="nombre">Categorias*</label>
+                                              <input  formControlName="nombre" type="text" class="form-control" id="nombre" name="nombre" required placeholder="Nombre..." [(ngModel)]="perfil.nombre">
+                                                -->
+                                  
+                                         <categorias [config]="configTags"></categorias>       
                                         <p class="card-text text-muted"> * Para que puedas ser categorizado de alguna forma debes introducir las etiquetas categoricen tus caracteristicas de conocimiento</p>
                                    
                                      <!-- <button type="button" (click)="setModalConfig()" class="btn btn-outline-dark">¡Comenzar!</button>
