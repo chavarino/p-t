@@ -24,7 +24,7 @@ Meteor.methods({
             ]
         }
         //{"profile.disponible" : !false,'profile.rol' : { $gte: RolesEnum.PROFFESOR}  , _id : { $ne: Meteor.userId() }}
-        console.log(JSON.stringify(input));
+       // console.log(JSON.stringify(input));
             return Meteor.users.rawCollection().find(input, {fields:  {
               'profile.name' : 1,
               "profile.foto" : 1,
@@ -32,6 +32,10 @@ Meteor.methods({
               'profile.apellidos' : 1,
               'profile.disponible' : 1,
               'profile.claseId' : 1,
+              'profile.descripcion' : 1,
+              'profile.categorias' : 1,
+              
+              
             }}).toArray();  
 
     }
@@ -45,7 +49,7 @@ Meteor.methods({
 
       let profile : Perfil=  Meteor.user().profile;
       console.log("rol actual: " + profile.rol)
-      if(profile.rol === RolesEnum.ALUMNO)
+      if(profile.rol >= RolesEnum.ALUMNO && profile.rol< RolesEnum.PROFFESOR)
       {
 
         console.log("entra:")

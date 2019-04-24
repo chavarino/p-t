@@ -40,7 +40,10 @@ export class RolesService {
             this.setIniRoles();
         }
         else{
-            this.roles =  roles;
+            this.roles =  {};
+
+            Object.assign(this.roles, roles);
+            //NO PILLA EL TEMA
 
         }
     }
@@ -53,7 +56,7 @@ export class RolesService {
         }
         let rol =  this.roles[modulo];
 
-        return rol!==null &&  rol.write >=min
+        return rol &&  rol.write >=min
     }
 
     canRead(modulo: string,min: number)
@@ -64,7 +67,7 @@ export class RolesService {
         }
         let rol =  this.roles[modulo];
 
-        return rol!==null &&  rol.read >=min
+        return rol &&  rol.read >=min
     }
     
 }

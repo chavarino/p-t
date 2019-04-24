@@ -10,16 +10,16 @@ Meteor.publish('rolByUser', function() {
     //alumno acceso a common, perfil y peticiones, tiempo gastado
     //profesor acceso a common perfil y recepcion de peticiones, y facturacion
     //4 admin common, perfil , alumno , profesor y admin
-    let rol = 1;
+    /*let rol = 1;
 
     if(!!Meteor.user())
     {
       let user : User = Meteor.user();
       console.log(user);
       rol = user.profile.rol;
-    }
+    }*/
   
-  return Roles.find({ codigo : rol});
+  return Roles.find({ });
 });
 
 

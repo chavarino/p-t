@@ -126,9 +126,12 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
             return vm.reducer(state, action);
         });
         
-    
+        
 
-         vm.redux.nextStatus({ type: ETipo.INIT });
+        setTimeout(()=>{
+            vm.redux.nextStatus({ type: ETipo.INIT });
+
+        }, 1000)
     }
 
  
@@ -184,10 +187,10 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
         let  idAux;
         let mServ : MsgClass =  this.msgServ;
         let funciones : Map<Number, (m :Message)=> void > ;
-        let profile : Perfil=  Meteor.user().profile;
+        
         let fnMsgCallIni = function(m :Message)
         {
-            
+            let profile : Perfil=  Meteor.user().profile;
             if(profile.disponible)
             {
                 
@@ -264,7 +267,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
             {
                 
                
-
+                let profile : Perfil=  Meteor.user().profile;
                 profile.claseId = m.cuerpo;
                 vm.redux.nextStatus({ type: ETipo.CLASS });
 
@@ -547,7 +550,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
                         cancelarCall();
                     }
                     else{
-
+                        let profile : Perfil=  Meteor.user().profile;
                         vm.sendMsg(vm.getUserCall()._id, MsgTipo.PING, profile.claseId);
                         vm.redux.estado.campos.ping ++;
                     }

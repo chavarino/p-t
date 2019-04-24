@@ -9,7 +9,11 @@
         <div  *ngIf="isEstadoSelProf()">
             <div class="row">
                 <div class="col-sm-12">
-                    <categorias (ondAdd)="findProf()" [config]="configTags"></categorias>  
+
+                    <!--
+                        
+                    -->
+                    <categorias [select]="selectedTag" (onAdd)="findProf()" [config]="configTags"></categorias>  
 
                 </div>
             </div>
@@ -38,8 +42,9 @@
                             </div>
                             <div class="col-6">
                                     <strong>Categorias: </strong>
+                            
                                     <br/>
-                                    <categorias [readOnly] ="true"  [array]="prof.profile.categorias"></categorias>
+                                    <categorias [readOnly] ="true" (onSelect)="onSelectTag($event)" [array]="prof.profile.categorias"></categorias>
 
                             </div>
                         </div>

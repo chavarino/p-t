@@ -92,8 +92,21 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy, CanAc
 
 
         this.userSuscripcion =  MeteorObservable.subscribe('usersProfile').subscribe(() => {
-            this.perfil = Users.findOne({_id:Meteor.userId()}).profile;
-            this.configTags.listCat = this.perfil.categorias || [];
+
+            Users.find({_id:Meteor.userId()}).subscribe((data)=>{
+
+                if(data[0])
+                {
+                    
+                    this.perfil = data[0].profile;
+                    
+                    this.configTags.listCat = this.perfil.categorias || [];
+                }
+                else{
+                  //this.rol.setRoles(data[0].rol);
+        
+                }
+              })
            // this.rol.setRoles(Roles.findOne().rol);
 
           });
@@ -115,7 +128,9 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy, CanAc
         let vm =this;
         let msg =  MethodsClass.msg.modal.confirm;
         MethodsClass.call("changePerfilToProfesor", ()=>{
+            //TODO HACER QUE SEA SIN RECARGAR.
             location.reload();
+            vm.perfil = Meteor.user().profile;
         })
       /*
         this.flags.setModalConfig(MethodsClass.getConfigConfirm(msg.title, msg.bSetProfesor,  function(evento){

@@ -43,6 +43,7 @@ enum ETipo  {
   styleUrls: ['roomAlumno.scss']
 })
 export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, CanActivate{
+    selectedTag: string;
   
     clase : Room
     roomAlumno :Subscription;
@@ -123,8 +124,10 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
             return vm.reducer(state, action);
         });
 
+        setTimeout(()=>{
+            vm.redux.nextStatus({ type: ETipo.INIT });
 
-        vm.redux.nextStatus({ type: ETipo.INIT });
+        }, 1000)
     }
     
     isInClass()
@@ -172,13 +175,14 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
 
         let vm =this;
        
-       /* let input = {
+        let input = {
             $and : [
                 {_id: { $ne: Meteor.userId() }},
                 ...vm.configTags.listCatBusc
 
             ]
         }
+        /*
  if(vm.configTags.listCatBusc 
             && vm.configTags.listCatBusc.length>0)
         {
@@ -187,17 +191,24 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
            */
         //Meteor.subscribe('allAvalaibleTeacher', vm.configTags.listCatBusc);
 
-        let p = new Promise<User[]>((resolve, reject) => {
+        /*   let p = new Promise<User[]>((resolve, reject) => {
       
-   
-            MethodsClass.call("callAvalaibleTeacher", vm.configTags.listCatBusc, (result)=>{
+            
+         MethodsClass.call("callAvalaibleTeacher", vm.configTags.listCatBusc, (result)=>{
               resolve(result); 
             })
-          });
+
+
+          });*/
               
           
      
-        vm.profesores =  from(p);
+        vm.profesores =  Users.find(input);
+    }
+
+    onSelectTag(e :string)
+    {
+        this.selectedTag = e;
     }
     ngOnInit()
     {
@@ -213,22 +224,10 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
         };
         
             
-        //this.profesoresSuscription =  MeteorObservable.subscribe('allAvalaibleTeacher').subscribe(fnFind);
+        this.profesoresSuscription =  MeteorObservable.subscribe('allAvalaibleTeacher').subscribe(fnFind);
       
        
-        Tracker.autorun(()=>{
-            let p = new Promise<User[]>((resolve, reject) => {
-      
    
-                MethodsClass.call("callAvalaibleTeacher", vm.configTags.listCatBusc, (result)=>{
-                  resolve(result); 
-                })
-              });
-                  
-              
-         
-            vm.profesores =  from(p);
-        })
         
         this.roomAlumno =  MeteorObservable.subscribe('getRoomForAlumno').subscribe(() => {
             
@@ -382,7 +381,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
         let  idAux;
         let mServ : MsgClass =  this.msgServ;
         let funciones : Map<Number, (m :Message)=> void > ;
-        let profile : Perfil=  Meteor.user().profile;
+        
         
         let  cancelarCall = ()  =>{
 
@@ -547,7 +546,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
                 
                 nextState.ini= function()
                 {
-                    let perfil : Perfil =   Meteor.user().profile;
+                   
             
                     
                     
@@ -560,7 +559,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
                         })
                     }
                     let fn2 = resolve =>{
-
+                        let perfil : Perfil =   Meteor.user().profile;
                         if(perfil.claseId && perfil.claseId !== "")
                         {
                             //si
@@ -700,7 +699,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
                     cancelarCall();
                 }
                 else{
-
+                    let profile : Perfil=  Meteor.user().profile;
                     vm.sendMsg(vm.getUserCall()._id, MsgTipo.PING, profile.claseId);
                     vm.redux.estado.campos.ping ++;
                 }
@@ -724,7 +723,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
 
             nextState.dispatcher = function()
             {
-
+                let profile : Perfil=  Meteor.user().profile;
                 //MIRAR LOS STATUS DE RTC TODO
                 if(!profile.claseId ||profile.claseId === "")
                     {

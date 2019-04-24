@@ -52,7 +52,13 @@ export class LoginComponent implements OnInit{
 
   recargarPermisos()
   {
-    this.rol.setRoles(Roles.findOne().rol);
+
+    //TODO 
+    location.reload();
+    /*
+    let input  = {codigo: Meteor.user().profile.rol};
+    let rol =  Roles.findOne(input);
+    this.rol.setRoles(rol.rol);*/
   }
   loginFacebook()
   {

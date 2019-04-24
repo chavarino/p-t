@@ -74,7 +74,7 @@ export class MethodsClass {
             args2.unshift(input);
         }
         
-        
+      /*  
         if(args2.length===0 || args2.length===1)
         {
             Meteor.call(method, args2[0] );
@@ -84,7 +84,9 @@ export class MethodsClass {
         {
             Meteor.call(method, args2[0], args2[1] );
 
-        }
+        }*/
+
+        Meteor.call(method, ...args2 );
     }
     static frontHandle(error, fn, result)
     {

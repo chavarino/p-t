@@ -41,21 +41,45 @@ export class AppComponent implements OnInit, OnDestroy {
       /*
       read : number,
   write : number*/
+  this.rolSubs = MeteorObservable.subscribe('rolByUser').subscribe(() => {
+    //this.todos = Todos.findOne();
+    let rol = 1;
+    if(this.loggedIn())
+    {
+      rol = Meteor.user().profile.rol;
+    }
+    
+    Roles.find({codigo: rol}).subscribe((data)=>{
 
-    this.rolSubs = MeteorObservable.subscribe('rolByUser').subscribe(() => {
-      //this.todos = Todos.findOne();
-      Roles.find().subscribe((data)=>{
+      if(!data[0])
+      {
+          this.rol.setIniRoles();
+      }
+      else{
+        this.rol.setRoles(data[0].rol);
 
-        if(!data[0])
-        {
-            this.rol.setIniRoles();
-        }
-        else{
-          this.rol.setRoles(data[0].rol);
+      }
+    })
+    
+  });
 
-        }
-      })
-      
+    Tracker.autorun(()=>{
+      if(Meteor.user())
+      {
+        this.rol.setIniRoles();
+        Roles.find({codigo: Meteor.user().profile.rol}).subscribe((data)=>{
+  
+          if(!data[0])
+          {
+              this.rol.setIniRoles();
+          }
+          else{
+            this.rol.setRoles(data[0].rol);
+    
+          }
+        })
+
+      }
     });
       
   }

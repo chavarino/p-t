@@ -25,6 +25,7 @@ export class Categorias{
   lista  = [];
   private autoComplete = [];
   private _readOnly : boolean  = false;
+  private _select : string  = "";
   @Input()
   set readOnly(readOnly : boolean)
   {
@@ -35,6 +36,28 @@ export class Categorias{
   {
      return this._readOnly;
   }
+
+  @Input()
+  set select(tag : string)
+ {
+ 
+  if(tag && tag!=="" && this.config.listCat.indexOf(tag) === -1)
+  {
+      this._select = tag;
+      //this.lista.push(this._select)
+      this.onAddTag(this._select);
+      let aux = this.config.listCat ;
+      this.config.listCat = [];
+      this.config.listCat.push(...aux);
+
+  }
+   
+ }
+ 
+ get select () : string
+ {
+   return this._select;
+ }
 
  @Input()
  set array(array : Array<string>)
@@ -70,10 +93,22 @@ get array () : Array<string>
   }
  
 
-  @Output() ondAdd = new EventEmitter<boolean>();
+@Output() onAdd = new EventEmitter<boolean>();
+
+@Output() onSelect= new EventEmitter<string>();
 
 
+public onSelectItem($event)
+{
+  let str = "";
+  if($event)
+  {
 
+    str = isString($event) ? $event : $event.value;
+  }
+
+  this.onSelect.emit(str)
+}
   get config(): ConfigTags { return this._config; }
    
  
@@ -125,7 +160,7 @@ get array () : Array<string>
 
     }
 
-    this.ondAdd.emit(true);
+    this.onAdd.emit(true);
       console.log("add: " +$event.value)
   }
  onRemoveTag($event)
@@ -153,7 +188,7 @@ get array () : Array<string>
       }
       
     }*/
-    this.ondAdd.emit(true);
+    this.onAdd.emit(true);
     console.log("remove: " +$event)
   }
   /*public requestAutocompleteItems = (text: string): Observable<Response> => {
