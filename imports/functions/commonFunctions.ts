@@ -149,3 +149,27 @@ export class FactoryCommon
         return promesasAnidadas();
       }
 }
+
+export class AudioC extends Audio {
+
+
+    constructor(source : string)
+    {
+        super(source)
+
+        this.loop = true;
+    }
+
+
+   
+
+ stop()
+{
+	this.load()
+	this.pause();
+}	
+
+
+
+
+}
