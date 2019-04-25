@@ -152,11 +152,13 @@ export class FactoryCommon
 
 export class AudioC extends Audio {
 
-
+    /*this.audio = new Audio();   
+    this.audio.src = "./../../assets/ring.mp3";
+    this.audio.load();*/
     constructor(source : string)
     {
         super(source)
-
+        
         this.loop = true;
     }
 
@@ -165,8 +167,8 @@ export class AudioC extends Audio {
 
  stop()
 {
+    this.pause();
 	this.load()
-	this.pause();
 }	
 
 

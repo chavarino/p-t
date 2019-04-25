@@ -463,6 +463,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
                 }
                
                 nextState.ini =  ()  =>{
+                    vm.audios["call"].play();
                     vm.redux.estado.campos.idTimeOut= setTimeout(() =>{
 
                         //si pasa el tiempo y se ejecuta se cancela.
@@ -484,7 +485,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
                 }
                 
                 nextState.destroy = ()=>{
-
+                    vm.audios["call"].stop()
                     clearTimeout(vm.redux.estado.campos.idTimeOut)
                 }
                 
