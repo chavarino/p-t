@@ -149,3 +149,29 @@ export class FactoryCommon
         return promesasAnidadas();
       }
 }
+
+export class AudioC extends Audio {
+
+    /*this.audio = new Audio();   
+    this.audio.src = "./../../assets/ring.mp3";
+    this.audio.load();*/
+    constructor(source : string)
+    {
+        super(source)
+        
+        this.loop = true;
+    }
+
+
+   
+
+ stop()
+{
+    this.pause();
+	this.load()
+}	
+
+
+
+
+}

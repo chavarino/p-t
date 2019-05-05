@@ -15,7 +15,7 @@ import { Subscription } from 'rxjs/Subscription';
 import {ReduxC, Estado, LogicEstado} from "../services/reduxC";
 import { Action } from 'redux';
 import { MsgTipo, Message, MessageRtc } from 'imports/models/message';
-import { MsgClass,FactoryCommon } from 'imports/functions/commonFunctions';
+import { MsgClass,FactoryCommon,AudioC } from 'imports/functions/commonFunctions';
 import { Msg } from 'imports/collections/msg';
 import {MethodsClass} from "../../../../imports/functions/methodsClass"
 import {Tipo} from "../timeCounter/timeCounter.component"
@@ -51,14 +51,18 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
     remoteVideoId : string;
     maxPing : number;
     temp: object;
+    audios : Map<string, AudioC>;
     
-    
+
+
     constructor( rol : RolesService, private formBuilder: FormBuilder )
     {
         super(1, 1, "Prof", rol);
 
         let vm =this;
        vm.maxPing = 3;
+       this.defineAudio();
+
 
         vm.localVideoId ="localVideo"
         vm.remoteVideoId ="remoteVideo";
@@ -138,7 +142,10 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
 
 
     
-
+    defineAudio() 
+    {
+        this.audios["call"] = new AudioC("ring.mp3");
+    }
     
     isEstadoIni() :boolean
     {
@@ -456,6 +463,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
                 }
                
                 nextState.ini =  ()  =>{
+                    vm.audios["call"].play();
                     vm.redux.estado.campos.idTimeOut= setTimeout(() =>{
 
                         //si pasa el tiempo y se ejecuta se cancela.
@@ -477,7 +485,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
                 }
                 
                 nextState.destroy = ()=>{
-
+                    vm.audios["call"].stop()
                     clearTimeout(vm.redux.estado.campos.idTimeOut)
                 }
                 
