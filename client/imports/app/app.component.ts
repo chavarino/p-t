@@ -10,6 +10,8 @@ import { MeteorObservable } from 'meteor-rxjs';
 import { Roles } from '../../../imports/collections/rol';
 import "material-design-icons";
 
+
+
 @Component({
   selector: 'app',
   templateUrl: 'app.html',

@@ -5,6 +5,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { RouterModule } from '@angular/router';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 
 import { LoginComponent } from './login/login.component';
@@ -30,6 +31,7 @@ import { AppComponent } from './app.component';
 //import { MdButtonModule} from "@angular/material/button";
 import { TagInputModule } from 'ngx-chips';
 
+import { ModalKpm} from './modalKpm/modaKpm.component';
 
 export const ROUTES_PROVIDERS = [{
   provide: 'canActivateForLoggedIn',
@@ -75,6 +77,7 @@ export const ROUTES_PROVIDERS = [{
       }
     ]),
     AccountsModule,
+    NgbModule
    // MatButtonModule
   ],
   exports : [
@@ -92,7 +95,8 @@ export const ROUTES_PROVIDERS = [{
     ModalComponent,
     PerfilComponent,
     RoomAlumnoComponent,
-    RoomProfComponent
+    RoomProfComponent,
+    ModalKpm
   ],
   bootstrap: [
     AppComponent

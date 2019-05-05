@@ -1,0 +1,18 @@
+
+
+ span.fa.fa-star.checked {
+    color: orange;
+}
+span.fa.fa-star {
+    color: #d4d2d2;
+    cursor: pointer;
+    
+}
+
+.modal-body textarea {
+    max-width: 100% !important;
+    width: 100% !important;
+    height: 130px;
+    min-height: 130px;
+    max-height: 200px;
+}

@@ -25,9 +25,6 @@ import {Tipo} from "../timeCounter/timeCounter.component"
 import {MethodsClass} from "../../../../imports/functions/methodsClass"
 import { ConfigTags } from '../categorias/categorias.component';
 
-import { Tracker } from 'meteor/tracker'
-import { of } from 'rxjs/internal/observable/of';
-import { from } from 'rxjs';
 enum ETipo  {
     INIT = 1,
     CLASS = 2,
@@ -267,7 +264,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
                 //this.iniClase();
             }
     }
-
+    
     ngOnDestroy()
     {
         if (this.roomAlumno) {

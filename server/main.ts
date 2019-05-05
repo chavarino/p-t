@@ -7,6 +7,7 @@ import './imports/publications/room'
 import './imports/publications/msg'
 import './imports/methods/msg'
 
+import './imports/publications/kpm'
 /*ServiceConfiguration.configurations.remove({
   service: "facebook"
 });
