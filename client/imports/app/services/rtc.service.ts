@@ -114,6 +114,7 @@ export class RtcService {
           fn(false);
         }
     }
+    
     static newRtc(localVideoId : string, remoteVideoId : string, singalSender : (Message) =>void, caller:boolean, handlerConnected : ()=>void)
     {
         let rtc : RtcService = new RtcService();

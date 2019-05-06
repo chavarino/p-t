@@ -105,7 +105,8 @@ export const ROUTES_PROVIDERS = [{
     RolesService,
     BanderasService,
     ROUTES_PROVIDERS
-  ]
+  ],
+  entryComponents: [ModalKpm]
 })
 export class AppModule {
 

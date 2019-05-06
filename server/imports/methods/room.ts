@@ -7,6 +7,7 @@ import { MethodsClass } from '../../../imports/functions/methodsClass'
 
 import { User } from 'imports/models/User';
 import { Perfil } from 'imports/models/perfil';
+import { Kpm, Score } from 'imports/models/kpm';
 function getTexto(room : Room)
 {
   if(!room.comenzado && room.activo)
@@ -28,6 +29,48 @@ function getTexto(room : Room)
 }
 
 Meteor.methods({
+
+  saveScoreFromAlumno(idClase: string, score : Score)
+  {
+    try {
+      //TODO, METER validacion y tiempo para poder guardar
+      console.log("clase :" + JSON.stringify(idClase))
+      let clase : Room = Rooms.findOne({ alumnoId : Meteor.userId()/*, activo : !true*/, _id : idClase});
+      //evitamos que cree mas de una
+      if(!clase)
+      {
+        console.log("clase nula")
+               //Error.duplic();
+          return;
+      }
+      console.log("no nula")
+      //puntuacion del alumno
+      if(!clase.scores)
+      {
+        clase.scores = {
+          alumno: {
+            comentario : "",
+            kpms : []
+
+          },
+          profesor : {
+            comentario : "",
+            kpms : []
+          }
+        }
+      }
+      clase.scores.alumno.dateScore = new Date();
+      clase.scores.alumno.comentario = score.comentario || "";
+      clase.scores.alumno.kpms = score.kpms || [];
+
+      Rooms.update({_id: clase._id}, clase,{ upsert: false });
+
+
+    } catch (error) {
+        console.log(error);
+    }
+
+  },
   //la clase la crea el alumno
   crearClase(profId : string) {
   let room: Room = {

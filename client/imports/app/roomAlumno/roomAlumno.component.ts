@@ -24,6 +24,9 @@ import {RtcService} from "../services/rtc.service"
 import {Tipo} from "../timeCounter/timeCounter.component"
 import {MethodsClass} from "../../../../imports/functions/methodsClass"
 import { ConfigTags } from '../categorias/categorias.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ModalKpm } from '../modalKpm/modaKpm.component';
+import { Score } from 'imports/models/kpm';
 
 enum ETipo  {
     INIT = 1,
@@ -71,7 +74,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
          listCatBusc : []
         }
     }
-    constructor( rol : RolesService, private formBuilder: FormBuilder, sanitizer : DomSanitizer,flags : BanderasService)
+    constructor( private modalService: NgbModal, rol : RolesService, private formBuilder: FormBuilder, sanitizer : DomSanitizer,flags : BanderasService)
     {
 
         super(1, 1, "comun", rol);
@@ -139,7 +142,30 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
 
 
 
- 
+      
+      async openModalPuntuacion(claseId : string, fn ?: () => void) {
+
+        try {
+            let result : Score = await this.modalService.open(ModalKpm, {size: 'lg',ariaLabelledBy: 'modal-basic-title'}).result;
+            alert("¡¡Muchas gracias por colaborar a un servicio mejor!!");
+            MethodsClass.call("saveScoreFromAlumno", claseId, result);
+            
+        } catch (error) {
+            alert("¡¡Muchas gracias, puede colaborar cuando quiera")
+        }
+        if(fn)
+            {
+                fn();
+            }
+        
+        /*.then((result) => {
+          //this.closeResult = `Closed with: ${result}`;
+         
+        }, (reason) => {
+          //this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+        })*/
+        
+      }
 
 
 
@@ -312,11 +338,23 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
     colgarCall()
     {
         let vm =this;
+        let claseId = Meteor.user().profile.claseId
         let fnGoInit = ()=> {
             vm.redux.estado.userFrom = null;
             vm.sendMsg(vm.getUserCall()._id, MsgTipo.CALL_COLGAR);
-            vm.redux.nextStatus({ type: ETipo.INIT });
+
+
+            if(claseId)
+            {
+                    vm.openModalPuntuacion(claseId,()=>{
+                        vm.redux.nextStatus({ type: ETipo.INIT });
+                    })
+
+                }
+            
+            
         }
+        
         if(vm.clase && vm.clase._id)
         {
                 this.terminarClase(false,()=>{
@@ -672,7 +710,16 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
                 vm.sendMsg(vm.getUserCall()._id, MsgTipo.RTC, msgRtc)
             }
             funciones = new Map();
-            funciones[MsgTipo.CALL_COLGAR] = fnMsgCancelCall;
+            
+            funciones[MsgTipo.CALL_COLGAR] = (msg :Message)=>{
+                let claseId = Meteor.user().profile.claseId
+                fnMsgCancelCall(msg);
+                if(claseId)
+                {
+                    vm.openModalPuntuacion(claseId)
+
+                }
+            };
             funciones[MsgTipo.RTC] = fnMsgRtc;
             funciones[MsgTipo.CALL_RECONNECT] = fnMsgReconnect;
             funciones[MsgTipo.PING] = fnMsgPing;

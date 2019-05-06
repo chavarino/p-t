@@ -15,12 +15,12 @@ class Elo {
     }
     factorInit ={
         positivo : 20,
-        mal : 60,
-        muyMal :  80
+        mal : 100,
+        muyMal :  150
     }
     maxScoreTotal = 300;
     maxElo = 7000;
-    minElo =500;
+    minElo =0;
     ref = 3;
     scoreRacha = 0;
 
@@ -90,14 +90,22 @@ calcularRacha() :number
     numRacha++;
   }
   this.logueoCol("numero de rachas: " + numRacha);
-  console.log("numero de rachas: " + numRacha);
-
-  return Math.min(this.racha.score * numRacha , this.racha.maxScoreRacha) * signo ;
+ 
+  if(signo>0)
+  {
+    return Math.min(this.racha.score * numRacha , this.racha.maxScoreRacha) * signo ;
+  }
+  else{
+    return this.racha.score * numRacha *3  * signo ;
+  }
+  
+  
 }
 
 logueoCol(col)
 {
     this.logueo = this.logueo + `${col}\n`;
+    console.log(col);
 }
 
 calcularElo()
@@ -107,17 +115,17 @@ calcularElo()
     let ultimaNota = this.notas[this.notas.length-1];
     this.mediaI = this.media();
     this.dTipicaI =  this.desTipica();
-
-    console.log(`i = ${this.i} ----------------`);
-    console.log(`media = ${this.mediaI}`);
-    console.log(`Raiz(Varianza) = ${this.dTipicaI}`);
+    this.logueoCol("nota: " +ultimaNota);
+    this.logueoCol(`i = ${this.i} ----------------`);
+    this.logueoCol(`media = ${this.mediaI}`);
+    this.logueoCol(`Raiz(Varianza) = ${this.dTipicaI}`);
     
     switch(ultimaNota-3)
     {
       case -1 :
       this.factor = this.factorInit.mal
       this.logueoCol("MAL " + this.factor);
-      console.log("MAL " + this.factor)
+      
       break;
       case -2 :
       this.factor = this.factorInit.muyMal
@@ -126,24 +134,38 @@ calcularElo()
          default:
          this.factor = this.factorInit.positivo;
             this.logueoCol("Positivo " + this.factor);
-            console.log("Positivo" + this.factor)
+            
          break;
         }
         
-      console.log(`Factor = ${this.factor}`)
+      
 
 
       let scoreRacha = this.calcularRacha();
       this.logueoCol("scoreRacha :" +scoreRacha);
-      console.log("scoreRacha :" +scoreRacha);
+  
       
       this.score = this.factor *(this.mediaI * 0.2  + ultimaNota * 0.8  -this.ref) +  scoreRacha;
       let dTipica = this.score <0 ? 0 :this.dTipicaI;
       
       this.eloTotal = this.eloTotal +  (ultimaNota === this.ref ? 0 : this.score)/ (1+dTipica) ;
-      console.log(`score = ${this.score}`);
-        console.log(`score/Varianza = ${(ultimaNota === this.ref ? 0 : this.score)/ (1+dTipica)}`)
-        console.log(`Elo Total = ${this.eloTotal}`);
+
+      this.logueoCol(`score = ${this.score}`);
+      this.logueoCol(`score/Varianza = ${(ultimaNota === this.ref ? 0 : this.score)/ (1+dTipica)}`);
+      
+      if(this.eloTotal>this.maxElo)
+      {
+        this.logueoCol(`Elo maximo  = ${this.maxElo}`);
+        this.eloTotal = this.maxElo;
+      }
+      else if(this.eloTotal<this.minElo)
+      {
+        this.logueoCol(`Elo minimo  = ${this.minElo}`);
+        this.eloTotal = this.minElo;
+      }
+      this.logueoCol(`Elo Total = ${this.eloTotal}`);
+      this.logueoCol("***********************")
+   
     return  this.eloTotal;
 }
 
@@ -163,7 +185,7 @@ toString()
 
 }
 
-
+/*
 simular()
 {
 
@@ -174,13 +196,13 @@ simular()
     for(let i = 1 ; i<=tam ; i++)
     {
        let nota = Math.floor( i%10 === 0 ? Math.random()*3 +1 : Math.random()*(5-4+1)+4);
-      console.log(nota)
+     
         elo.add(nota);
         elo.calcularElo();
-        elo.toString();
-        console.error("-----")
+       // elo.toString();
+        
     }
 
+    console.log(elo.logueo);
 
-
-}
+}*/

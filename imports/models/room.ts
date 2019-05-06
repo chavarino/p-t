@@ -1,3 +1,7 @@
+import { Kpm, Score } from './kpm';
+
+
+
 export interface Room {
     _id ?: string,
     titulo : string,
@@ -12,6 +16,13 @@ export interface Room {
     rechazado ?: boolean,
     comenzado ?: boolean,
     estadoText ?: string,
-    urlVideo ?: string
+    urlVideo ?: string,
+    elo ?: number,
+    
+    scores ?: {
+        alumno : Score
+
+        profesor : Score
+    }
 }
 

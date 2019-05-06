@@ -13,3 +13,10 @@ export interface Kpm{
     answer ?: number,
     activo ?: boolean
 }
+
+export  interface  Score
+{
+    kpms : Kpm[],
+    comentario : string,
+    dateScore ?: Date
+}

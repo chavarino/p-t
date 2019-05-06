@@ -1,43 +1,50 @@
-<ng-template #content let-modal class="modal-kpm">
-  <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">¿Qué puntuación nos das?</h4>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body">
-      <h6 class="card-subtitle mb-2 text-muted">Para nosotros es muy importante que puntues.</h6>
-      <br/>
-    <form>
-      <!--
-         
-      -->
-      <div class="form-group">
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">¿Qué puntuación nos das?</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+    <h6 class="card-subtitle mb-2 text-muted">Para nosotros es muy importante que puntues.</h6>
+    <br/>
+  <form>
+    <!--
        
-        <div class="row" *ngFor="let kpm of kmps | async">
-          <div class="col">
-              {{kpm.question}}
-          </div>
-          <div class="col">
-              <span (click)="setScore(kpm, score)" class="fa fa-star" *ngFor="let score of scores"  [ngClass]="{'checked': isChecked(kpm, score)}"></span>
-              
-           </div>
+    -->
+    <div class="form-group">
+     
+      <div class="row" *ngFor="let kpm of kmps | async">
+        <div class="col">
+            {{kpm.question}}
         </div>
-        <div class="row">
-            <div class="col">
-                <textarea class="area"></textarea>
-            </div>
-        </div>
+        <div class="col">
+            <span (click)="setScore(kpm, score)" class="fa fa-star" *ngFor="let score of scores"  [ngClass]="{'checked': isChecked(kpm, score)}"></span>
+            
+         </div>
       </div>
-    </form>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Aceptar</button>
-  </div>
-</ng-template>
+      <div class="row">
+          <div class="col">
+              <textarea class="area"></textarea>
+          </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-dark" (click)="close('Save click')">Aceptar</button>
+</div>
 
-<button class="btn btn-lg btn-outline-primary" (click)="open(content)">Launch demo modal</button>
+<!--
 
-<hr>
+  <ng-template #content let-modal class="modal-kpm">
+  
+  
+  </ng-template>
+  
+  <button class="btn btn-lg btn-outline-primary" (click)="open(content)">Launch demo modal</button>
+  
+  <hr>
+  
+  <pre>{{closeResult}}</pre>
 
-<pre>{{closeResult}}</pre>
+-->

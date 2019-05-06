@@ -51,28 +51,30 @@ export class MethodsClass {
             
             
         } */
+        let args2 : any[] = []
         
-        for (let i = 0; i < 2; i++) {
+        for (let i = 0; i < args.length; i++) {
             const element = args[i];
             if(isFunction(element))
             {
                 
                 fn = element;
                 
+                
             }
             else if(!isUndefined(element)){
-                input = element
+               // input = element
+                args2.push(element);
             }
             
         }
-        
-        let args2 : any[] = [(error,result) => {
+        args2.push((error,result) => {
             MethodsClass.frontHandle(error, fn, result)
-        }]
-        if(!isUndefined(input))
+        })
+        /*if(!isUndefined(input))
         {
             args2.unshift(input);
-        }
+        }*/
         
       /*  
         if(args2.length===0 || args2.length===1)

@@ -1,12 +1,13 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import { Kpm, tipoAnsw} from '../../../../imports/models/kpm'
-import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
+import {NgbModal, ModalDismissReasons, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import { MeteorObservable } from 'meteor-rxjs';
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
 import { Kpms } from '../../../../imports/collections/kpm';
+import { from } from 'rxjs';
 @Component({
-  selector: 'modal-kpm',
+  //selector: 'modal-kpm',
   templateUrl: './modalKpm.html',
   styleUrls: ['modalKpm.scss']
 })
@@ -14,6 +15,7 @@ export class ModalKpm implements OnInit, OnDestroy {
 
 
   kpmSubscription : Subscription;
+  comentario : string;
   kmps : Observable<Kpm[]>; /*= [
     {
       type : tipoAnsw.clase,
@@ -33,12 +35,26 @@ export class ModalKpm implements OnInit, OnDestroy {
   scores : number[]  =[ 1,2 ,3,4,5]
   closeResult: string;
 
-  constructor(private modalService: NgbModal) {
+  constructor(  public activeModal: NgbActiveModal) {
 
       
 
   }
 
+  close()
+  {
+    let vm =this;
+    this.kmps
+    .subscribe(kpms => {
+
+      vm.activeModal.close({
+        kpms : kpms  as Kpm[],
+        comentario : vm.comentario
+      })
+        
+    })
+      
+  }
   ngOnInit()
   {
 
@@ -68,14 +84,6 @@ export class ModalKpm implements OnInit, OnDestroy {
         
     }
 
-  open(content) {
-    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
-      this.closeResult = `Closed with: ${result}`;
-      alert("¡¡Muchas gracias por colaborar a un servicio mejor!!")
-    }, (reason) => {
-      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-    });
-  }
   isChecked(kpm :Kpm, score: number): boolean
   {
  
