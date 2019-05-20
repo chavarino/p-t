@@ -24,7 +24,8 @@ export interface Message  {
     _id ?: string
     msgTipo : MsgTipo,
     cuerpo ?: any,
-    readed ?: boolean
+    readed ?: boolean,
+    fecha ?: Date
 
 }
 

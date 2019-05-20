@@ -572,7 +572,14 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
 
                     setTimeout(() => {
                         
-                        vm.rtc.startWebRTC();
+                        try {
+                            vm.rtc.startWebRTC();
+                            
+                        } catch (error) {
+                            alert("La aplicación necesita permisos de video y audio para poder ser usada. Por favor acepte los permisos para usarla.")
+                            console.log("Error startWebRTC : " +error)
+                            cancelarCall();
+                        }
                         
                     }, 500);
 
