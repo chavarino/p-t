@@ -13,10 +13,16 @@ export class MsgClass{
    
     private  msgIn: Message[]// Observable<Message>;
     private  sus: Subscription;
+    l : Log;
+
+    contador = 0;
     //METER EL OBSERVABLE de  MENSAJES
     constructor()
     {
         this.suscribe();
+
+        this.l = new Log("lectorMSG", Meteor.userId())
+        this.contador = 0;
     }
     private suscribe()
     {
@@ -24,14 +30,17 @@ export class MsgClass{
         this.msgIn = [];
         vm.sus = MeteorObservable.subscribe('getMsg').subscribe(() => {
             
+           
             Msg.find().forEach((lista : Message[])=>{
 
-                 vm.msgIn = lista;
+                vm.msgIn = lista;
             });
+           
+         
             //vm.findClass();
         });;
         
-        
+    
         
     }
     borrarAllMsg(fn ?: (any) =>any)
@@ -82,26 +91,39 @@ export class MsgClass{
 
 
         })*/
-      while(vm.msgIn.length>0)
-        {
-            let m : Message = vm.msgIn.shift()
+        
 
-                if(m && !m.readed)
-                 {
-                     let fn : (m : Message)=>void = fns[m.msgTipo]
-                     if(fn)
-                     {
-                        fn(m);
-                        
-                    }
-                    m.readed = true;
 
-                    vm.setLeido(m);
-                 }
+       
+
+            if(vm.contador>0) return;
            
-
-
-        }
+            vm.contador = vm.msgIn.length;
+            while(vm.msgIn.length>0)
+              {
+                  let m : Message = vm.msgIn.shift()
+                  vm.l.log("Read :" + JSON.stringify(m))
+                  if(m && !m.readed)
+                  {
+                      
+                           vm.l.log("Reading ")
+                           let fn : (m : Message)=>void = fns[m.msgTipo]
+                           if(fn)
+                           {
+                              fn(m);
+                              
+                          }
+                          m.readed = true;
+                          vm.borrarMsg(m,()=>{
+                              vm.contador--;
+                          })
+                          //vm.setLeido(m);
+                       }
+                 
+      
+      
+              }
+    
         
     }
 
@@ -114,12 +136,73 @@ export class MsgClass{
     }
 }
 
+export class Log{
+
+
+  static on : boolean =true;
+ modulo :string; 
+ user :string;
+ constructor(modulo : string, user:string, on ?: boolean)
+ {
+    this.modulo = modulo || "?";
+    this.user = user || "?";
+    Log.on = on || true;
+ }
+ 
+  
+  
+  log( msg:string, error ?:boolean)
+    {
+        if(Log.on)
+        {
+            
+            let date = new Date();
+            let res : string = `${this.user }-${date.toJSON()}-${this.modulo}-${msg}`;
+
+            if(error)
+            {
+                console.error(res)
+            }
+            else{
+                console.log(res)
+            }
+        }
+        //TODO loguear en aplicaicon
+    }
+
+    static logStatic(modulo:string, msg:string, error ?:boolean)
+    {
+        if(this.on)
+        {
+            
+            let date = new Date();
+            let res = `${Meteor.userId() || "?" }-${date.toJSON()}-${modulo}-${msg}`;
+
+            if(error)
+            {
+                console.error(res)
+            }
+            else{
+                console.log(res)
+
+            }
+        }
+
+    }
+}
+
+
+
 export class FactoryCommon
 {
+
+
     constructor()
     {
 
     }
+
+
 
     static promesa(fn : (valor : any)=>any) {
         return new Promise(fn);

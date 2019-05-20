@@ -5,6 +5,7 @@ import * as $ from "jquery/dist/jquery.min.js"//'jquery';
 import { v } from '@angular/core/src/render3';
 import { isUndefined } from 'util';
 import { forEach } from '@angular/router/src/utils/collection';
+import { Log } from 'imports/functions/commonFunctions';
 //import { Message } from '@angular/compiler/src/i18n/i18n_ast';
 /*interface Map<T> {
     [key: string]: T;
@@ -48,6 +49,15 @@ export class RtcService {
     offerToReceiveAudio : true,
     offerToReceiveVideo : true
     }
+
+    
+    private audioConfig = {   
+      echoCancellation: true,
+      autoGainControl: true,
+      latency : { min:  0.100 , ideal: 0.200  , max: 0.250   },
+      noiseSuppression: true
+      
+      };
     private videoConfig =     {
       width: { min: 640, ideal: 1920, max: 1920 },
       height: { min: 400, ideal: 1080 },
@@ -55,7 +65,7 @@ export class RtcService {
       frameRate: { max: 30 },
       //facingMode: { exact: "user" }
     };
-    private configuration :object = {
+    private static configuration  = {
         iceServers: [{
           urls: 'stun:stun.l.google.com:19302'
           //TODO AÑADIR SERVIDOR TURN.
@@ -73,9 +83,11 @@ export class RtcService {
     caller : boolean;
     videoSender : RTCRtpSender;
     remoteVideoTrack : MediaStreamTrack;
+    l: Log = new Log(RtcService.module, Meteor.userId());
+    static module :string = "RtcService";
     contructor()
-    {
-        
+    { 
+ 
         
         this.rct = {
           localVideoId : "",
@@ -85,15 +97,27 @@ export class RtcService {
         
     }
 
+
+    static pushServers(servers)
+    {
+
+      Log.logStatic(this.module, "pushServers: " + JSON.stringify(servers))
+      this.configuration.iceServers.push(...servers)
+    }
     isConnected() :boolean
     {
+     // this.l.log("isConnected Ini");
       let vm= this;
       if(!vm.rct || !vm.rct.pc)
       {
+
+       // this.l.log("isConnected False");
         return false;
       }
       else
       {
+
+        //this.l.log("isConnected True");
         return vm.rct.pc.connectionState === "connected";
 
       }
@@ -102,21 +126,27 @@ export class RtcService {
     static async getPermisos(fn : (boolean)=>void)
     {
         try{
-           await navigator.mediaDevices.getUserMedia({
+          Log.logStatic(this.module, "getPermisos: getUserMedia INI");
+           let stream =await navigator.mediaDevices.getUserMedia({
             audio: true,
             video: true,
           });
+        Log.logStatic(this.module, "getPermisos: getUserMedia OK");
+        stream.getTracks().forEach(function (track) { track.stop(); });
           fn(true);
         }
         catch(e)
         {
-          console.log(e);
+
+          Log.logStatic(this.module, "getPermisos: getUserMedia ERROR " + e, true);
           fn(false);
         }
     }
     
     static newRtc(localVideoId : string, remoteVideoId : string, singalSender : (Message) =>void, caller:boolean, handlerConnected : ()=>void)
     {
+
+      Log.logStatic(this.module, "newRtc: definiendo");
         let rtc : RtcService = new RtcService();
         rtc.rct = {
           localVideoId : localVideoId,
@@ -127,19 +157,27 @@ export class RtcService {
         rtc.caller = caller;
         
         rtc.switchVideo = new Map();;
+        Log.logStatic(this.module, "newRtc: OK");
        return rtc;
     }
     newMsg( tipo:MsgTipo, sdp ?: object, candidate ?: object) : MessageRtc
     {
-        return   {
+        let json =  {
             msgTipo : tipo,
             sdp : sdp as sdpMsg,
             candidate : candidate as candidateMsg
+
+            
         }
+
+        this.l.log("newMsg "+ JSON.stringify(json));
+
+        return json;
     }
 
     sendMessage(msg : MessageRtc)
     {
+        this.l.log("sendMessage "+ JSON.stringify(msg));
         this.rct.singalSender(msg)
     }
     async localDescCreated(desc : RTCSessionDescriptionInit) {
@@ -150,11 +188,10 @@ export class RtcService {
           onError
         );*/
         let vm =this;
-        console.log("setLocalDescription - type: " + desc.type);
+        this.l.log("localDescCreated setLocalDescription - type: " + desc.type);
+        
         await vm.rct.pc.setLocalDescription(desc);
-        //await  this.rct.pc.setLocalDescription(desc)
-        console.log("send MSG local Description");
-       // vm.rct.localDes = vm.rct.pc.localDescription.sdp;
+ 
         vm.sendMessage(vm.newMsg(MsgTipo.SDP, vm.rct.pc.localDescription.toJSON()));
           
       }
@@ -163,11 +200,12 @@ export class RtcService {
       startWebRTC() {
 
         let vm =this;
-        console.log("Inicia RTCPeerConection");
+
+        this.l.log("startWebRTC  INI");
         //this.setVideoTypeScreen();
-        this.rct.pc = new RTCPeerConnection(this.configuration);
+        this.rct.pc = new RTCPeerConnection(RtcService.configuration);
         let pc = this.rct.pc;
-        
+        this.l.log("startWebRTC  RTCPeerConnection conf: "+ JSON.stringify(RtcService.configuration));
         
         //document.getElementById("demo")
         /*
@@ -176,57 +214,94 @@ export class RtcService {
         let remoteVideo =  $("#remoteId")[0],  localVideo = $("#localId")[0]
         vm.remoteVideo = remoteVideo ;
         vm.localVideo =  localVideo;
-       
-        // 'onicecandidate' notifies us whenever an ICE agent needs to deliver a
-        // message to the other peer through the signaling server
+        vm.localVideo.muted = true;
+        this.l.log("startWebRTC  RTCPeerConnection  conf HTML video: ");
         
-        pc.onconnectionstatechange  = function(event) {
-          if (vm.isConnected() && vm.rct.handlerConnected) {
-            // Handle the failure
-            vm.rct.handlerConnected();
-          }
-        };
-        pc.onicecandidate = event => {
-          if (event.candidate) {
-            console.log("Send Candidate");
-            vm.sendMessage(vm.newMsg( MsgTipo.CANDIDATE, null,event.candidate.toJSON()));
-          }
-        };
-      
-        // If user is offerer let the 'negotiationneeded' event create the offer
-        vm.negotiating = this.caller ?  false : true;
-          pc.onnegotiationneeded = async () => {
+        let iniRtc = ()=>{
 
-            console.log(`signalingState : ${vm.rct.pc.signalingState}, conectionState: ${vm.rct.pc.connectionState}, iceConnectionState: ${vm.rct.pc.iceConnectionState},`);
-            if (vm.negotiating) return;
-            if (pc.signalingState != "stable") return;
-            vm.negotiating = true;
-            console.log("stable-TRUE");
+          // 'onicecandidate' notifies us whenever an ICE agent needs to deliver a
+          // message to the other peer through the signaling server
+          this.l.log("startWebRTC  iniRtc().");
 
-            //pc.createOffer().then((desc  :RTCSessionDescriptionInit) => vm.localDescCreated(desc)).catch(onError);
-            try {
-              
-              //EL CALLER GENERA OFERTA => have-local-offer espera un respuesta.
-              vm.localDescCreated(await vm.rct.pc.createOffer(vm.offerOptions))
-            } catch (err) {
-              console.error(err);
-            } finally {
-              vm.negotiating = false;
+          pc.onconnectionstatechange  = function(event) {
+
+            vm.l.log("rtc  onconnectionstatechange(). " + JSON.stringify(event));
+            if (vm.isConnected() && vm.rct.handlerConnected) {
+              // Handle the failure
+              vm.l.log("rtc  onconnectionstatechange(). isConnected ");
+              vm.rct.handlerConnected();
             }
-          }
+          };
+          pc.onicecandidate = event => {
+
+            vm.l.log("rtc  onicecandidate() ini");
+            if (event.candidate) {
+              vm.l.log("rtc  onicecandidate() event.candidate ");
+              vm.l.log("rtc  onicecandidate() Send Candidate");
+             
+              vm.sendMessage(vm.newMsg( MsgTipo.CANDIDATE, null,event.candidate.toJSON()));
+            }
+          };
         
-      
-        // When a remote stream arrives display it in the #remoteVideo element
-        pc.ontrack = event => {
-          if (remoteVideo.srcObject) return;
+          // If user is offerer let the 'negotiationneeded' event create the offer
+          vm.negotiating = this.caller ?  false : true;
+            pc.onnegotiationneeded = async () => {
+              vm.l.log(`rtc onnegotiationneeded() signalingState : ${vm.rct.pc.signalingState}, conectionState: ${vm.rct.pc.connectionState}, iceConnectionState: ${vm.rct.pc.iceConnectionState},`);
+              
+              if (vm.negotiating) return;
+
+              vm.l.log("rtc onnegotiationneeded() negotiating" );
+              vm.l.log("rtc onnegotiationneeded() pc.signalingState=" +pc.signalingState );
+              if (pc.signalingState != "stable") return;
+
+              vm.negotiating = true;
+              
+              vm.l.log("rtc onnegotiationneeded() stable-TRUE" );
+              //pc.createOffer().then((desc  :RTCSessionDescriptionInit) => vm.localDescCreated(desc)).catch(onError);
+              try {
+                vm.l.log("rtc onnegotiationneeded() createOffer..." );
+                //EL CALLER GENERA OFERTA => have-local-offer espera un respuesta.
+                vm.localDescCreated(await vm.rct.pc.createOffer(vm.offerOptions))
+                vm.l.log("rtc onnegotiationneeded() createOffer...OK" );
+              } catch (err) {
+
+                vm.l.log("rtc onnegotiationneeded() ERROR: " +err, true );
+                throw err;
+              } finally {
+                vm.negotiating = false;
+              }
+            }
           
-          console.log("Remote Stream");
-          remoteVideo.srcObject = event.streams[0];
-          vm.remoteVideoTrack = event.streams[0].getVideoTracks()[0]
-        };
+        
+          // When a remote stream arrives display it in the #remoteVideo element
+          pc.ontrack = event => {
+
+           // if (remoteVideo.srcObject) return;
+           vm.l.log("rtc ontrack() Remote Stream");
+           
+            remoteVideo.srcObject = event.streams[0];
+            vm.remoteVideoTrack = event.streams[0].getVideoTracks()[0]
+            vm.l.log("rtc ontrack() OK");
+          };
+        }
+        try {
+          
+          
+
+          
+          this.l.log("startWebRTC  mediaUser.");
+          this.mediaUser(iniRtc);
+
+        } catch (error) {
+          
+            //TODO CONTROLAR
+            this.l.log("startWebRTC  ERROR " + error, true);
+            throw error;
+    
+        }
       
        
-        this.mediaUser();
+        
         //vm.rct.singalGetter = (msg : MessageRtc) => vm.getMsg(msg);
       
        
@@ -239,20 +314,29 @@ export class RtcService {
 
         let vm=this;
         let pc = vm.rct.pc;
-        console.log(`signalingState : ${vm.rct.pc.signalingState}, conectionState: ${vm.rct.pc.connectionState}, iceConnectionState: ${vm.rct.pc.iceConnectionState},`);
+
+        this.l.log("getMsg  INI.");
+
+        this.l.log(`signalingState : ${vm.rct.pc.signalingState}, conectionState: ${vm.rct.pc.connectionState}, iceConnectionState: ${vm.rct.pc.iceConnectionState},`);
+       
           try {
+
+            this.l.log("getMsg  INI.");
+            this.l.log("getMsg  msgTipo." + msg.msgTipo);
             if (msg.msgTipo === MsgTipo.SDP) {
               
-              console.log(`SDP ${msg.sdp.type}`);
               // if we get an offer, we need to reply with an answer
               if (msg.sdp.type === 'offer') {
-
+                
+                this.l.log(`getMsg SDP offer` + JSON.stringify(msg.sdp));
        
+                this.l.log(`getMsg setRemoteDescription...`);
                 //EL CALLEr Obtiene una oferta set remote with offer => genera una respuesta y se pone el local have-remote-offer =>> estable
                   await pc.setRemoteDescription(msg.sdp as RTCSessionDescriptionInit);
+                  this.l.log(`getMsg setRemoteDescription ok...`);
+                  this.l.log(`getMsg createAnswer - localDescCreated...`);
                   vm.localDescCreated(await pc.createAnswer())
-                
-
+                  this.l.log(`getMsg createAnswer - localDescCreated...OK`);
                //this.mediaUser(vm.localVideo, pc);
                // 
                /* pc.createAnswer()
@@ -263,20 +347,27 @@ export class RtcService {
                 //console.log(pc.localDescription);
                
               } else if (msg.sdp.type === 'answer') {
-                
-                  //CALLER esta en have-local-offer = obtiene anserr para set remote => estable
-                  await pc.setRemoteDescription(msg.sdp as RTCSessionDescriptionInit).catch(err => console.log(err));
 
+                this.l.log(`getMsg  SDP answer`+ JSON.stringify(msg.sdp));
+                this.l.log(`getMsg  SDP setRemoteDescription...`);
+                  //CALLER esta en have-local-offer = obtiene anserr para set remote => estable
+                  await pc.setRemoteDescription(msg.sdp as RTCSessionDescriptionInit)
+                  this.l.log(`getMsg  SDP setRemoteDescription...ok`);
                 
               } else {
-                console.log('Unsupported SDP type.');
+                this.l.log(`getMsg Unsupported SDP type.`);
+                
               }
             } else if (msg.msgTipo === MsgTipo.CANDIDATE) {
-              console.log(`CANDIDATE `);
-              await pc.addIceCandidate(new RTCIceCandidate(msg.candidate )).catch(err => console.log(err));
+              this.l.log(`getMsg CANDIDATE `+ JSON.stringify(msg.candidate));
+
+              this.l.log(`getMsg addIceCandidate... `);
+              await pc.addIceCandidate(new RTCIceCandidate(msg.candidate ))
+              this.l.log(`getMsg addIceCandidate... ok`);
             }
           } catch (err) {
-            console.error(err);
+            this.l.log("getMsg " + err, true);
+            throw err;
           }
     }
     getVideoType()
@@ -286,24 +377,29 @@ export class RtcService {
 
     setVideoTypeTo(type : VideoType)
     {
+      this.l.log(`setVideoTypeTo type.` + JSON.stringify(type));
       this.videoType = type;
     }
     setVideoTypeScreen()
     {
+
+      this.l.log("setVideoTypeScreen SCREEN");
         this.videoType = VideoType.SCREEN
     }
     setVideoTypeCam()
     {
+
+      this.l.log("setVideoTypeCam CAM");
       this.videoType =VideoType.CAM;
     }
 
   
   
     
-   async  mediaUser() {
+   async  mediaUser(fn ?: ()=>void) {
      
     let vm=this;
-    console.log("User Media Stream");
+    this.l.log("mediaUser INi");
  
     // TODO   meterle compartir pantalla : https://webrtc.github.io/samples/src/content/getusermedia/getdisplaymedia/
     // https://webrtc.github.io/samples/src/content/devices/multi/
@@ -317,11 +413,14 @@ export class RtcService {
     //guardar trak.
     let fnGuardarTrack = ()=>
     {
+      this.l.log("mediaUser  fnGuardarTrack");
         videoTrackAux = stream.getVideoTracks()[0];
         videoTrackAux.onended = ()=>
         {
+
           videoTrackAux.stop();
           videoTrackAux = null;
+          this.l.log("mediaUser  fnGuardarTrack onended stop");
         }
 
         //se rellena el switch de videos.
@@ -332,24 +431,31 @@ export class RtcService {
     if(!vm.stream || 
       this.videoType === VideoType.CAM && (!videoTrackAux || videoTrackAux.readyState === "ended"))
     {
+
+      this.l.log("mediaUser getUserMedia CAM...");
       //se genera el stream user media.
       stream  = await navigator.mediaDevices.getUserMedia({
         audio: true,
         video: true,
       });
-
+      this.l.log("mediaUser getUserMedia CAM...OK");
       //si es la primera vez se inserta el stream base.
       if(!vm.stream)
       {
           vm.stream = stream;
           vm.stream.getTracks().forEach((track) => {
-          console.log(`adding ${track.kind} track`);
+            this.l.log(`mediaUser adding ${track.kind} track`);
           let sender =vm.rct.pc.addTrack(track, vm.stream)
           if(track.kind=="video")
           {
-           
+            this.l.log("mediaUser  track VIDEO");
             vm.changeTrackConfig(track, vm.videoConfig);
             vm.videoSender = sender;
+          }
+          else{
+            this.l.log("mediaUser  track SOUND");
+            vm.changeTrackConfig(track, vm.audioConfig);
+            
           }
           vm.localVideo.srcObject = vm.stream;
         });
@@ -357,6 +463,7 @@ export class RtcService {
 
       //guarda el trak.
       fnGuardarTrack();
+
       
     }
     
@@ -364,58 +471,71 @@ export class RtcService {
     {
       if(this.videoType === VideoType.SCREEN )
       {
-          
-            if (navigator.getDisplayMedia) {
-              stream = await navigator.getDisplayMedia({video: true});
-            } else if (navigator.mediaDevices.getDisplayMedia) {
-              stream = await navigator.mediaDevices.getDisplayMedia({video: true});
-            } else {
-              stream = await navigator.mediaDevices.getUserMedia({video: {mediaSource: 'screen'},});
-            }
-            
+        this.l.log("mediaUser  SCREEN...");
+        if (navigator.getDisplayMedia) {
+          stream = await navigator.getDisplayMedia({video: true});
+        } else if (navigator.mediaDevices.getDisplayMedia) {
+          stream = await navigator.mediaDevices.getDisplayMedia({video: true});
+        } else {
+          stream = await navigator.mediaDevices.getUserMedia({video: {mediaSource: 'screen'},});
+        }
+        this.l.log("mediaUser  SCREEN...OK");
       }
       fnGuardarTrack();
-          
+      
     }
-      //GENERAR EL MUTE.
-      
-      //NO PERDER EL STREAM y CERRARLO.
-      if(vm.videoSender.track.id !== videoTrackAux.id)
-      {
-        vm.setActiveTracks(false);
-        await vm.videoSender.replaceTrack(videoTrackAux);
-        vm.stream.removeTrack(vm.stream.getVideoTracks()[0])
-        vm.stream.addTrack(videoTrackAux);
-        vm.setActiveTracks(true);
-        vm.localVideo.srcObject = vm.stream;
-      }
-     
-      
+    //GENERAR EL MUTE.
+    
+    //NO PERDER EL STREAM y CERRARLO.
+    if(vm.videoSender.track.id !== videoTrackAux.id)
+    {
+
+      this.l.log("mediaUser  GUARDAR STREAM...");
+      vm.setActiveTracks(false);
+      await vm.videoSender.replaceTrack(videoTrackAux);
+      vm.stream.removeTrack(vm.stream.getVideoTracks()[0])
+      vm.stream.addTrack(videoTrackAux);
+      vm.setActiveTracks(true);
+      vm.localVideo.srcObject = vm.stream;
+      this.l.log("mediaUser  GUARDAR STREAM...OK");
+    }
+    
+    if(fn)
+    {
+      fn();
+    }
+    this.l.log("mediaUser  fin");
     }
 
 
     switchVideoMute(flag ?: boolean) :boolean
     {
+
+      this.l.log("switchVideoMute  ini");
       let  vm= this;
       let trackVideo = vm.stream.getVideoTracks()[0];
       if(isUndefined(flag))
       {
          flag  = !trackVideo.enabled;
       }
+      this.l.log("switchVideoMute flag" + flag);
       trackVideo.enabled =  flag; 
+      this.l.log("switchVideoMute FIN");
       return trackVideo.enabled;
     }
 
     switchAudioMute(flag ?: boolean) :boolean
     {
       let  vm= this;
+      this.l.log("switchAudioMute INI");
       let trackAudio = vm.stream.getAudioTracks()[0];
       if(isUndefined(flag))
       {
          flag  = !trackAudio.enabled;
       }
       trackAudio.enabled =  flag; 
-
+      this.l.log("switchAudioMute flag " + trackAudio.enabled);
+      this.l.log("switchAudioMute FIN");
       return trackAudio.enabled;
     }
 
@@ -423,19 +543,22 @@ export class RtcService {
     setActiveTracks(flag :boolean)
     {
       let vm=this;
+
+      this.l.log("setActiveTracks flag " +flag);
       vm.stream.getTracks().forEach(function (track) { track.enabled = flag; });
     }
      close()
     {
       let vm=this;
-      console.log("Close");
+      this.l.log("close Close");
       vm.negotiating = false;
       
      // await vm.rct.pc.setRemoteDescription(null);
     // await vm.rct.pc.setLocalDescription(null);
       this.closeTracks();
+
       vm.rct.pc.close();
-      
+      this.l.log("close FIN");
     }
 
 
@@ -452,36 +575,45 @@ export class RtcService {
       constraints = {width: {exact: e.target.value}};
     } */
    // clearErrorMessage();
-    console.log('applying ' + JSON.stringify(constraints));
+   this.l.log('changeTrackConfig applying ' + JSON.stringify(constraints));
     try{
       await track.applyConstraints(constraints)
-      console.log("applied Ttrack config")
+      this.l.log("changeTrackConfig applied Ttrack config")
     }
     catch(e)
     {
-      console.log("Error:" + e)    
-
+      this.l.log("changeTrackConfig Error:" + e, true)    
+      throw e;
     }
   }
 
 
   private closeTracks() {
     let vm=this;
-    vm.stream.getTracks().forEach(function (track) { track.stop(); });
 
-    Object.keys(VideoType).forEach((e :string) =>{
+    try {
 
-      let i = parseInt(e);
-      if(isUndefined(i) || !vm.switchVideo[i] )
-      {
-       return;
-      }
-        vm.switchVideo[i].stop();
-        vm.switchVideo[i] = null;
-
-    })
+      this.l.log("closeTracks stop");
+      vm.stream.getTracks().forEach(function (track) { track.stop(); });
   
-    vm.switchVideo = null;
+      Object.keys(VideoType).forEach((e :string) =>{
+  
+        let i = parseInt(e);
+        if(isUndefined(i) || !vm.switchVideo[i] )
+        {
+         return;
+        }
+          vm.switchVideo[i].stop();
+          vm.switchVideo[i] = null;
+  
+      })
+    
+      vm.switchVideo = null;
+      this.l.log("closeTracks OK");
+    } catch (error) {
+      this.l.log("closeTracks Error:" + error, true)    
+      throw error;
+   }
   }
 }
 

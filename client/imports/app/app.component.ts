@@ -9,6 +9,8 @@ import { MeteorObservable } from 'meteor-rxjs';
 
 import { Roles } from '../../../imports/collections/rol';
 import "material-design-icons";
+import { MethodsClass } from 'imports/functions/methodsClass';
+import { RtcService } from './services/rtc.service';
 
 
 
@@ -39,6 +41,15 @@ export class AppComponent implements OnInit, OnDestroy {
   })
   }
     ngOnInit() {
+
+
+      MethodsClass.call("getServers", (res) =>{
+
+        RtcService.pushServers(res.data.v.iceServers) ;
+       // console.log(JSON.stringify(res))
+      });
+
+      
       //cargar rol
       /*
       read : number,

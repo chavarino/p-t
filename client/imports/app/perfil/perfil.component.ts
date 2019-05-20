@@ -5,7 +5,7 @@ import {Generic} from "../services/generic.interface";
 import { Perfil } from '../../../../imports/models/perfil';
 import { Users } from '../../../../imports/collections/users';
 import { MeteorObservable } from 'meteor-rxjs';
-import { CanActivate } from '@angular/router';
+
 import { FormGroup, FormBuilder,Validators,FormControl } from '@angular/forms';
 import  {BanderasService} from "../services/flags.service";
 import {MethodsClass} from "../../../../imports/functions/methodsClass"
@@ -15,7 +15,7 @@ import {ConfigTags} from  "../categorias/categorias.component"
   templateUrl: 'perfil.html',
   styleUrls: ['perfil.scss']
 })
-export class PerfilComponent extends Generic implements OnInit, OnDestroy, CanActivate{
+export class PerfilComponent extends Generic implements OnInit, OnDestroy{
   
     perfil : Perfil
     userSuscripcion :Subscription;
@@ -43,10 +43,6 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy, CanAc
     }
     
 
-    canActivate() {
-        //const party = Parties.findOne(this.partyId);
-        return this.canRead() && this.loggedIn();
-      }
     save()
     {
         //this.addForm.

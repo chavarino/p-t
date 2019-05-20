@@ -18,7 +18,7 @@ Meteor.methods({
             MethodsClass.camposInsuficientes();
         }
 
-        
+        msg.fecha = new Date();
         Msg.insert(msg);
     },
     borrarMsg(id : string)
@@ -29,9 +29,9 @@ Meteor.methods({
         {  
             MethodsClass.noLogueado();
           }
-          
+          console.log("MENSAJE ID " +id );  
        let message :Message=  Msg.findOne({_id : id});
-
+       console.log("mensjae a borrar " +JSON.stringify(message))
        if(!message || message.to !== Meteor.userId())
        {
             MethodsClass.noPermisos();

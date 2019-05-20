@@ -6,7 +6,7 @@ import './imports/publications/user'
 import './imports/publications/room'
 import './imports/publications/msg'
 import './imports/methods/msg'
-
+import './imports/methods/general';
 import './imports/publications/kpm'
 /*ServiceConfiguration.configurations.remove({
   service: "facebook"
@@ -20,6 +20,46 @@ ServiceConfiguration.configurations.insert({
 import { Meteor } from 'meteor/meteor';
 import { ServiceConfiguration } from 'meteor/service-configuration';
 import { Accounts} from 'meteor/accounts-base';
+import { Mongo } from 'meteor/mongo';
+import { Kpms } from 'imports/collections/kpm';
+import { Kpm } from 'imports/models/kpm';
+import { Rol } from 'imports/models/rol';
+import { Roles, RolesObj } from 'imports/collections/rol';
+import { getServers } from './imports/methods/general';
+
+
+
+
+
+//mongo
+
+/*
+let SSL = function(key, cert, port){                                     // 1
+	var httpProxy = Npm.require('http-proxy');                          // 2
+	var fs = Npm.require('fs');                                         // 3
+	if(!port){                                                          // 4
+		port = 443;                                                        // 5
+	};                                                                  // 6
+	httpProxy.createServer({                                            // 7
+		target: {                                                          // 8
+    		host: 'localhost',                                             // 9
+    		port: process.env.PORT                                         // 10
+  		},                                                               // 11
+  		ssl: {                                                           // 12
+    		key: fs.readFileSync(key, 'utf8'),                             // 13
+    		cert: fs.readFileSync(cert, 'utf8')                            // 14
+ 		},                                                                // 15
+ 		ws: true,                                                         // 16
+ 		xfwd: true                                                        // 17
+ 	}).listen(port);                                                   // 18
+};                                                                   // 19
+          
+*/
+
+
+Meteor.users.deny ({
+  update () {return true; }
+});
 ServiceConfiguration.configurations.remove({
   service: "facebook"
 });
@@ -42,8 +82,23 @@ ServiceConfiguration.configurations.insert({
 
 if(Meteor.isServer)
 {
+  console.log("isServer");
   Meteor.startup(()=>{
-    //smtps , poner lista
+   /* console.log("inicio startup");
+    getServers();
+    console.log("inicio getServers");
+    setInterval(()=>{
+
+
+      getServers();
+    }, 1200000)
+    console.log("inicio setInterval");*/
+   // let key =Assets.getText("l.key");
+   // let cer = Assets.getText("l.cert");
+   /* SSL(
+      key,
+      cer,
+      443);*/
     process.env.MAIL_URL="smtp://javier.chavarino.martinez@gmail.com:Albaricoke91@smtp.gmail.com:587/";
   });
   
@@ -53,7 +108,7 @@ if(Meteor.isServer)
 
 Accounts.onCreateUser(function (options, user) {
 
-  console.log("inicio");
+  
   let profile = {
     foto : "https://lh3.googleusercontent.com/-OOti6sgi1g0/AAAAAAAAAAI/AAAAAAAAAAA/AGDgw-jC9_q1efO3BBff2F0OBFE4p0QxOA/s64-c-mo/photo.jpg",
     rol : 2,

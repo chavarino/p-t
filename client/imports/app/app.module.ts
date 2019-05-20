@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 
@@ -13,7 +13,7 @@ import { Categorias } from './categorias/categorias.component';
 import { TimeCounter } from './timeCounter/timeCounter.component';
 import { InicioComponent } from './inicio/inicio.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
-import { AccountsModule } from 'angular2-meteor-accounts-ui';
+import { AccountsModule, LoginButtons } from 'angular2-meteor-accounts-ui';
 
 import { RolesService } from './services/roles.service';
 import { BanderasService } from './services/flags.service';
@@ -33,10 +33,7 @@ import { TagInputModule } from 'ngx-chips';
 
 import { ModalKpm} from './modalKpm/modaKpm.component';
 
-export const ROUTES_PROVIDERS = [{
-  provide: 'canActivateForLoggedIn',
-  useValue: () => !! Meteor.userId()
-}];
+export const ROUTES_PROVIDERS = [];
 @NgModule({
   imports: [
     BrowserModule,
@@ -54,15 +51,15 @@ export const ROUTES_PROVIDERS = [{
       },
       {
           path: 'opciones/perfil',
-           component: PerfilComponent, canActivate: ['canActivateForLoggedIn']
+           component: PerfilComponent//, canActivate: ['canActivateForLoggedIn']
        },
        {
         path: 'room/alumno',
-         component: RoomAlumnoComponent, canActivate: ['canActivateForLoggedIn']
+         component: RoomAlumnoComponent//, canActivate: ['canActivateForLoggedIn']
         },
       {
         path: 'room/prof',
-         component: RoomProfComponent, canActivate: ['canActivateForLoggedIn']
+         component: RoomProfComponent//, canActivate: ['canActivateForLoggedIn']
         },
       // Home Page
       {
@@ -104,7 +101,10 @@ export const ROUTES_PROVIDERS = [{
   providers: [
     RolesService,
     BanderasService,
-    ROUTES_PROVIDERS
+    {
+      provide: 'canActivateForLoggedIn',
+      useValue: (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => { return !! Meteor.userId()}
+    }
   ],
   entryComponents: [ModalKpm]
 })

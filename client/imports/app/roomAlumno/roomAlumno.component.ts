@@ -8,7 +8,7 @@ import { Room } from '../../../../imports/models/room';
 import { Rooms } from '../../../../imports/collections/room';
 import { Observable } from 'rxjs/Observable';
 import { MeteorObservable } from 'meteor-rxjs';
-import { CanActivate } from '@angular/router';
+
 import { FormGroup, FormBuilder,Validators,FormControl } from '@angular/forms';
 import {DomSanitizer} from '@angular/platform-browser';
 import { User } from 'imports/models/User';
@@ -16,7 +16,7 @@ import { Users } from 'imports/collections/users';
 import {ReduxC, Estado, LogicEstado} from "../services/reduxC";
 import { Action } from 'redux';
 import { MsgTipo, Message, MessageRtc } from 'imports/models/message';
-import { MsgClass, FactoryCommon } from 'imports/functions/commonFunctions';
+import { MsgClass, FactoryCommon, Log } from 'imports/functions/commonFunctions';
 import { Msg } from 'imports/collections/msg';
 import {Perfil, AutoCompleteModel} from "../../../../imports/models/perfil"
 
@@ -27,7 +27,7 @@ import { ConfigTags } from '../categorias/categorias.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalKpm } from '../modalKpm/modaKpm.component';
 import { Score } from 'imports/models/kpm';
-
+import { Router } from '@angular/router';
 enum ETipo  {
     INIT = 1,
     CLASS = 2,
@@ -42,7 +42,7 @@ enum ETipo  {
   templateUrl: 'roomAlumno.html',
   styleUrls: ['roomAlumno.scss']
 })
-export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, CanActivate{
+export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy{
     selectedTag: string;
   
     clase : Room
@@ -66,7 +66,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
         listCat : [],
         listCatBusc : []
     }
-
+    
     getCategorias(categorias : Array<string>) : ConfigTags
     {
         return { 
@@ -74,10 +74,14 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
          listCatBusc : []
         }
     }
-    constructor( private modalService: NgbModal, rol : RolesService, private formBuilder: FormBuilder, sanitizer : DomSanitizer,flags : BanderasService)
+    constructor( private modalService: NgbModal, private rutas : Router , rol : RolesService, private formBuilder: FormBuilder, sanitizer : DomSanitizer,flags : BanderasService)
     {
 
-        super(1, 1, "comun", rol);
+        super(1, 1, "alumno", rol);
+
+        this.l = new Log(this.modulo, Meteor.userId());
+
+        
         this.temp = {
             tipo :Tipo.TEMP,
             secondsIni : 30,
@@ -88,11 +92,11 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
         this.flags = flags;
         let vm  = this;
         vm.maxPing = 3;
-
+        this.rutas = rutas;
         vm.localVideoId ="localVideo"
         vm.remoteVideoId ="remoteVideo";
 
-        
+        this.l.log("constructor  inicializacion")
         vm.estadoLogic =[
             
             // init : 
@@ -123,13 +127,34 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
         {
             return vm.reducer(state, action);
         });
-
+        this.l.log("constructor  reducer")
         setTimeout(()=>{
+            this.l.log("setTimeout  nextStatus INIT")
             vm.redux.nextStatus({ type: ETipo.INIT });
 
         }, 1000)
+        /*
+        RtcService.getPermisos((res)=>{
+
+            if(res)
+            {
+                //obtiene permisos => iniciamos
+
+                
+
+            }
+            else{
+                alert("La aplicación necesita permisos de video y audio para poder ser usada. Por favor acepte los permisos para usarla.")
+                this.rutas.navigate(["inicio"])
+            }
+        })
+
+        */
     }
     
+
+   
+
     isInClass()
     {
         return this.inClass;
@@ -146,12 +171,18 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
       async openModalPuntuacion(claseId : string, fn ?: () => void) {
 
         try {
+
+            this.l.log("openModalPuntuacion  modalService ModalKpm...")
             let result : Score = await this.modalService.open(ModalKpm, {size: 'lg',ariaLabelledBy: 'modal-basic-title'}).result;
             alert("¡¡Muchas gracias por colaborar a un servicio mejor!!");
+            this.l.log("openModalPuntuacion  modalService ModalKpm...OK")
+
+            this.l.log("openModalPuntuacion  call(saveScoreFromAlumno");
             MethodsClass.call("saveScoreFromAlumno", claseId, result);
             
         } catch (error) {
             alert("¡¡Muchas gracias, puede colaborar cuando quiera")
+            this.l.log("openModalPuntuacion  " +error);
         }
         if(fn)
             {
@@ -205,6 +236,8 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
 
             ]
         }
+
+        this.l.log("findProf input" + JSON.stringify(input));
         /*
  if(vm.configTags.listCatBusc 
             && vm.configTags.listCatBusc.length>0)
@@ -227,6 +260,8 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
           
      
         vm.profesores =  Users.find(input);
+
+        this.l.log("findProf find OOK");
     }
 
     onSelectTag(e :string)
@@ -236,35 +271,39 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
     ngOnInit()
     {
 
-       
+        this.l.log("ngOnInit INi");
 
         let vm =this;
         
         let fnFind = () => {
-          
+            this.l.log("ngOnInit  fnFind"); 
                 vm.findProf();
             //vm.findClass();
         };
         
-            
+        this.l.log("ngOnInit suscribe allAvalaibleTeacher"); 
         this.profesoresSuscription =  MeteorObservable.subscribe('allAvalaibleTeacher').subscribe(fnFind);
       
        
    
-        
+        this.l.log("ngOnInit suscribe getRoomForAlumno"); 
         this.roomAlumno =  MeteorObservable.subscribe('getRoomForAlumno').subscribe(() => {
             
+
+            this.l.log("ngOnInit suscribe  Rooms.find()"); 
                 Rooms.find({alumnoId : Meteor.userId(), activo : true}).subscribe((data) => { 
                     vm.clase = data[0];
+
+
                     if(vm.clase && vm.clase.comenzado)
                     {
                         
-
+                    this.l.log("ngOnInit subscribe clase " + JSON.stringify(vm.clase) );
                         
-
+                    this.l.log("ngOnInit getDiffTimeInSeconds...");
                         MethodsClass.call("getDiffTimeInSeconds", vm.clase.fechaCom,(result)=>{
                             vm.secondsIniClass = result;
-
+                            this.l.log("ngOnInit getDiffTimeInSeconds... ok sec:" +vm.secondsIniClass );
                         })
                     }
                     else{
@@ -330,24 +369,33 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
     cancelarCall()
     {
         let vm =this;
-
+        this.l.log("cancelarCall CALL_CANCEL" );
         vm.sendMsg(vm.getUserCall()._id, MsgTipo.CALL_CANCEL);
+
+        this.l.log("cancelarCall nextStatus INIT" );
         vm.redux.nextStatus({ type: ETipo.INIT });
     }
 
     colgarCall()
     {
         let vm =this;
+
         let claseId = Meteor.user().profile.claseId
+        this.l.log("colgarCall clase=" +claseId );
         let fnGoInit = ()=> {
+
+            this.l.log("colgarCall fnGoInit COLGAR");
             vm.redux.estado.userFrom = null;
             vm.sendMsg(vm.getUserCall()._id, MsgTipo.CALL_COLGAR);
 
 
             if(claseId)
             {
+
+                this.l.log("colgarCall fnGoInit openModalPuntuacion");
                     vm.openModalPuntuacion(claseId,()=>{
                         vm.redux.nextStatus({ type: ETipo.INIT });
+                        this.l.log("colgarCall openModalPuntuacion res next INIT");
                     })
 
                 }
@@ -357,6 +405,8 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
         
         if(vm.clase && vm.clase._id)
         {
+
+            this.l.log("colgarCall terminarClase");
                 this.terminarClase(false,()=>{
                     vm.clase = null;
                     fnGoInit();
@@ -371,8 +421,13 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
     tryCallProfesor(profesor  : User )
     {   
         let vm =this;
+        this.l.log("colgarCall tryCallProfesor profsor " + JSON.stringify(profesor));
         vm.setUserCall(profesor);
+
+        this.l.log("colgarCall tryCallProfesor");
         vm.sendMsg(vm.getUserCall()._id, MsgTipo.CALL_INI);
+
+        this.l.log("colgarCall next CALLING");
         vm.redux.nextStatus({ type: ETipo.CALLING });
     }
 
@@ -405,6 +460,8 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
     }
     private reducer (state : Estado = {}, action : Action<number>) : Estado
     {
+
+        this.l.log("reducer");
         let vm =this;
         let nextState :Estado = {
             id : action.type,
@@ -419,7 +476,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
         
         
         let  cancelarCall = ()  =>{
-
+            this.l.log("cancelarCall");
             let fnGoInit = ()=> {
                 vm.redux.estado.userFrom = null;
                 vm.redux.nextStatus({ type: ETipo.INIT });
@@ -428,6 +485,8 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
 
             if(vm.clase && vm.clase._id)
             {
+
+                this.l.log("cancelarCall terminarClase");
                 vm.terminarClase(false,()=>{
                     vm.clase = null;
                     
@@ -444,7 +503,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
         }
         let fnMsgCancelCall = function(m :Message)
         {
-            
+            this.l.log("cancelarCall fnMsgCancelCall");
             if(vm.getUserCall()._id === m.from)
             {
                 
@@ -462,6 +521,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
 
                 
                 //crear CLASE
+                
                 let fn1 = resolve =>{
                     MethodsClass.call("crearClase", vm.getUserCall()._id, ()=>{
 
@@ -756,8 +816,14 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, C
                 }  );
 
                 setTimeout(() => {
-                    
-                    vm.rtc.startWebRTC();
+                    try {
+                        vm.rtc.startWebRTC();
+                        
+                    } catch (error) {
+                        alert("La aplicación necesita permisos de video y audio para poder ser usada. Por favor acepte los permisos para usarla.")
+                        console.log("Error startWebRTC : " +error)
+                        cancelarCall();
+                    }
                    
                 }, 500);
 
