@@ -116,7 +116,14 @@ Accounts.onCreateUser(function (options, user) {
     nombre : "",
     apellidos : "",
     disponible : false,
-    categorias : [],
+    perfClase : {
+      categorias : [],
+      clases : [],
+      ultElo : 0,
+      nombre : "",
+      ultPrecio: 0,
+      updated : false
+  },
     descripcion : ""
   };
   
