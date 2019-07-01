@@ -37,6 +37,6 @@ Meteor.publish('allAvalaibleTeacher', function() {
     'profile.disponible' : 1,
     'profile.claseId' : 1,
     'profile.descripcion' : 1,
-    'profile.categorias' : 1,
+    'profile.perfClase.categorias' : 1,
   }});
 });

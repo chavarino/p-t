@@ -12,6 +12,52 @@
                         Iniciando.
                     </span>
             </div>
+            <div *ngIf="isEstadoPreClass()">
+                
+                    
+                <h4>
+                    Confirma el precio.
+                </h4>
+                <form #perfilForm="ngForm" [formGroup]="addForm" (ngSubmit)="save()">
+                    <div >
+                        
+                        <div class="row">
+                            <div class="col-6">
+    
+                                <categorias [readOnly] ="true" [array]="perfClase.categorias"></categorias>       
+                               
+                           
+                            </div>
+                            <div class="col-4">
+                                <h5>
+                                    
+                                    <strong>Elo</strong>
+                                </h5>
+                                <span>
+                                    {{perfClase.ultElo}}
+                                    
+                                </span>
+                                </div>
+                                
+                                <div class="col-2">
+                                    <input  formControlName="ultPrecio" type="number" class="form-control" id="ultPrecio" name="ultPrecio" required placeholder="Precio" [(ngModel)]="perfClase.perfClase">
+    
+                                </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-2">
+                                    <button [disabled]="!isValid()" type="submit" class="btn btn-primary">empezar!</button>
+                                </div>
+                            <div class="col-10">
+    
+                            </div>
+                            
+                        </div>
+
+                    </div>
+                
+                </form>
+            </div>
             <div *ngIf="isEstadoWaitCall()">
                     <span class="alert alert-info">No existe ninguna llamada para dar clase.</span>
                 </div>

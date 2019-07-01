@@ -33,7 +33,7 @@ Meteor.methods({
               'profile.disponible' : 1,
               'profile.claseId' : 1,
               'profile.descripcion' : 1,
-              'profile.categorias' : 1,
+              'profile.perfClase.categorias' : 1,
               
               
             }}).toArray();  
@@ -155,8 +155,8 @@ Meteor.methods({
       console.log("Entra en autocomplete")
       return Meteor.users.rawCollection().aggregate([
         
-            { $unwind : "$profile.categorias" },
-            { $group : { _id : "$profile.categorias" , number : { $sum : 1 } } },
+            { $unwind : "$profile.perfClase.categorias" },
+            { $group : { _id : "$profile.perfClase.categorias" , number : { $sum : 1 } } },
             {$match : { _id : {'$regex': str} }},
             { $sort : { number : -1 } },
             { $limit : 10},

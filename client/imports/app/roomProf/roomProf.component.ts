@@ -4,7 +4,7 @@ import  {RolesService} from "../services/roles.service";
 import {RtcService} from "../services/rtc.service"
 
 import {Room} from "../../../../imports/models/room"
-import {Perfil} from "../../../../imports/models/perfil"
+import {Perfil, PerfClase} from "../../../../imports/models/perfil"
 import { Rooms } from '../../../../imports/collections/room';
 import { FormGroup, FormBuilder,Validators,FormControl } from '@angular/forms';
 import {Generic} from "../services/generic.interface";
@@ -21,13 +21,14 @@ import {MethodsClass} from "../../../../imports/functions/methodsClass"
 import {Tipo} from "../timeCounter/timeCounter.component"
 import { User } from 'imports/models/User';
 import { Users } from 'imports/collections/users';
+import { ConfigTags } from '../categorias/categorias.component';
 enum ETipo  {
     INIT = 1,
     CLASS = 2,
     WAIT_CALL = 3,
     WAIT_CALL_ACCEPT =4,
     WAIT_CLASS=5,
-    
+    PRE_CLASS = 6
 }
 
 
@@ -52,8 +53,11 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
     maxPing : number;
     temp: object;
     audios : Map<string, AudioC>;
-    
-
+    perfClase : PerfClase
+    configTags : ConfigTags = {
+        listCat : [],
+        listCatBusc : []
+    }
 
     constructor( rol : RolesService, private formBuilder: FormBuilder )
     {
@@ -80,10 +84,15 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
                 action : ETipo.INIT,
                 fromEstado : [null, undefined, ETipo.WAIT_CALL_ACCEPT,ETipo.WAIT_CLASS, ETipo.CLASS] 
             },
+            // pre class // config  : 
+            {
+                action : ETipo.PRE_CLASS,
+                fromEstado : [ETipo.INIT] 
+            },
             //            waitCall :
             {
                 action : ETipo.WAIT_CALL,
-                fromEstado : [ETipo.INIT]
+                fromEstado : [ETipo.PRE_CLASS]
             },
             //waitCallAccept :
             {
@@ -152,6 +161,12 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
         let vm = this;
 
         return vm.redux.estado.id === ETipo.INIT;
+    }
+    isEstadoPreClass() :boolean
+    {
+        let vm = this;
+
+        return vm.redux.estado.id === ETipo.PRE_CLASS;
     }
     isEstadoWaitCall() :boolean
     {
@@ -408,7 +423,8 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
                                 else{
                                     vm.terminarClase(true,()=>{
     
-                                        vm.redux.nextStatus({ type: ETipo.WAIT_CALL})
+                                        //vm.setDisponible(true, ()=>{})
+                                        vm.redux.nextStatus({ type: ETipo.PRE_CLASS})
                                         resolve(1);
                                     });
                                 }
@@ -419,11 +435,9 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
                                 //no está en clase
                                 //ponemos la disponibilidad a true;
                 
-                                vm.setDisponible(true, ()=>{
-    
-                                    vm.redux.nextStatus({ type: ETipo.WAIT_CALL})
-                                    resolve(1);
-                                })
+                                vm.redux.nextStatus({ type: ETipo.PRE_CLASS})
+                                resolve(1);
+                               // vm.setDisponible(true, ()=>{ })
                         }
 
                     }
@@ -440,6 +454,29 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
                         });
             
                     }
+            break;
+            case ETipo.PRE_CLASS:
+                
+                nextState.ini= function()
+                {
+                    //
+                    vm.perfClase = Meteor.user().profile.perfClase; 
+                    vm.addForm = new FormGroup({
+                        'ultPrecio': new FormControl(vm.perfClase.ultPrecio, [
+                        Validators.required,
+                        Validators.nullValidator
+                        
+                        ])
+                        
+                    });
+                }
+
+                nextState.destroy = ()=>{
+                  
+                    
+                }
+
+
             break;
             case ETipo.WAIT_CALL:
                 funciones = new Map();
@@ -725,6 +762,20 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
         return this.addForm.valid;
     }
 
+    save()
+    {
+        //this.addForm.
+       // this.perfil.perfClase.categorias = this.configTags.listCat;
+        if (this.addForm.valid) {
+            alert("Guardando nota")
+
+            //MethodsClass.call("savePerfil", this.perfil);
+            
+        }
+       else  {
+        alert("Invalido")
+        }
+    }
  
  
 /*    loggedIn() {

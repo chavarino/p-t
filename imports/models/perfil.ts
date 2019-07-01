@@ -1,3 +1,13 @@
+export interface PerfClase 
+{
+    nombre ?: string,
+    clases : Array<string>,
+    categorias : Array<string>,
+    ultElo : number,
+    ultPrecio : number
+    updated ?: boolean
+}
+
 export interface Perfil {
     foto : string,
     rol : number,
@@ -6,10 +16,12 @@ export interface Perfil {
     apellidos : string,
     disponible : Boolean,
     claseId ?: string,
-    categorias : Array<string>,
+    perfClase ?: PerfClase,
     descripcion : string
 
 }
+
+
 
 export enum RolesEnum {
 
@@ -24,25 +36,25 @@ export interface AutoCompleteModel {
 //{tags : {'$regex': "tag10"}}
 export interface CategoriasPatron {
 
-    "profile.categorias" : {
+    "profile.perfClase.categorias" : {
         $regex : string
     }
 }
 
 export class CategoriasPatronClass implements CategoriasPatron{
-    "profile.categorias": { 
+    "profile.perfClase.categorias": { 
         $regex: string; 
     };
     constructor( str : string)
     {
-        this["profile.categorias"] = {
+        this["profile.perfClase.categorias"] = {
             $regex :str
         }
     }
 
     equals(cat:string) :boolean
     {
-        return cat === this["profile.categorias"].$regex
+        return cat === this["profile.perfClase.categorias"].$regex
     }
 }
 

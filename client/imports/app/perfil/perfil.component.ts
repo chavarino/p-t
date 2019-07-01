@@ -36,7 +36,14 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy{
             nombre : "",
             apellidos : "",
             disponible: false,
-            categorias : [],
+            perfClase : {
+                categorias : [],
+                clases : [],
+                ultElo : 0,
+                nombre : "",
+                ultPrecio: 0,
+                updated : false
+            },
             descripcion : ""
         }
         this.flags = flags;
@@ -46,7 +53,7 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy{
     save()
     {
         //this.addForm.
-        this.perfil.categorias = this.configTags.listCat;
+        this.perfil.perfClase.categorias = this.configTags.listCat;
         if (this.addForm.valid) {
             alert("Guardado")
 
@@ -85,7 +92,7 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy{
                     
                 });
        
-
+              
 
         this.userSuscripcion =  MeteorObservable.subscribe('usersProfile').subscribe(() => {
 
@@ -96,7 +103,7 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy{
                     
                     this.perfil = data[0].profile;
                     
-                    this.configTags.listCat = this.perfil.categorias || [];
+                    this.configTags.listCat = this.perfil.perfClase.categorias || [];
                 }
                 else{
                   //this.rol.setRoles(data[0].rol);
