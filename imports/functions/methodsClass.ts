@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { isFunction, isUndefined } from 'util';
 import  { modalObj} from "../../client/imports/app/services/flags.service"
+import { Log } from './commonFunctions';
 export class MethodsClass {
 
     static msg = {
@@ -18,7 +19,7 @@ export class MethodsClass {
           }
         }
       }
-
+    
 
     static call(method : string , ...args: any[])
     {
@@ -136,6 +137,11 @@ export class MethodsClass {
     {
         
         throw new Meteor.Error('Error', 'No se pudo crear usuario, usuario/contraseña incorrectos.');
+    }
+    static except(modulo: string, src :string, user ?:string)
+    {
+        Log.logStatic(modulo, (user|| "") + " - " + src, true)
+        throw new Meteor.Error(src);
     }
     static errorSetDisponible() 
     {

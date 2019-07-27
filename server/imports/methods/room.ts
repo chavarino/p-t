@@ -28,10 +28,13 @@ function getTexto(room : Room)
   }
 }
 
+
+const modulo = "Methods-Room"
 Meteor.methods({
 
   saveScoreFromAlumno(idClase: string, score : Score)
   {
+    
     try {
       //TODO, METER validacion y tiempo para poder guardar
       console.log("clase :" + JSON.stringify(idClase))
@@ -39,11 +42,34 @@ Meteor.methods({
       //evitamos que cree mas de una
       if(!clase)
       {
-        console.log("clase nula")
+       
+        throw "clase nula";
                //Error.duplic();
-          return;
+          
       }
-      console.log("no nula")
+
+      if(clase.alumnoId !== Meteor.userId())
+      {
+        throw "no alumno de la clase."
+
+         
+      }
+
+      if(clase.scores && clase.scores.profesor && clase.scores.profesor.dateScore)
+      {
+        throw "clase ya valorada.";
+        
+      
+      }
+      
+     let flag : boolean = score.kpms.reduce((before: boolean, current :Kpm)=>{
+          return before && current.activo && current.type && current.answer >=0 && current.answer <=5;
+      }, true)
+      if(!flag)
+      {
+        throw "Algun score incorrecto.";
+        
+      }
       //puntuacion del alumno
       if(!clase.scores)
       {
@@ -59,15 +85,17 @@ Meteor.methods({
           }
         }
       }
-      clase.scores.alumno.dateScore = new Date();
-      clase.scores.alumno.comentario = score.comentario || "";
-      clase.scores.alumno.kpms = score.kpms || [];
+      clase.scores.profesor.dateScore = new Date();
+      clase.scores.profesor.comentario = score.comentario || "";
+      clase.scores.profesor.kpms = score.kpms || [];
 
       Rooms.update({_id: clase._id}, clase,{ upsert: false });
 
-
+      Meteor.call("calcularElo", clase.profId,clase.scores.profesor.kpms);
     } catch (error) {
-        console.log(error);
+      //  console.log(error);
+      MethodsClass.except(modulo, "saveScoreFromAlumno : " + error);
+       
     }
 
   },

@@ -9,7 +9,7 @@ export interface Kpm{
     type : tipoAnsw,
 
     question : string,
-
+    ponderacion ?: number,
     answer ?: number,
     activo ?: boolean
 }

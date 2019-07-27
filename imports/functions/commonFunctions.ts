@@ -8,6 +8,7 @@ import {  OnInit, OnDestroy } from '@angular/core';
 
 
 import {MethodsClass} from "./methodsClass"
+import { Perfil } from 'imports/models/perfil';
 export class MsgClass{
 
    
@@ -232,12 +233,12 @@ export class FactoryCommon
         return promesasAnidadas();
       }
 }
-
+/*
 export class AudioC extends Audio {
 
-    /*this.audio = new Audio();   
+    this.audio = new Audio();   
     this.audio.src = "./../../assets/ring.mp3";
-    this.audio.load();*/
+    this.audio.load();
     constructor(source : string)
     {
         super(source)
@@ -256,5 +257,241 @@ export class AudioC extends Audio {
 
 
 
+
+}
+*/
+export interface  EloIntefaceModel 
+{   
+    eloIni : number,
+    eloTotal :  number,
+    i : number,
+    notas : Array<number>,
+    dTipicaI :  number,
+    mediaI : number,
+    score : number,
+    factor : number,
+    
+    racha : {
+      maxScoreRacha : number,
+      score :number
+    },
+    factorInit :{
+        positivo : number,
+        mal : number,
+        muyMal :  number
+    },
+    maxScoreTotal : number,
+    maxElo : number,
+    minElo :number,
+    ref : number,
+    scoreRacha : number,
+
+    logueo  : string
+}
+
+export let  iniEloModel : EloIntefaceModel=  {
+    eloIni :1000,
+    eloTotal :  1000,
+    i : 0,
+    notas : [],
+    dTipicaI : 0,
+    mediaI : 0,
+    score : 0,
+    factor : 20,
+    
+    racha : {
+      maxScoreRacha : 200,
+      score :5
+    },
+    factorInit :{
+        positivo : 20,
+        mal : 100,
+        muyMal :  150
+    },
+    maxScoreTotal : 300,
+    maxElo : 7000,
+    minElo :0,
+    ref : 3,
+    scoreRacha : 0,
+
+    logueo    :""
+
+}
+
+export let  iniProfesorModel = (profile: Perfil) =>{
+    profile.perfClase = {
+      categorias: [],
+      clases: [],
+      ultElo: iniEloModel.eloIni,
+      nombre: "",
+      ultPrecio: 0,
+      updated: false,
+      eloModel: iniEloModel
+    };
+  }
+export class Elo {
+    modelo;
+
+constructor(modelo)
+{
+    this.modelo =  modelo ||iniEloModel
+}
+add(nota)
+{
+    this.modelo.i++;
+    this.modelo.notas.push(nota);
+}
+
+media()
+{
+    let res = this.modelo.notas.reduce((res, vActual)=>{
+        return res + vActual;
+    },0)
+
+    return res / this.modelo.i;
+}
+
+desTipica(media ?: number)
+{
+    if(!media && media!==0)
+    {
+        media = this.media();
+    }
+
+    let res = this.modelo.notas.reduce((res, vActual)=>{
+
+        return res + Math.pow(vActual-media, 2);
+    },0)
+    
+    return Math.sqrt(res/this.modelo.i); 
+}
+
+
+calcularRacha() :number
+{
+  let vm= this;
+ 
+  
+  let ultimaNota = this.modelo.notas[this.modelo.notas.length-1]-this.modelo.ref;
+  if(ultimaNota===0)
+  {
+    return 0;
+  }
+
+  let signo = 1;
+  if(ultimaNota <0 )
+  {
+    signo = -1;
+  }
+
+  
+  let numRacha = 1;
+  
+  for(let i = this.modelo.notas.length-2; i>=0; i--)
+  {
+    let n = this.modelo.notas[i]-vm.modelo.ref;
+
+    if(n>=0 && signo<0 || n<=0 && signo>0)
+    {
+      //pierde racha
+      break;
+
+    }
+
+    numRacha++;
+  }
+  this.logueoCol("numero de rachas: " + numRacha);
+ 
+  if(signo>0)
+  {
+    return Math.min(this.modelo.racha.score * numRacha , this.modelo.racha.maxScoreRacha) * signo ;
+  }
+  else{
+    return this.modelo.racha.score * numRacha *3  * signo ;
+  }
+  
+  
+}
+
+logueoCol(col)
+{
+    this.modelo.logueo = this.modelo.logueo + `${col}\n`;
+    console.log(col);
+}
+
+calcularElo()
+{
+
+    //si la ultima nota sacada es muy baja y tiene un factor mayor
+    let ultimaNota = this.modelo.notas[this.modelo.notas.length-1];
+    this.modelo.mediaI = this.media();
+    this.modelo.dTipicaI =  this.desTipica();
+    this.logueoCol("nota: " +ultimaNota);
+    this.logueoCol(`i = ${this.modelo.i} ----------------`);
+    this.logueoCol(`media = ${this.modelo.mediaI}`);
+    this.logueoCol(`Raiz(Varianza) = ${this.modelo.dTipicaI}`);
+    
+    switch(ultimaNota-3)
+    {
+      case -1 :
+      this.modelo.factor = this.modelo.factorInit.mal
+      this.logueoCol("MAL " + this.modelo.factor);
+      
+      break;
+      case -2 :
+      this.modelo.factor = this.modelo.factorInit.muyMal
+      this.logueoCol("Muy MAL " + this.modelo.factor);
+         break;
+         default:
+         this.modelo.factor = this.modelo.factorInit.positivo;
+            this.logueoCol("Positivo " + this.modelo.factor);
+            
+         break;
+        }
+        
+      
+
+
+      let scoreRacha = this.calcularRacha();
+      this.logueoCol("scoreRacha :" +scoreRacha);
+  
+      
+      this.modelo.score = this.modelo.factor *(this.modelo.mediaI * 0.2  + ultimaNota * 0.8  -this.modelo.ref) +  scoreRacha;
+      let dTipica = this.modelo.score <0 ? 0 :this.modelo.dTipicaI;
+      
+      this.modelo.eloTotal = this.modelo.eloTotal +  (ultimaNota === this.modelo.ref ? 0 : this.modelo.score)/ (1+dTipica) ;
+
+      this.logueoCol(`score = ${this.modelo.score}`);
+      this.logueoCol(`score/Varianza = ${(ultimaNota === this.modelo.ref ? 0 : this.modelo.score)/ (1+dTipica)}`);
+      
+      if(this.modelo.eloTotal>this.modelo.maxElo)
+      {
+        this.logueoCol(`Elo maximo  = ${this.modelo.maxElo}`);
+        this.modelo.eloTotal = this.modelo.maxElo;
+      }
+      else if(this.modelo.eloTotal<this.modelo.minElo)
+      {
+        this.logueoCol(`Elo minimo  = ${this.modelo.minElo}`);
+        this.modelo.eloTotal = this.modelo.minElo;
+      }
+      this.logueoCol(`Elo Total = ${this.modelo.eloTotal}`);
+      this.logueoCol("***********************")
+   
+    return  this.modelo.eloTotal;
+}
+
+toString()
+{
+  let ultimaNota = this.modelo.notas[this.modelo.notas.length-1];
+     let dTipica = this.modelo.score <0 ? 0 :this.modelo.dTipicaI;
+    console.log(`i = ${this.modelo.i} ----------------`);
+    console.log(`media = ${this.modelo.mediaI}`);
+    console.log(`Raiz(Varianza) = ${this.modelo.dTipicaI}`);
+    console.log(`Factor = ${this.modelo.factor}`)
+    console.log(`score = ${this.modelo.score}`);
+    console.log(`score/Varianza = ${(ultimaNota === this.modelo.ref ? 0 : this.modelo.score)/ (1+dTipica)}`)
+    console.log(`Elo Total = ${this.modelo.eloTotal}`);
+
+}
 
 }

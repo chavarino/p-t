@@ -10,6 +10,7 @@ import { FormGroup, FormBuilder,Validators,FormControl } from '@angular/forms';
 import  {BanderasService} from "../services/flags.service";
 import {MethodsClass} from "../../../../imports/functions/methodsClass"
 import {ConfigTags} from  "../categorias/categorias.component"
+import { FilesI } from '../file.component/file.component';
 @Component({
   selector: 'perfilC',
   templateUrl: 'perfil.html',
@@ -40,6 +41,7 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy{
                 categorias : [],
                 clases : [],
                 ultElo : 0,
+                eloModel : undefined,
                 nombre : "",
                 ultPrecio: 0,
                 updated : false
@@ -49,7 +51,13 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy{
         this.flags = flags;
     }
     
-
+    addFile(files : Array<FilesI>)
+    {
+        if(files && files.length>0)
+        {
+            this.perfil.foto = files[0].valueUrl;
+        }
+    }
     save()
     {
         //this.addForm.

@@ -1,9 +1,12 @@
+import { EloIntefaceModel } from 'imports/functions/commonFunctions';
+
 export interface PerfClase 
 {
     nombre ?: string,
     clases : Array<string>,
     categorias : Array<string>,
     ultElo : number,
+    eloModel :EloIntefaceModel,
     ultPrecio : number
     updated ?: boolean
 }
