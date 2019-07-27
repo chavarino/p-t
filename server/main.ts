@@ -26,6 +26,9 @@ import { Kpm } from 'imports/models/kpm';
 import { Rol } from 'imports/models/rol';
 import { Roles, RolesObj } from 'imports/collections/rol';
 import { getServers } from './imports/methods/general';
+import { Perfil } from 'imports/models/perfil';
+import { iniProfesorModel } from 'imports/functions/commonFunctions';
+
 
 
 
@@ -109,21 +112,13 @@ if(Meteor.isServer)
 Accounts.onCreateUser(function (options, user) {
 
   
-  let profile = {
+  let profile : Perfil= {
     foto : "https://lh3.googleusercontent.com/-OOti6sgi1g0/AAAAAAAAAAI/AAAAAAAAAAA/AGDgw-jC9_q1efO3BBff2F0OBFE4p0QxOA/s64-c-mo/photo.jpg",
     rol : 2,
     email : "",
     nombre : "",
     apellidos : "",
     disponible : false,
-    perfClase : {
-      categorias : [],
-      clases : [],
-      ultElo : 0,
-      nombre : "",
-      ultPrecio: 0,
-      updated : false
-  },
     descripcion : ""
   };
   
@@ -156,6 +151,7 @@ Accounts.onCreateUser(function (options, user) {
   if(profile.email =="javier.chavarino.1991@gmail.com")
   {
     profile.rol = 6;
+    iniProfesorModel(profile);
   }
   
   user.profile = profile;
@@ -189,6 +185,8 @@ Accounts.emailTemplates.verifyEmail = {
       return `¡Hola ${user.username}! Verifica tu cuenta de correo en el siguiente link: ${url}`;
    }
 };
+
+
 
 //
 //https://docs.meteor.com/api/email.html

@@ -15,7 +15,7 @@ import { Subscription } from 'rxjs/Subscription';
 import {ReduxC, Estado, LogicEstado} from "../services/reduxC";
 import { Action } from 'redux';
 import { MsgTipo, Message, MessageRtc } from 'imports/models/message';
-import { MsgClass,FactoryCommon,AudioC } from 'imports/functions/commonFunctions';
+import { MsgClass,FactoryCommon, Log } from 'imports/functions/commonFunctions';
 import { Msg } from 'imports/collections/msg';
 import {MethodsClass} from "../../../../imports/functions/methodsClass"
 import {Tipo} from "../timeCounter/timeCounter.component"
@@ -52,12 +52,13 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
     remoteVideoId : string;
     maxPing : number;
     temp: object;
-    audios : Map<string, AudioC>;
+    //audios : Map<string, AudioC>;
     perfClase : PerfClase
     configTags : ConfigTags = {
         listCat : [],
         listCatBusc : []
     }
+    userSuscripcion: Subscription;
 
     constructor( rol : RolesService, private formBuilder: FormBuilder )
     {
@@ -66,7 +67,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
         let vm =this;
        vm.maxPing = 3;
        //this.defineAudio();
-
+       this.l = new Log(this.modulo, Meteor.userId());
 
         vm.localVideoId ="localVideo"
         vm.remoteVideoId ="remoteVideo";
@@ -87,7 +88,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
             // pre class // config  : 
             {
                 action : ETipo.PRE_CLASS,
-                fromEstado : [ETipo.INIT] 
+                fromEstado : [ETipo.INIT, ETipo.WAIT_CALL] 
             },
             //            waitCall :
             {
@@ -153,7 +154,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
     
     defineAudio() 
     {
-        this.audios["call"] = new AudioC("ring.mp3");
+       // this.audios["call"] = new AudioC("ring.mp3");
     }
     
     isEstadoIni() :boolean
@@ -195,6 +196,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
     }
 
     
+
     
     private reducer (state : Estado = {}, action : Action<number>) : Estado
     {
@@ -220,13 +222,36 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
                     
                     vm.setDisponible(false, ()=>{
     
-                        vm.redux.estado.userFrom = m.from;
-                        vm.setUserCall(Users.findOne({_id : vm.redux.estado.userFrom}));
-                        vm.redux.nextStatus({ type: ETipo.WAIT_CALL_ACCEPT});
-                        resolve(1)
+                        
+                            resolve(1)
+                        
                     });
                 }
-                FactoryCommon.promisesAnid(fn1)
+
+                let fn2 = resolve =>{
+                    
+                    vm.redux.estado.userFrom = m.from;
+                    
+
+                    MethodsClass.call("findUser", vm.redux.estado.userFrom, (user)=>{
+
+                        if(user)
+                        {
+                            vm.setUserCall(user);
+                            vm.redux.nextStatus({ type: ETipo.WAIT_CALL_ACCEPT});
+                            resolve(1)
+                        }
+                        else {
+                            vm.setDisponible(true);
+                            resolve(1)
+                        }
+
+
+                    });
+                   
+                    
+                }
+                FactoryCommon.promisesAnid(fn1, fn2)
                         .then(function(res)
                         {
 
@@ -461,6 +486,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
                 {
                     //
                     vm.perfClase = Meteor.user().profile.perfClase; 
+                   
                     vm.addForm = new FormGroup({
                         'ultPrecio': new FormControl(vm.perfClase.ultPrecio, [
                         Validators.required,
@@ -652,7 +678,15 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
             return nextState;
     }
 
+    cancelarEspera()
+    {
+        let vm =this;
+        vm.setDisponible(false, ()=>{
+            vm.redux.nextStatus({ type: ETipo.PRE_CLASS });
+            
+        })
 
+    }
     botonAceptarCall()
     {
         let vm= this;
@@ -691,14 +725,27 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
 
         let vm =this;
 
-        this.alumnoSus =  MeteorObservable.subscribe('alumnoCall').subscribe(() => {
-            
-           // this.rol.setRoles(Roles.findOne().rol);
-          // this.clase = Rooms.findOne({profId : Meteor.userId()});
-          
 
-           
+        this.userSuscripcion =  MeteorObservable.subscribe('usersProfile').subscribe(() => {
+
+            Users.find({_id:Meteor.userId()}).subscribe((data)=>{
+
+                if(data[0])
+                {
+                    let p : Perfil = data[0].profile;
+                    let precio = this.perfClase ? this.perfClase.ultPrecio : p.perfClase.ultPrecio;
+                    this.perfClase = p.perfClase;
+                    this.perfClase.ultPrecio =precio;
+                }
+                else{
+                  //this.rol.setRoles(data[0].rol);
+        
+                }
+              })
+           // this.rol.setRoles(Roles.findOne().rol);
+
           });
+    
         this.roomProf =  MeteorObservable.subscribe('getRoomForProf').subscribe(() => {
             
            // this.rol.setRoles(Roles.findOne().rol);
@@ -755,6 +802,10 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
           } 
           vm.redux.cerrar();
           this.msgServ.cerrar();
+
+          if (this.userSuscripcion) {
+            this.userSuscripcion.unsubscribe();
+          }
     }
 
     isValid()
@@ -762,14 +813,40 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy{
         return this.addForm.valid;
     }
 
-    save()
+    
+    async save()
     {
+        let vm=this;
         //this.addForm.
        // this.perfil.perfClase.categorias = this.configTags.listCat;
         if (this.addForm.valid) {
-            alert("Guardando nota")
+            this.l.log("save() ini")
+           
+            let perfil : Perfil = Meteor.user().profile;
 
-            //MethodsClass.call("savePerfil", this.perfil);
+            perfil.perfClase = vm.perfClase;
+            perfil.disponible = true;//nos ponemos disponibles.
+            try{
+               
+                
+                MethodsClass.call("savePerfil", perfil, ()=>
+                {
+                    this.l.log("save() savePrecio OK")
+                    this.l.log("save() setDisponible OK")
+                    vm.redux.nextStatus({ type: ETipo.WAIT_CALL });
+                    
+                });
+
+               
+                //await p2;
+
+            }
+            catch(e)
+            {
+                alert("ERROR al guardar")
+                this.l.log("save() error")
+            }
+
             
         }
        else  {

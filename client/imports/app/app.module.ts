@@ -32,6 +32,7 @@ import { AppComponent } from './app.component';
 import { TagInputModule } from 'ngx-chips';
 
 import { ModalKpm} from './modalKpm/modaKpm.component';
+import { FileInput } from './file.component/file.component';
 
 export const ROUTES_PROVIDERS = [];
 @NgModule({
@@ -93,7 +94,8 @@ export const ROUTES_PROVIDERS = [];
     PerfilComponent,
     RoomAlumnoComponent,
     RoomProfComponent,
-    ModalKpm
+    ModalKpm,
+    FileInput
   ],
   bootstrap: [
     AppComponent

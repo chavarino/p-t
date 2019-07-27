@@ -1,0 +1,14 @@
+<div class="file-input row">
+        
+        <div class="col">
+            <div *ngIf="loading" class="spinner-grow text-light" role="status"><span class="sr-only">Loading...</span></div>
+            <span  (click)="openFileSelector()"><i class="material-icons">
+                    add
+                    </i> Fichero</span>
+           <!--
+               <input *ngIf="!multiple" style="display: none"  [disabled]="loading" type="file"  (change)="onFileChange($event)" #fileInput>
+
+           --> 
+            <input style="display: none" [multiple]="multiple" [disabled]="loading" type="file"  (change)="onFileChange($event)" #fileInput>
+        </div>
+   </div> 

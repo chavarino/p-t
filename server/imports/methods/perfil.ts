@@ -4,11 +4,84 @@ import { Users } from '../../../imports/collections/users';
 import { Perfil,RolesEnum, AutoCompleteModel } from '../../../imports/models/perfil';
 import { User } from 'imports/models/User';
 import {Accounts} from 'meteor/accounts-base';
+import { iniProfesorModel, Elo } from 'imports/functions/commonFunctions';
+import { Kpm } from 'imports/models/kpm';
 
 
+const modulo = "Methods-Perfil";
+let savePerfil = (id :string, profile: Perfil, all ?: boolean) =>
+{
+ 
+  if(!id)
+  {
+      MethodsClass.noLogueado();
+  }
+  let filter = {
+    "_id": id
+  };
+  
+  if(!id)
+  {
+    id = Meteor.userId();
+      return;
+  }
+
+
+  if( !all)
+  {
+    let perfilAux : Perfil;
+
+    if(id === Meteor.userId())
+    {
+      perfilAux = Meteor.user().profile;
+    }
+    else{
+      perfilAux = Users.findOne(id).profile;
+    }
+    console.log(" restriccion de guardado")
+    profile.rol = perfilAux.rol;
+    if(profile.rol >= RolesEnum.PROFFESOR)
+    {
+      profile.perfClase.ultElo = perfilAux.perfClase.ultElo;
+      profile.perfClase.clases = perfilAux.perfClase.clases;
+      console.log("Perfil clase de profesor")
+    }
+    else if (profile.perfClase){
+      console.log("Perfil clase de alumno rellenado")
+      profile.perfClase = undefined;
+    }
+
+    //profile.perfClase.updated = perfilAux.perfClase.updated;
+    
+  }
+  else{
+    console.log("Guardando perfil entero");
+  }
+
+
+  let input : any = {$set : { profile : profile}}
+  //validar TODO
+  
+  console.log(JSON.stringify(input));
+  Users.update(filter, input);
+}
 
 Meteor.methods({
-
+  findUser(id : String)
+  {
+    return Meteor.users.findOne({_id: id}, {fields:  {
+      'profile.name' : 1,
+      "profile.foto" : 1,
+      'profile.nombre' : 1,
+      'profile.apellidos' : 1,
+      'profile.disponible' : 1,
+      'profile.claseId' : 1,
+      'profile.descripcion' : 1,
+      'profile.perfClase.categorias' : 1
+      
+      
+    }})
+  },
   callAvalaibleTeacher(filters : Array<AutoCompleteModel>)
   {
 
@@ -34,6 +107,8 @@ Meteor.methods({
               'profile.claseId' : 1,
               'profile.descripcion' : 1,
               'profile.perfClase.categorias' : 1,
+              'profile.perfClase.ultPrecio' : 1,
+              'profile.perfClase.ultElo' : 1
               
               
             }}).toArray();  
@@ -57,7 +132,9 @@ Meteor.methods({
       }
       try{
         console.log("rol actual: " + profile.rol)
-        Meteor.call("savePerfil", profile);
+        
+        iniProfesorModel(profile);
+        savePerfil(Meteor.userId(), profile, true);
 
       }
       catch(e)
@@ -68,32 +145,12 @@ Meteor.methods({
 
   },
   savePerfilById(id :string, profile: Perfil) {
-
-    if(Meteor.isClient)
-    {
-      id = Meteor.userId();
-    }
-    if(!id)
-    {
-        MethodsClass.noLogueado();
-    }
-    let filter = {
-      "_id": id
-    };
-
-    if(Meteor.isClient)
-    {
-      console.log("Cliente")
-      profile.rol = Users.findOne(filter).profile.rol;
-    }
-    let input : any = {$set : { profile : profile}}
-    //validar TODO
+    savePerfil(id, profile);
     
-    console.log(filter + ", " + input)
-    Users.update(filter, input);
   },
   savePerfil(profile: Perfil) {
 
+    console.log("SavePerfil - user" + Meteor.userId())
     Meteor.call("savePerfilById", Meteor.userId(), profile)
   },
   setDisponible(disponible : Boolean)
@@ -107,6 +164,7 @@ Meteor.methods({
       {
         
         Meteor.call("savePerfil", profile);
+        console.log("Set disponible fin");
       }
       catch(e)
       {
@@ -177,6 +235,34 @@ Meteor.methods({
       //throw e;
       return  [];
     }
+  },
+
+  calcularElo(idProf : string, newNotas : Array<Kpm>)
+  {
+      try {
+
+        if(Meteor.isClient || !newNotas)
+        {
+          return;
+        }
+        this.unblock();
+
+        let perfil :Perfil = Meteor.users.findOne(idProf).profile;
+        let elo : Elo = new Elo(perfil.perfClase.eloModel);
+        
+        let newNotaMedia = newNotas.reduce((before : number, current : Kpm)=> before + current.answer *  (current.ponderacion || 1/newNotas.length), 0);
+
+        elo.add(newNotaMedia);
+        
+        perfil.perfClase.ultElo =  elo.calcularElo();
+        // el modelo del elo es la misma referencia qye estamos usando, => ya esta usandose
+        perfil.perfClase.updated =true;
+        savePerfil(idProf,perfil,true)
+
+      } catch (error) {
+         
+          MethodsClass.except(modulo, "calcularElo : " + error);
+      }  
   }
 })
 
