@@ -18,8 +18,8 @@ Meteor.publish('getMsg', function() {
       }
 
 
-      
-  return Msg.find({ to : Meteor.userId(), readed : !true}, {sort: {fecha: -1}});
+     // {sort: {fecha: -1}}
+  return Msg.find({ to : Meteor.userId(), readed : !true}, {sort: {fecha: 1}});
 });
 
 

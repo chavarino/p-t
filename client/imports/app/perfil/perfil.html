@@ -8,14 +8,23 @@
         <form #perfilForm="ngForm" [formGroup]="addForm" (ngSubmit)="save()">
                 <div class="row" style="border-bottom: 1px solid #f5efef;">
                         <div class="col">
-                           <div class="col">
-                               <img [src]="perfil.foto" id="foto" alt="Foto perfil" height="100" width="auto">
+                            <div class="row">
 
-                           </div>
-                           <div class="col">
-                               <fileInput [multiple]="false" (onSelectFile)="addFile($event)"></fileInput>        
-
+                                <div class="col">
+                                    <img class="foto-perfil"  [src]="perfil.foto" id="foto" alt="Foto perfil" height="200" width="auto">
+     
+                                </div>
+                                
                             </div>
+                            <div class="row">
+
+                                    
+                                    <div class="col">
+                                        <fileInput [multiple]="false" (onSelectFile)="addFile($event)"></fileInput>        
+                                        
+         
+                                     </div>
+                                </div>
                         </div>
                         <div class="col">
                             <h4>Email: {{perfil.email}}</h4>

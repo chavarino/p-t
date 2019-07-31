@@ -1,5 +1,5 @@
 
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, DoCheck } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import  {RolesService} from "../services/roles.service";
 import  {BanderasService} from "../services/flags.service";
@@ -42,7 +42,7 @@ enum ETipo  {
   templateUrl: 'roomAlumno.html',
   styleUrls: ['roomAlumno.scss']
 })
-export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy{
+export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, DoCheck{
     selectedTag: string;
   
     clase : Room
@@ -66,6 +66,8 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy{
         listCat : [],
         listCatBusc : []
     }
+    cd: ChangeDetectorRef;
+    
     
     getCategorias(categorias : Array<string>) : ConfigTags
     {
@@ -74,14 +76,14 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy{
          listCatBusc : []
         }
     }
-    constructor( private modalService: NgbModal, private rutas : Router , rol : RolesService, private formBuilder: FormBuilder, sanitizer : DomSanitizer,flags : BanderasService)
+    constructor( private modalService: NgbModal, private rutas : Router , rol : RolesService, private formBuilder: FormBuilder, sanitizer : DomSanitizer,flags : BanderasService, cd :ChangeDetectorRef)
     {
 
         super(1, 1, "alumno", rol);
 
         this.l = new Log(this.modulo, Meteor.userId());
 
-        
+        this.cd = cd;
         this.temp = {
             tipo :Tipo.TEMP,
             secondsIni : 30,
@@ -122,12 +124,17 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy{
             }
         ]
         
-        vm.redux = new ReduxC()
+        vm.redux = new ReduxC((estado :Estado)=>{
+
+            vm.cdUpdate(estado, vm.cd)
+        })
+
         vm.redux.setReducer( function(state : Estado, action : Action<number>)
         {
             return vm.reducer(state, action);
         });
         this.l.log("constructor  reducer")
+        
         setTimeout(()=>{
             this.l.log("setTimeout  nextStatus INIT")
             vm.redux.nextStatus({ type: ETipo.INIT });
@@ -154,7 +161,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy{
     
 
    
-
+    
     isInClass()
     {
         return this.inClass;
@@ -259,7 +266,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy{
               
           
      
-        vm.profesores =  Users.find(input);
+        vm.profesores =  Users.find(input,{ sort: [['profile.perfClase.ultElo', 'desc'], ['profile.name', 'asc']] });
 
         this.l.log("findProf find OOK");
     }
@@ -316,7 +323,12 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy{
            // this.rol.setRoles(Roles.findOne().rol);
           
           });
+
+        
+          vm.intervalUpdAction(this.cd)
     }
+
+    
     findClass()
     {
        // this.clase = Rooms.findOne(Meteor.userId);
@@ -342,6 +354,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy{
         this.redux.cerrar();
 
         this.msgServ.cerrar();
+        this.intervalUpdAction(this.cd)
         
     }
 
@@ -385,7 +398,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy{
         let fnGoInit = ()=> {
 
             this.l.log("colgarCall fnGoInit COLGAR");
-            vm.redux.estado.userFrom = null;
+            vm.estado.userFrom = null;
             vm.sendMsg(vm.getUserCall()._id, MsgTipo.CALL_COLGAR);
 
 
@@ -436,19 +449,19 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy{
     {
         let vm = this;
 
-        return vm.redux.estado.id === ETipo.INIT;
+        return vm.estado.id === ETipo.INIT;
     }
     isEstadoSelProf() :boolean
     {
         let vm = this;
 
-        return vm.redux.estado.id === ETipo.SEL_PROFESOR;
+        return vm.estado.id === ETipo.SEL_PROFESOR;
     }
     isEstadoCalling() :boolean
     {
         let vm = this;
 
-        return vm.redux.estado.id === ETipo.CALLING;
+        return vm.estado.id === ETipo.CALLING;
     }
 
 
@@ -456,7 +469,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy{
     {
         let vm = this;
 
-        return vm.redux.estado.id === ETipo.CLASS;
+        return vm.estado.id === ETipo.CLASS;
     }
     private reducer (state : Estado = {}, action : Action<number>) : Estado
     {
@@ -478,7 +491,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy{
         let  cancelarCall = ()  =>{
             this.l.log("cancelarCall");
             let fnGoInit = ()=> {
-                vm.redux.estado.userFrom = null;
+                vm.estado.userFrom = null;
                 vm.redux.nextStatus({ type: ETipo.INIT });
             }
 
@@ -498,7 +511,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy{
                 fnGoInit();
             }
 
-           // vm.redux.estado.userFrom = null;
+           // vm.estado.userFrom = null;
            // vm.redux.nextStatus({ type: ETipo.INIT });
         }
         let fnMsgCancelCall = function(m :Message)
@@ -563,7 +576,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy{
         let fnMsgGoClassCall = function(m :Message)
         {
             
-            if(vm.redux.estado.userFrom === m.from)
+            if(vm.estado.userFrom === m.from)
             {
                 
                
@@ -595,7 +608,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy{
             if(vm.getUserCall()._id === m.from)
             {
                 
-                vm.redux.estado.campos.ping =0;
+                vm.estado.campos.ping =0;
             }
             
 
@@ -619,7 +632,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy{
             if(vm.getUserCall()._id === m.from)
             {
                 //en el cuerpo lleva el mensaje RTC
-                vm.redux.estado.campos.ping = 0;
+                vm.estado.campos.ping = 0;
             }
             
 
@@ -736,7 +749,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy{
                 }
                
                 nextState.ini =  ()  =>{
-                    vm.redux.estado.campos.idTimeOut= setTimeout(() =>{
+                    vm.estado.campos.idTimeOut= setTimeout(() =>{
 
                         //si pasa el tiempo y se ejecuta se cancela.
 
@@ -758,7 +771,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy{
                 
                 nextState.destroy = ()=>{
 
-                    clearTimeout(vm.redux.estado.campos.idTimeOut)
+                    clearTimeout(vm.estado.campos.idTimeOut)
                 }
 
 
@@ -797,7 +810,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy{
 
                 //si pasa el tiempo y se ejecuta se cancela.
                 //ping
-                if(vm.redux.estado.campos.ping === vm.maxPing)//time out
+                if(vm.estado.campos.ping === vm.maxPing)//time out
                 {
                     //TODO COLGAR
                     cancelarCall();
@@ -805,7 +818,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy{
                 else{
                     let profile : Perfil=  Meteor.user().profile;
                     vm.sendMsg(vm.getUserCall()._id, MsgTipo.PING, profile.claseId);
-                    vm.redux.estado.campos.ping ++;
+                    vm.estado.campos.ping ++;
                 }
             }
 
@@ -827,7 +840,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy{
                    
                 }, 500);
 
-                vm.redux.estado.campos.idIntervalPing= setInterval(fnInterval, time)
+                vm.estado.campos.idIntervalPing= setInterval(fnInterval, time)
             };
 
 
@@ -845,7 +858,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy{
             nextState.destroy = ()=>{
 
                 vm.rtc.close();
-                clearInterval(vm.redux.estado.campos.idIntervalPing);
+                clearInterval(vm.estado.campos.idIntervalPing);
 
                
 
@@ -859,5 +872,9 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy{
             return nextState;
     }
  //Meteor.user().profile
-  
+ ngDoCheck() {
+    
+    //console.log("do check " + JSON.stringify(this.redux.estado));
+
+}
 }

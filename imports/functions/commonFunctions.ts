@@ -9,6 +9,7 @@ import {  OnInit, OnDestroy } from '@angular/core';
 
 import {MethodsClass} from "./methodsClass"
 import { Perfil } from 'imports/models/perfil';
+import { FilesI } from 'client/imports/app/file.component/file.component';
 export class MsgClass{
 
    
@@ -203,6 +204,10 @@ export class FactoryCommon
 
     }
 
+    static isImageCorrect(file : FilesI) :boolean
+    {
+            return  file.filetype.split("/")[0]==="image" && file.size <= 5242880 /// menos oigual a 5 MBx
+    }
 
 
     static promesa(fn : (valor : any)=>any) {
