@@ -35,7 +35,7 @@
                                     <strong>Elo</strong>
                                 </label><br>
                                 <span id="elo">
-                                    {{perfClase.ultElo}}
+                                        {{perfClase.ultElo | number:'1.0-2'}}
                                     
                                 </span>
                                 </div>
@@ -78,7 +78,7 @@
                                     <strong>Elo</strong>
                                 </label><br>
                                 <span id="elo">
-                                    {{perfClase.ultElo}}
+                                    {{perfClase.ultElo | number:'1.0-2'}}
                                     
                                 </span>
                                 </div>
@@ -118,13 +118,13 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                                <img [src]="getUserCall().profile.foto" id="foto" alt="Foto perfil" height="100" width="auto">
+                                <img class="foto-perfil" [src]="getUserCall().profile.foto" id="foto" alt="Foto perfil" >
                         </div>
                         <div class="col">
                             <strong>Nombre:</strong>  {{getUserCall().profile.nombre + " " + getUserCall().profile.apellidos}}
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row" *ngIf="false">
                             <div class="col">
                                 <strong>
                                     Categoria: 

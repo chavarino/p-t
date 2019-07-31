@@ -12,3 +12,16 @@ video {
 body{
   min-height: 509px;
 }
+
+.cursor-p {
+  cursor: pointer;
+}
+
+.foto-perfil{
+  border-radius: 10%;
+  box-shadow: 0px 0px 6px 1px #e4e3e3;
+  max-height: 200px;
+  max-width: 350px;
+  height: 200px;
+  width: auto;
+}

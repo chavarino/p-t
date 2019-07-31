@@ -34,6 +34,11 @@ let savePerfil = (id :string, profile: Perfil, all ?: boolean) =>
     if(id === Meteor.userId())
     {
       perfilAux = Meteor.user().profile;
+
+      if(profile.foto && profile.foto!==perfilAux.foto && profile.foto.includes("data:image/"))
+      {
+          perfilAux.foto = profile.foto;
+      }
     }
     else{
       perfilAux = Users.findOne(id).profile;
@@ -62,7 +67,7 @@ let savePerfil = (id :string, profile: Perfil, all ?: boolean) =>
   let input : any = {$set : { profile : profile}}
   //validar TODO
   
-  console.log(JSON.stringify(input));
+ // console.log(JSON.stringify(input));
   Users.update(filter, input);
 }
 
@@ -181,8 +186,8 @@ Meteor.methods({
     let patt = new RegExp(regex)
     //TODO VALIDAR
     //Accounts.findUserByEmail(user.em)
-    console.log(JSON.stringify(user));
-    console.log("email val:" +  patt.test(user.username))
+   // console.log(JSON.stringify(user));
+    //console.log("email val:" +  patt.test(user.username))
     if(!user ||!user.username || user.username === ""  || !patt.test(user.username) || user.password.length>20 || user.password.length<5 )
     {
         console.log("ERROR : CAMPOS MAL INTRODUCIDOS")

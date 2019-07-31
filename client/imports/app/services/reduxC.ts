@@ -7,7 +7,7 @@ export interface Estado {
     destroy?: ()=>void;
     id ?: number,
     userFrom ?: string,
-    campos ?: any
+    campos ?: any,
 }
 
 export interface LogicEstado {
@@ -20,11 +20,13 @@ export class ReduxC {
     store;
     estado : Estado;
     dispatcherId : NodeJS.Timer;
-    constructor()
+    fnChange : (newEstado :Estado) => void
+    constructor(fnChange : (newEstado)=>void)
     {
         this.estado = {
 
         }
+        this.fnChange= fnChange
     }
 
     setReducer(reducer :  (state: Estado, action: Action<number>) => Estado)
@@ -47,6 +49,8 @@ export class ReduxC {
                 }
                 //ponemos el nuevo
                 vm.estado = nextStado;
+                vm.fnChange(vm.estado);
+                console.log("redux " + vm.estado.id);
                 if(vm.estado.ini)
                 {
                     //configuramos

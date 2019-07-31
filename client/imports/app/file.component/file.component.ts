@@ -14,7 +14,9 @@ export interface FilesI {
     selector: 'fileInput',
     outputs: [ 'onSelectFile' ],
     inputs:["multiple"],
-    templateUrl: "file.html" 
+    templateUrl: "file.html",
+    styleUrls: ['file.scss']
+    
   })
   export class FileInput {
     onSelectFile: EventEmitter<Array<FilesI>> = new EventEmitter<Array<FilesI>>();

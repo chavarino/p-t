@@ -9,6 +9,8 @@ import {MsgClass, Log} from "../../../../imports/functions/commonFunctions"
 import { User } from 'imports/models/User';
 
 import {MethodsClass} from "../../../../imports/functions/methodsClass"
+import { Estado } from './reduxC';
+import { ChangeDetectorRef } from '@angular/core';
 
 interface RolesEnt {
     module : string,
@@ -28,6 +30,11 @@ export class Generic {
     userCall : User;
 
     l : Log;
+    estado: Estado = {
+
+        id:-1
+    };intervalUpd: any;
+;
   
     constructor(minWrite : number,  minRead : number,modulo : string, rol : RolesService)
     {
@@ -196,4 +203,37 @@ export class Generic {
     {
         this.userCall = userCall;
     }
+
+    cdUpdate(estado : Estado,cd :ChangeDetectorRef)
+    {
+        let vm=this;
+
+        if(vm.estado !== estado)
+        {
+            vm.estado = estado;
+            
+            vm.estado.id = estado.id;
+
+        }
+        cd.reattach();//.detectChanges();
+        //console.log("update cd " + vm.estado.id)
+    }
+
+
+
+    intervalUpdAction(cd)
+    {
+        let vm = this;
+        if(!this.intervalUpd)  
+        {
+            this.intervalUpd = setInterval(()=>{
+                vm.cdUpdate(vm.estado, cd)
+            },500)
+
+        }
+        else {
+            clearInterval(this.intervalUpd)
+        }
+    }
+    
   }

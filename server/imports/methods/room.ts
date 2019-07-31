@@ -203,7 +203,7 @@ Meteor.methods({
     
     let perfil : Perfil = Meteor.users.findOne({_id : userId}).profile;
 
-    console.log(JSON.stringify(perfil))
+    //console.log(JSON.stringify(perfil))
 
     if(!perfil.claseId || perfil.claseId=== "")
     {
@@ -215,7 +215,7 @@ Meteor.methods({
     if(profesor)
     {
 
-      perfil.disponible =true;
+      perfil.disponible =false;
     }
     else{
       perfil.disponible=false;

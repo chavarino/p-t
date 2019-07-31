@@ -11,6 +11,7 @@ import  {BanderasService} from "../services/flags.service";
 import {MethodsClass} from "../../../../imports/functions/methodsClass"
 import {ConfigTags} from  "../categorias/categorias.component"
 import { FilesI } from '../file.component/file.component';
+import { FactoryCommon } from 'imports/functions/commonFunctions';
 @Component({
   selector: 'perfilC',
   templateUrl: 'perfil.html',
@@ -53,9 +54,13 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy{
     
     addFile(files : Array<FilesI>)
     {
-        if(files && files.length>0)
+        if(files && files.length>0 && FactoryCommon.isImageCorrect(files[0]))
         {
+            // image/png
             this.perfil.foto = files[0].valueUrl;
+        }
+        else{
+            alert("Imagen incorrecta. La imagen debe ser un formato compatible (*.png, .jpg ...) y de un tamaño máximo de 5MB ");
         }
     }
     save()

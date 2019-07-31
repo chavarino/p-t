@@ -1,10 +1,16 @@
-<div class="file-input row">
+<div class="file-input">
         
-        <div class="col">
-            <div *ngIf="loading" class="spinner-grow text-light" role="status"><span class="sr-only">Loading...</span></div>
-            <span  (click)="openFileSelector()"><i class="material-icons">
-                    add
-                    </i> Fichero</span>
+        <div class="">
+            
+            <button [disabled]="loading" type="button" (click)="openFileSelector()" class="btn btn-outline-dark attach">
+                
+                <i *ngIf="!loading" class="material-icons">
+                attach_file
+            </i>
+            
+                <div *ngIf="loading" class="spinner-grow text-light" role="status"><span class="sr-only">Loading...</span></div>
+                </button>
+            
            <!--
                <input *ngIf="!multiple" style="display: none"  [disabled]="loading" type="file"  (change)="onFileChange($event)" #fileInput>
 
