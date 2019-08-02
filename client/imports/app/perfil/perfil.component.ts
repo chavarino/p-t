@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import  {RolesService} from "../services/roles.service";
-import {Generic} from "../services/generic.interface";
+
 import { Perfil } from '../../../../imports/models/perfil';
 import { Users } from '../../../../imports/collections/users';
 import { MeteorObservable } from 'meteor-rxjs';
@@ -10,8 +10,10 @@ import { FormGroup, FormBuilder,Validators,FormControl } from '@angular/forms';
 import  {BanderasService} from "../services/flags.service";
 import {MethodsClass} from "../../../../imports/functions/methodsClass"
 import {ConfigTags} from  "../categorias/categorias.component"
-import { FilesI } from '../file.component/file.component';
+
 import { FactoryCommon } from 'imports/functions/commonFunctions';
+import { Generic } from 'imports/clases/generic.class';
+import { FilesI } from 'imports/models/fileI';
 @Component({
   selector: 'perfilC',
   templateUrl: 'perfil.html',

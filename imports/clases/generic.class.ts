@@ -1,16 +1,13 @@
-import  {RolesService} from "../services/roles.service";
-import {RtcService} from "../services/rtc.service"
-import { Meteor } from 'meteor/meteor';
-import { Rol } from '../../../../imports/models/rol';
-import { Map } from '../../../../imports/models/map';
-import $ from "jquery";
-import {Message, MessageRtc, MsgTipo} from "../../../../imports/models/message"
-import {MsgClass, Log} from "../../../../imports/functions/commonFunctions"
-import { User } from 'imports/models/User';
+import  {RolesService} from "../../client/imports/app/services/roles.service";
 
-import {MethodsClass} from "../../../../imports/functions/methodsClass"
-import { Estado } from './reduxC';
-import { ChangeDetectorRef } from '@angular/core';
+import { Meteor } from 'meteor/meteor';
+import { Rol } from '../models/rol';
+import { Map } from '../models/map';
+
+import { MsgTipo} from "../models/message"
+import {MsgClass, Log} from "../functions/commonFunctions"
+
+
 
 interface RolesEnt {
     module : string,
@@ -25,16 +22,8 @@ export class Generic {
     rol : RolesService;
     rolesElemnt : Map<RolesEnt> 
     msgServ : MsgClass;
-    rtc : RtcService;
-    secondsIniClass : number
-    userCall : User;
-
+    
     l : Log;
-    estado: Estado = {
-
-        id:-1
-    };intervalUpd: any;
-;
   
     constructor(minWrite : number,  minRead : number,modulo : string, rol : RolesService)
     {
@@ -44,7 +33,7 @@ export class Generic {
         this.modulo = modulo;
         this.msgServ =  new MsgClass();
         this.rol = rol;
-        
+        this.l = new Log(this.modulo, Meteor.userId());
         this.rolesElemnt = 
         {
             peticion : {
@@ -184,56 +173,6 @@ export class Generic {
     }
  
 
-    empezarClase(fn ?: (any) =>any)
-    {
-        MethodsClass.call("empezarClase", fn)
-    }
-
-    terminarClase (profesor : boolean, fn?: (any) =>any)
-    {
-        
-        MethodsClass.call("terminarClase",profesor, fn)
-    }
-
-    getUserCall() : User {
-        return this.userCall;
-    }
-
-    setUserCall (userCall :User)
-    {
-        this.userCall = userCall;
-    }
-
-    cdUpdate(estado : Estado,cd :ChangeDetectorRef)
-    {
-        let vm=this;
-
-        if(vm.estado !== estado)
-        {
-            vm.estado = estado;
-            
-            vm.estado.id = estado.id;
-
-        }
-        cd.reattach();//.detectChanges();
-        //console.log("update cd " + vm.estado.id)
-    }
-
-
-
-    intervalUpdAction(cd)
-    {
-        let vm = this;
-        if(!this.intervalUpd)  
-        {
-            this.intervalUpd = setInterval(()=>{
-                vm.cdUpdate(vm.estado, cd)
-            },500)
-
-        }
-        else {
-            clearInterval(this.intervalUpd)
-        }
-    }
+    
     
   }

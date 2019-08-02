@@ -4,7 +4,7 @@ import { Users } from '../../../imports/collections/users';
 import { Perfil,RolesEnum, AutoCompleteModel } from '../../../imports/models/perfil';
 import { User } from 'imports/models/User';
 import {Accounts} from 'meteor/accounts-base';
-import { iniProfesorModel, Elo } from 'imports/functions/commonFunctions';
+import { iniProfesorModel, Elo, FactoryCommon } from 'imports/functions/commonFunctions';
 import { Kpm } from 'imports/models/kpm';
 
 
@@ -35,7 +35,7 @@ let savePerfil = (id :string, profile: Perfil, all ?: boolean) =>
     {
       perfilAux = Meteor.user().profile;
 
-      if(profile.foto && profile.foto!==perfilAux.foto && profile.foto.includes("data:image/"))
+      if(profile.foto && profile.foto!==perfilAux.foto && FactoryCommon.isImageCorrectFromUrl(perfilAux.foto ) )
       {
           perfilAux.foto = profile.foto;
       }

@@ -8,6 +8,8 @@ import { MethodsClass } from '../../../imports/functions/methodsClass'
 import { User } from 'imports/models/User';
 import { Perfil } from 'imports/models/perfil';
 import { Kpm, Score } from 'imports/models/kpm';
+import { RoomFile } from 'imports/models/fileI';
+import { FactoryCommon } from 'imports/functions/commonFunctions';
 function getTexto(room : Room)
 {
   if(!room.comenzado && room.activo)
@@ -28,7 +30,7 @@ function getTexto(room : Room)
   }
 }
 
-
+const MAX_FILES = 10;
 const modulo = "Methods-Room"
 Meteor.methods({
 
@@ -104,22 +106,25 @@ Meteor.methods({
   let room: Room = {
     profId : "",
     alumnoId :"",
-    titulo : ""
+    titulo : "",
+    chat : [],
+    files : []
   };
     try
     {
-      
+        //TODO MIRAR QUE SEA PROFESOR
           if(!Meteor.user())
           {  
               MethodsClass.noLogueado();
             }
-          let claseAnt : Room = Rooms.findOne({ alumnoId : Meteor.userId(), activo : true});
-            //evitamos que cree mas de una
-          if(claseAnt !=null)
-          {
-               //Error.duplic();
+            let claseAnt : Room = Rooms.findOne({ alumnoId : Meteor.userId(), activo : true});
+            if(claseAnt !=null)
+            {
+              //Error.duplic();
               return;
-          }
+            }
+          //evitamos que cree mas de una
+          let p: Perfil = Users.findOne(profId).profile; //profesor se carga
           //console.log("Entra");
           room.profId = profId;
           room.alumnoId = Meteor.userId();
@@ -129,21 +134,31 @@ Meteor.methods({
           room.fechaCom = null;
           room.fechaFin = null;
           room.estadoText = getTexto(room);
+
+          if(p.perfClase)
+          {
+              room.elo = p.perfClase.ultElo || 0;
+              room.precio =p.perfClase.ultPrecio || 0;
+
+          }
           //VALIDACIONES
          // console.log("insertando " + room);
          //Rooms.collection.insert
          let _idRoom : string=  Rooms.collection.insert(room);
-         let p: Perfil = Meteor.user().profile
+         
+         //guardamos el del profesor.
+         p.claseId = _idRoom;
+         Meteor.call('savePerfilById',profId, p);
+
+        //guardamos el de el alumno
+         p = Meteor.user().profile
 
          p.claseId = _idRoom;
          //esta bien , es guardar el mio.
          Meteor.call('savePerfil', p);
 
-         p = Users.findOne(profId).profile;
 
           
-         p.claseId = _idRoom;
-         Meteor.call('savePerfilById',profId, p);
 
     }
     catch(e) {
@@ -242,6 +257,90 @@ Meteor.methods({
     //VALIDACIONES
    // console.log("insertando " + room);
    Rooms.update({_id: room._id}, room,{ upsert: false });
+  },
+
+  uploadFile(claseId :string ,filesIn: Array<RoomFile>)
+  {
+   // && profile.foto.includes("data:image/") && FactoryCommon.getSizeFileB64(profile.foto) <=  FactoryCommon.MAX_SIZE_FOTO)
+    
+    try {
+
+      //PUEDE EMPEZAR SOLO EL ALUMNO
+        if(!Meteor.user())
+        {  
+             throw "No logueado";
+        }
+
+        let room : Room = Rooms.findOne({ _id : claseId});
+
+
+
+          //Nos aseguramos que tenga permisos para cerrar  la clase (Que sea el creador.)
+        if(room ==null || room.alumnoId != Meteor.userId() && room.profId != Meteor.userId()  || room.comenzado || !room.activo)
+        {
+            //Error.noPermisos();
+            throw "La clase no existe o no tiene permisos"
+           
+        }
+
+
+        let files : Array<RoomFile> = room.files;
+
+
+        let array: Array<RoomFile> = [];
+        let flag_excedidos = false;
+        let flag_formato_bad = false;
+        
+        let msg1: Array<string> = [],msg2 : Array<string>= [];
+        let flag :boolean = false;
+        for (let i = 0; i < filesIn.length; i++) {
+          const f = filesIn[i];
+            flag =false;
+                if(files.length > MAX_FILES)
+                {
+                    flag_excedidos = true;
+                    flag = true;
+                    msg1.push(f.filename);
+                }
+        
+                if(!FactoryCommon.isDocCorrect(f))
+                {
+        
+                  flag=true;
+                  flag_formato_bad = true;
+                  msg2.push(f.filename);
+                }
+                if(!flag)
+                {
+                  f.owner = Meteor.userId();
+                  array.push(f)
+
+                }
+         
+          
+        }
+        
+        if(array.length>0)
+        {
+          room.files.push(...array)
+          Rooms.update({_id: room._id}, room,{ upsert: false });
+        }
+
+        
+        if(flag_excedidos || flag_formato_bad)
+        {
+          throw "Algunos ficheros quedaron sin subir." + (flag_excedidos ?  `Numero de ficheros excedidos del limite: (${msg1.toString()})` : "") 
+          + (flag_formato_bad ?  `Ficheros con formato o tamaño incorrecto: (${msg1.toString()}). Acepta: *.doc, *.docx, *.pdf, *.zip, *.rar, *.tar (Max 10MB) y *.png, *.jpg(Max 5MB)`   : "") 
+        }
+        
+ 
+    } catch (error) {
+        MethodsClass.except(modulo, "uploadFile : " + error);
+    }
+
   }
   
 })
+
+
+

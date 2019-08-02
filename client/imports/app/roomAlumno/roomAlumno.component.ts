@@ -3,7 +3,7 @@ import { Component, OnInit, OnDestroy, ChangeDetectorRef, DoCheck } from '@angul
 import { Subscription } from 'rxjs/Subscription';
 import  {RolesService} from "../services/roles.service";
 import  {BanderasService} from "../services/flags.service";
-import {Generic} from "../services/generic.interface";
+
 import { Room } from '../../../../imports/models/room';
 import { Rooms } from '../../../../imports/collections/room';
 import { Observable } from 'rxjs/Observable';
@@ -13,28 +13,24 @@ import { FormGroup, FormBuilder,Validators,FormControl } from '@angular/forms';
 import {DomSanitizer} from '@angular/platform-browser';
 import { User } from 'imports/models/User';
 import { Users } from 'imports/collections/users';
-import {ReduxC, Estado, LogicEstado} from "../services/reduxC";
+import { Estado} from "../services/reduxC";
 import { Action } from 'redux';
 import { MsgTipo, Message, MessageRtc } from 'imports/models/message';
 import { MsgClass, FactoryCommon, Log } from 'imports/functions/commonFunctions';
-import { Msg } from 'imports/collections/msg';
-import {Perfil, AutoCompleteModel} from "../../../../imports/models/perfil"
+
+import {Perfil} from "../../../../imports/models/perfil"
 
 import {RtcService} from "../services/rtc.service"
-import {Tipo} from "../timeCounter/timeCounter.component"
+
 import {MethodsClass} from "../../../../imports/functions/methodsClass"
 import { ConfigTags } from '../categorias/categorias.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalKpm } from '../modalKpm/modaKpm.component';
 import { Score } from 'imports/models/kpm';
 import { Router } from '@angular/router';
-enum ETipo  {
-    INIT = 1,
-    CLASS = 2,
-    SEL_PROFESOR = 3,
-    CALLING =4,
-    
-}
+import { RoomClass, ETipo } from 'imports/clases/room.class';
+
+
 
 //bug https://stackoverflow.com/questions/53029708/how-to-set-remote-description-for-a-webrtc-caller-in-chrome-without-errors
 @Component({
@@ -42,61 +38,48 @@ enum ETipo  {
   templateUrl: 'roomAlumno.html',
   styleUrls: ['roomAlumno.scss']
 })
-export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, DoCheck{
+export class RoomAlumnoComponent extends RoomClass implements OnInit, OnDestroy, DoCheck{
     selectedTag: string;
   
     clase : Room
     roomAlumno :Subscription;
     addForm: FormGroup;
-    inClass : boolean;
+  
     sanitizer : DomSanitizer;
     ///todos: Observable<Room>;
     flags : BanderasService;
     profesoresSuscription:  Subscription;
-    temp: object;
+
     profesores : Observable<User[]>;
-    redux : ReduxC;
-    estadoLogic :  LogicEstado[];
-    localVideoId : string;
-    remoteVideoId : string;
-    maxPing : number;
+    
+    
+
+
     userCall : User;
 
     configTags : ConfigTags = {
         listCat : [],
         listCatBusc : []
     }
-    cd: ChangeDetectorRef;
+  
     
-    
-    getCategorias(categorias : Array<string>) : ConfigTags
-    {
-        return { 
-            listCat : categorias,
-         listCatBusc : []
-        }
-    }
-    constructor( private modalService: NgbModal, private rutas : Router , rol : RolesService, private formBuilder: FormBuilder, sanitizer : DomSanitizer,flags : BanderasService, cd :ChangeDetectorRef)
+ 
+    constructor( private modalService: NgbModal,  rutas : Router  , rol : RolesService, private formBuilder: FormBuilder, sanitizer : DomSanitizer,flags : BanderasService, cd :ChangeDetectorRef)
     {
 
-        super(1, 1, "alumno", rol);
+        super("alumno", rol, cd, rutas);
 
-        this.l = new Log(this.modulo, Meteor.userId());
-
-        this.cd = cd;
-        this.temp = {
-            tipo :Tipo.TEMP,
-            secondsIni : 30,
-            mostrar : true
-        }
-        this.inClass = false;
+        
+        
+      
+        
+       
         this.sanitizer = sanitizer;
         this.flags = flags;
         let vm  = this;
-        vm.maxPing = 3;
-        this.rutas = rutas;
-        vm.localVideoId ="localVideo"
-        vm.remoteVideoId ="remoteVideo";
+      
+
+       
 
         this.l.log("constructor  inicializacion")
         vm.estadoLogic =[
@@ -124,10 +107,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, D
             }
         ]
         
-        vm.redux = new ReduxC((estado :Estado)=>{
-
-            vm.cdUpdate(estado, vm.cd)
-        })
+        
 
         vm.redux.setReducer( function(state : Estado, action : Action<number>)
         {
@@ -135,11 +115,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, D
         });
         this.l.log("constructor  reducer")
         
-        setTimeout(()=>{
-            this.l.log("setTimeout  nextStatus INIT")
-            vm.redux.nextStatus({ type: ETipo.INIT });
-
-        }, 1000)
+        
         /*
         RtcService.getPermisos((res)=>{
 
@@ -161,11 +137,17 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, D
     
 
    
-    
-    isInClass()
+       
+     
+
+    getCategorias(categorias : Array<string>) : ConfigTags
     {
-        return this.inClass;
+        return { 
+            listCat : categorias,
+         listCatBusc : []
+        }
     }
+  
 
     canActivate() {
         //const party = Parties.findOne(this.partyId);
@@ -324,23 +306,12 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, D
           
           });
 
-        
-          vm.intervalUpdAction(this.cd)
+          vm.iniRoom()
+          vm.intervalUpdAction()
     }
 
     
-    findClass()
-    {
-       // this.clase = Rooms.findOne(Meteor.userId);
-            if(this.clase && this.clase._id)
-            {
-                this.inClass = true;
-            }
-            else{
-                this.inClass= false;
-                //this.iniClase();
-            }
-    }
+    
     
     ngOnDestroy()
     {
@@ -354,7 +325,7 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, D
         this.redux.cerrar();
 
         this.msgServ.cerrar();
-        this.intervalUpdAction(this.cd)
+        this.intervalUpdAction()
         
     }
 
@@ -363,22 +334,10 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, D
         return this.addForm.valid;
     }
     
-    isComenzado()
-    {
-        return this.clase.comenzado;
+ 
 
-    }
+ 
 
-    
-    isTerminado()
-    {
-        return this.clase.activo;
-    }
-
-    getTextEstado()
-    {
-       
-    }
     cancelarCall()
     {
         let vm =this;
@@ -444,33 +403,6 @@ export class RoomAlumnoComponent extends Generic implements OnInit, OnDestroy, D
         vm.redux.nextStatus({ type: ETipo.CALLING });
     }
 
-
-    isEstadoIni() :boolean
-    {
-        let vm = this;
-
-        return vm.estado.id === ETipo.INIT;
-    }
-    isEstadoSelProf() :boolean
-    {
-        let vm = this;
-
-        return vm.estado.id === ETipo.SEL_PROFESOR;
-    }
-    isEstadoCalling() :boolean
-    {
-        let vm = this;
-
-        return vm.estado.id === ETipo.CALLING;
-    }
-
-
-    isEstadoClass() :boolean
-    {
-        let vm = this;
-
-        return vm.estado.id === ETipo.CLASS;
-    }
     private reducer (state : Estado = {}, action : Action<number>) : Estado
     {
 

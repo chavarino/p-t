@@ -1,14 +1,7 @@
 import { Component, EventEmitter, ViewChild, ElementRef } from "@angular/core";
+import { FilesI } from 'imports/models/fileI';
 
-export interface FilesI {
 
-    filename :string,
-    filetype : string,
-    valueUrl : string,
-    valueB64 : string,
-    size : number
-
-}
 
 @Component({
     selector: 'fileInput',

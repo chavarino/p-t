@@ -43,7 +43,8 @@ export enum MsgTipo {
     RECONNECT = 10,
     CALL_NO_DISPONIBLE =11,
     GO_CLASS = 12,
-    CALL_RECONNECT = 13
+    CALL_RECONNECT = 13,
+    INSIDE_ROOM = 14
     
     
 

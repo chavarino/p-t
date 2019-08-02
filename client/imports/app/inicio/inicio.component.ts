@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { Meteor } from 'meteor/meteor';
 import  {RolesService} from "../services/roles.service";
-import {Generic} from "../services/generic.interface";
+import { Generic } from 'imports/clases/generic.class';
+
 @Component({
   selector: 'inicioC',
   templateUrl: 'inicio.html',

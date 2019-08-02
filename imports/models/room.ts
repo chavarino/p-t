@@ -1,4 +1,6 @@
 import { Kpm, Score } from './kpm';
+import { RoomFile } from './fileI';
+import { Message } from './message';
 
 
 
@@ -18,7 +20,9 @@ export interface Room {
     estadoText ?: string,
     urlVideo ?: string,
     elo ?: number,
-    
+    precio ?: number,
+    files : Array<RoomFile>,
+    chat : Array<Message>,
     scores ?: {
         alumno : Score
 
