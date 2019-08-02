@@ -9,7 +9,8 @@ import {  OnInit, OnDestroy } from '@angular/core';
 
 import {MethodsClass} from "./methodsClass"
 import { Perfil } from 'imports/models/perfil';
-import { FilesI } from 'client/imports/app/file.component/file.component';
+import { FilesI } from 'imports/models/fileI';
+
 export class MsgClass{
 
    
@@ -198,17 +199,45 @@ export class Log{
 export class FactoryCommon
 {
 
-
+   static  MAX_SIZE_FOTO :number = 5242880 ;
+   static   MAX_SIZE_DOCS:number  = 10485760;
+   static  MIME_FORMATS : Array<string> = ["application/pdf","application/vnd.openxmlformats-officedocument.wordprocessingml.document","application/msword","application/zip","application/x-7z-compressed","application/x-rar-compressed","application/x-tar"] 
     constructor()
     {
 
     }
 
-    static isImageCorrect(file : FilesI) :boolean
+    static getSizeFileB64(encoded_string: string) : number
     {
-            return  file.filetype.split("/")[0]==="image" && file.size <= 5242880 /// menos oigual a 5 MBx
+        return 3 * encoded_string.length / 4
     }
 
+    static convertMBtoB(n : number) :number
+    {   
+        return n *  Math.pow(1024, 2)
+    }
+    static isDocCorrect(file : FilesI) :boolean
+    {
+        
+
+        
+            return   this.isImageCorrect(file) || file.size <= FactoryCommon.MAX_SIZE_DOCS  && this.MIME_FORMATS.reduce((a: boolean,act : string)=>{
+
+                return a || file.valueUrl.includes(act);
+            }, false)
+            
+            /// menos oigual a 5 MBx
+    }
+
+    static isImageCorrectFromUrl(url :string) :boolean
+    {
+       return this.isImageCorrect({filename : "", valueUrl : url, filetype: "", valueB64: "", size : this.getSizeFileB64(url.split(",")[1])})
+    }
+    static isImageCorrect(file : FilesI) :boolean
+    {
+         
+            return  file.valueUrl.includes("data:image/") && file.size <= FactoryCommon.MAX_SIZE_FOTO /// menos oigual a 5 MBx
+    }
 
     static promesa(fn : (valor : any)=>any) {
         return new Promise(fn);

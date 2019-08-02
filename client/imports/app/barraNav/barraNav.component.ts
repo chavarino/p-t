@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import  {RolesService} from "../services/roles.service";
-import {Generic} from "../services/generic.interface";
+import { Generic } from 'imports/clases/generic.class';
+
 //import {Meteor} from "meteor/meteor";
 
 

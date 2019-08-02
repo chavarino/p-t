@@ -21,7 +21,7 @@ export class ReduxC {
     estado : Estado;
     dispatcherId : NodeJS.Timer;
     fnChange : (newEstado :Estado) => void
-    constructor(fnChange : (newEstado)=>void)
+    constructor(fnChange ?: (newEstado)=>void)
     {
         this.estado = {
 
@@ -49,7 +49,8 @@ export class ReduxC {
                 }
                 //ponemos el nuevo
                 vm.estado = nextStado;
-                vm.fnChange(vm.estado);
+                if(vm.fnChange)
+                    vm.fnChange(vm.estado);
                 console.log("redux " + vm.estado.id);
                 if(vm.estado.ini)
                 {

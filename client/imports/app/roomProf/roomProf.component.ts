@@ -1,5 +1,6 @@
 
 import { Meteor } from 'meteor/meteor';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, DoCheck } from '@angular/core';
 import  {RolesService} from "../services/roles.service";
 import {RtcService} from "../services/rtc.service"
 
@@ -7,8 +8,7 @@ import {Room} from "../../../../imports/models/room"
 import {Perfil, PerfClase} from "../../../../imports/models/perfil"
 import { Rooms } from '../../../../imports/collections/room';
 import { FormGroup, FormBuilder,Validators,FormControl } from '@angular/forms';
-import {Generic} from "../services/generic.interface";
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, DoCheck } from '@angular/core';
+
 import { MeteorObservable } from 'meteor-rxjs';
 import { Subscription } from 'rxjs/Subscription';
 
@@ -16,20 +16,14 @@ import {ReduxC, Estado, LogicEstado} from "../services/reduxC";
 import { Action } from 'redux';
 import { MsgTipo, Message, MessageRtc } from 'imports/models/message';
 import { MsgClass,FactoryCommon, Log, EloIntefaceModel } from 'imports/functions/commonFunctions';
-import { Msg } from 'imports/collections/msg';
+
 import {MethodsClass} from "../../../../imports/functions/methodsClass"
-import {Tipo} from "../timeCounter/timeCounter.component"
-import { User } from 'imports/models/User';
+
 import { Users } from 'imports/collections/users';
 import { ConfigTags } from '../categorias/categorias.component';
-enum ETipo  {
-    INIT = 1,
-    CLASS = 2,
-    WAIT_CALL = 3,
-    WAIT_CALL_ACCEPT =4,
-    WAIT_CLASS=5,
-    PRE_CLASS = 6
-}
+import { RoomClass, ETipo } from 'imports/clases/room.class';
+import { Router } from '@angular/router';
+
 
 
 
@@ -38,21 +32,20 @@ enum ETipo  {
   templateUrl: 'roomProf.html',
   styleUrls: ['roomProf.scss']
 })
-export class RoomProfComponent extends Generic  implements OnInit, OnDestroy , DoCheck {
+export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy , DoCheck {
 
     
     clase : Room
     roomProf :Subscription;
     alumnoSus :Subscription;
     addForm: FormGroup;
-    existePet : boolean;
+    
     interval : any;
-    redux : ReduxC;
-    estadoLogic :  LogicEstado[];
-    localVideoId : string;
-    remoteVideoId : string;
-    maxPing : number;
-    temp: object;
+    
+
+  
+  
+   
     //audios : Map<string, AudioC>;
     perfClase : PerfClase ;
     configTags : ConfigTags = {
@@ -60,12 +53,12 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy , D
         listCatBusc : []
     }
     userSuscripcion: Subscription;
-    cd : ChangeDetectorRef;
-    constructor( rol : RolesService, private formBuilder: FormBuilder, cd :ChangeDetectorRef )
-    {
-        super(1, 1, "Prof", rol);
-
    
+    constructor( rol : RolesService,  rutas : Router , private formBuilder: FormBuilder, cd :ChangeDetectorRef )
+    {
+        super( "Prof", rol, cd, rutas);
+
+     
         let vm =this;
         vm.perfClase = {
             categorias : [],
@@ -84,19 +77,13 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy , D
             ])
             
         });
-       vm.maxPing = 3;
-       //this.defineAudio();
-       this.l = new Log(this.modulo, Meteor.userId());
+       
+       
 
-        vm.localVideoId ="localVideo"
-        vm.remoteVideoId ="remoteVideo";
+        
 
-        this.temp = {
-            tipo :Tipo.TEMP,
-            secondsIni : 30,
-            mostrar : true
-        }
-        vm.cd = cd ;
+        
+    
         vm.estadoLogic =[
             
             // init : 
@@ -133,7 +120,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy , D
         
         
         
-        this.existePet = false;
+     
         //vm.setDisponible(true)
         window.onbeforeunload = function (event) {
             
@@ -151,10 +138,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy , D
             return message;
         };
         
-        vm.redux = new ReduxC((estado :Estado)=>{
-
-            vm.cdUpdate(estado, vm.cd)
-        })
+        
         
 
         // setTimeout()
@@ -165,10 +149,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy , D
         
         
         
-        setTimeout(()=>{
-            vm.redux.nextStatus({ type: ETipo.INIT });
-
-        }, 1000)
+      
     }
 
     ngDoCheck() {
@@ -178,49 +159,8 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy , D
     }
 
   
-    
-    defineAudio() 
-    {
-       // this.audios["call"] = new AudioC("ring.mp3");
-    }
-    
-    isEstadoIni() :boolean
-    {
-        let vm = this;
 
-        return vm.redux.estado.id === ETipo.INIT;
-    }
-    isEstadoPreClass() :boolean
-    {
-        let vm = this;
 
-        return vm.redux.estado.id === ETipo.PRE_CLASS;
-    }
-    isEstadoWaitCall() :boolean
-    {
-        let vm = this;
-
-        return vm.redux.estado.id === ETipo.WAIT_CALL;
-    }
-    isEstadoWaitAcceptCall() :boolean
-    {
-        let vm = this;
-
-        return vm.redux.estado.id === ETipo.WAIT_CALL_ACCEPT;
-    }
-    isEstadoWaitClass() :boolean
-    {
-        let vm = this;
-
-        return vm.redux.estado.id === ETipo.WAIT_CLASS;
-    }
-
-    isEstadoClass() :boolean
-    {
-        let vm = this;
-
-        return vm.redux.estado.id === ETipo.CLASS;
-    }
 
     
 
@@ -734,10 +674,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy , D
         p.disponible= disponible;
         MethodsClass.call("setDisponible", disponible, fn);
     }
-    isInClass()
-    {
-      return this.existePet;
-    }
+ 
     ngOnInit()
     {
 
@@ -787,22 +724,12 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy , D
                     //vm.findClass();
             });
           });
-          vm.intervalUpdAction(this.cd)
+          vm.intervalUpdAction()
+
+          vm.iniRoom()
     }
 
-    findClass()
-    {
-        
-            if(this.clase)
-            {
-                this.existePet = true;
-            }
-            else{
-                this.existePet= false;
-              
-                //
-            }
-    }
+
 
     ngOnDestroy()
     {
@@ -826,7 +753,7 @@ export class RoomProfComponent extends Generic  implements OnInit, OnDestroy , D
           if (this.userSuscripcion) {
             this.userSuscripcion.unsubscribe();
           }
-          vm.intervalUpdAction(this.cd)
+          vm.intervalUpdAction()
     }
 
     isValid()
