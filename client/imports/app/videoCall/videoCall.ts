@@ -1,8 +1,9 @@
 import { Component, OnInit, OnDestroy, Input,Output,EventEmitter } from '@angular/core';
 import {RtcService, VideoType} from "../services/rtc.service"
-import {Tipo} from "../timeCounter/timeCounter.component"
+
 import { isUndefined } from 'util';
 import {MethodsClass} from "../../../../imports/functions/methodsClass"
+import { Tipo } from '../timeCounter/timeCounter.component';
 
 @Component({
   selector: 'videoCall',

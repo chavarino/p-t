@@ -6,11 +6,12 @@ import { MethodsClass } from 'imports/functions/methodsClass';
 import { User } from 'imports/models/User';
 import { Estado, ReduxC, LogicEstado } from 'client/imports/app/services/reduxC';
 import { RtcService } from 'client/imports/app/services/rtc.service';
-import { Tipo } from 'client/imports/app/timeCounter/timeCounter.component';
+
 
 import { Component, OnInit, OnDestroy, ChangeDetectorRef, DoCheck } from '@angular/core';
 import { resolve } from 'url';
 import { Router } from '@angular/router';
+import { Tipo } from 'client/imports/app/timeCounter/timeCounter.component';
 /*enum ETipo  {
     INIT = 1,
     CLASS = 2,

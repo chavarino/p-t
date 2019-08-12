@@ -10,7 +10,7 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 import { LoginComponent } from './login/login.component';
 import { Categorias } from './categorias/categorias.component';
-import { TimeCounter } from './timeCounter/timeCounter.component';
+
 import { InicioComponent } from './inicio/inicio.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { AccountsModule, LoginButtons } from 'angular2-meteor-accounts-ui';
@@ -33,6 +33,7 @@ import { TagInputModule } from 'ngx-chips';
 
 import { ModalKpm} from './modalKpm/modaKpm.component';
 import { FileInput } from './file.component/file.component';
+import { TimeCounter } from './timeCounter/timeCounter.component';
 
 export const ROUTES_PROVIDERS = [];
 @NgModule({
