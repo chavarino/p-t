@@ -3,7 +3,8 @@ import {RtcService, VideoType} from "../services/rtc.service"
 
 import { isUndefined } from 'util';
 import {MethodsClass} from "../../../../imports/functions/methodsClass"
-import { Tipo } from '../timeCounter/timeCounter.component';
+import { Tipo } from 'imports/models/enums';
+
 
 @Component({
   selector: 'videoCall',

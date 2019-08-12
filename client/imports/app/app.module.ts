@@ -35,6 +35,7 @@ import { ModalKpm} from './modalKpm/modaKpm.component';
 import { FileInput } from './file.component/file.component';
 import { TimeCounter } from './timeCounter/timeCounter.component';
 
+
 export const ROUTES_PROVIDERS = [];
 @NgModule({
   imports: [

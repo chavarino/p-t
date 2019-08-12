@@ -11,7 +11,8 @@ import { RtcService } from 'client/imports/app/services/rtc.service';
 import { Component, OnInit, OnDestroy, ChangeDetectorRef, DoCheck } from '@angular/core';
 import { resolve } from 'url';
 import { Router } from '@angular/router';
-import { Tipo } from 'client/imports/app/timeCounter/timeCounter.component';
+import { Tipo } from 'imports/models/enums';
+
 /*enum ETipo  {
     INIT = 1,
     CLASS = 2,
