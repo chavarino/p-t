@@ -2,12 +2,9 @@ import { Component, OnInit, OnDestroy, Input,Output,EventEmitter } from '@angula
 
 import  {RolesService} from "../services/roles.service";
 import { isUndefined } from 'util';
+import { Tipo } from 'imports/models/enums';
 
-export enum Tipo
-{
-  CONT = 1,
-  TEMP =-1
-}
+
 interface TiempoView {
   segundos: number,
   minutos : number,
