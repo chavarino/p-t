@@ -59,28 +59,47 @@ let SSL = function(key, cert, port){                                     // 1
           
 */
 
-
 Meteor.users.deny ({
   update () {return true; }
 });
 ServiceConfiguration.configurations.remove({
   service: "facebook"
 });
-let service : string = "facebook";
-ServiceConfiguration.configurations.insert({
-  service: service,
-  appId: '2159629500964595',
-  secret: 'd7fa5cb79f2fd9ff567fc734fdcf09be'
-}); 
-
 ServiceConfiguration.configurations.remove({
   service: "google"
 });
-ServiceConfiguration.configurations.insert({
-  service: "google",
-  clientId: "968081809867-fpagrpdujnjauiggoqucmd5cgiseuqfl.apps.googleusercontent.com",
-  secret: "COov_-wK-IkGBkWTCuwtpWBd"
-});
+let service : string = "facebook";
+if(Meteor.isProduction)
+{
+  console.log("Production Enviroment")
+  ServiceConfiguration.configurations.insert({
+    service: service,
+    appId: '451520298781502',
+    secret: '64cd9a2568172b601d176eac77f942d6'
+  }); 
+  
+  ServiceConfiguration.configurations.insert({
+    service: "google",
+    clientId: "439619175679-p6319ak5e7gmneljfumoedm6brnoc0l4.apps.googleusercontent.com",
+    secret: "VH9BmaSayFPqWccJakog_LhA"
+  });
+
+}
+else{
+  console.log("Development Enviroment")
+  ServiceConfiguration.configurations.insert({
+    service: service,
+    appId: '2159629500964595',
+    secret: 'd7fa5cb79f2fd9ff567fc734fdcf09be'
+  }); 
+  
+  ServiceConfiguration.configurations.insert({
+    service: "google",
+    clientId: "968081809867-fpagrpdujnjauiggoqucmd5cgiseuqfl.apps.googleusercontent.com",
+    secret: "COov_-wK-IkGBkWTCuwtpWBd"
+  });
+
+}
 
 
 if(Meteor.isServer)
