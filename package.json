@@ -8,7 +8,8 @@
     "updateAll": "meteor update --all-packages",
     "seeVulnera": "npm audit",
     "run": "MONGO_URL='mongodb+srv://fasmos:563ioVoUYaXQMOZj@cluster0-cnrdq.mongodb.net/test?retryWrites=true&ssl=true' meteor",
-    "setDb": "SET MONGO_URL=mongodb://fasmos:javier88@ds253243.mlab.com:53243/meteor"
+    "setDb": "SET MONGO_URL=mongodb://fasmos:javier88@ds253243.mlab.com:53243/meteor",
+    "build": "TOOL_NODE_FLAGS='--max-old-space-size=4096' meteor build ../apps/sapens/"
   },
   "dependencies": {
     "@angular/animations": "^6.0.5",
