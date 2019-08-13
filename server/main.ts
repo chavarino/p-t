@@ -72,6 +72,7 @@ let service : string = "facebook";
 if(Meteor.isProduction)
 {
   console.log("Production Enviroment")
+  Meteor.settings.public
   ServiceConfiguration.configurations.insert({
     service: service,
     appId: '451520298781502',
@@ -121,6 +122,13 @@ if(Meteor.isServer)
       key,
       cer,
       443);*/
+      if(Meteor.isProduction)
+      {
+        Meteor.absoluteUrl ("https://marcos.alvaco.org");
+        process.env.absoluteUrl = "https://marcos.alvaco.org";
+        process.env.url = "https://marcos.alvaco.org";
+
+      }
     process.env.MAIL_URL="smtp://javier.chavarino.martinez@gmail.com:Albaricoke91@smtp.gmail.com:587/";
   });
   
