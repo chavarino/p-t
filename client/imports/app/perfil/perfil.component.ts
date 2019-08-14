@@ -68,7 +68,11 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy{
     save()
     {
         //this.addForm.
-        this.perfil.perfClase.categorias = this.configTags.listCat;
+        if(this.perfil.perfClase)
+        {
+            this.perfil.perfClase.categorias = this.configTags.listCat;
+
+        }
         if (this.addForm.valid) {
             alert("Guardado")
 

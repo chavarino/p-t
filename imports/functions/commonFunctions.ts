@@ -231,7 +231,11 @@ export class FactoryCommon
 
     static isImageCorrectFromUrl(url :string) :boolean
     {
-       return this.isImageCorrect({filename : "", valueUrl : url, filetype: "", valueB64: "", size : this.getSizeFileB64(url.split(",")[1])})
+        if(!url)
+        {
+            return false;
+        }
+       return url.includes("http") || this.isImageCorrect({filename : "", valueUrl : url, filetype: "", valueB64: "", size : this.getSizeFileB64(url.split(",")[1])})
     }
     static isImageCorrect(file : FilesI) :boolean
     {

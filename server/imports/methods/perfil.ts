@@ -35,7 +35,7 @@ let savePerfil = (id :string, profile: Perfil, all ?: boolean) =>
     {
       perfilAux = Meteor.user().profile;
 
-      if(profile.foto && profile.foto!==perfilAux.foto && FactoryCommon.isImageCorrectFromUrl(perfilAux.foto ) )
+      if(profile.foto && profile.foto!==perfilAux.foto && FactoryCommon.isImageCorrectFromUrl(profile.foto ) )
       {
           perfilAux.foto = profile.foto;
       }
