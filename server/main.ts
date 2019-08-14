@@ -124,12 +124,13 @@ if(Meteor.isServer)
       443);*/
       if(Meteor.isProduction)
       {
-        Meteor.absoluteUrl ("https://marcos.alvaco.org");
-        process.env.absoluteUrl = "https://marcos.alvaco.org";
-        process.env.url = "https://marcos.alvaco.org";
+        //Meteor.absoluteUrl ("https://marcos.alvaco.org");
+        //process.env.absoluteUrl = "https://marcos.alvaco.org";
+        //process.env.url = "https://marcos.alvaco.org";
 
       }
-    process.env.MAIL_URL="smtp://javier.chavarino.martinez@gmail.com:Albaricoke91@smtp.gmail.com:587/";
+    console.log("url absoluta :" +Meteor.absoluteUrl());
+    //process.env.MAIL_URL="smtp://javier.chavarino.martinez@gmail.com:Albaricoke91@smtp.gmail.com:587/";
   });
   
 }
@@ -185,7 +186,7 @@ Accounts.onCreateUser(function (options, user) {
   console.log(user);
   return user;
 });
-
+/*
 Accounts.emailTemplates.siteName = 'Clases Online';
 Accounts.emailTemplates.from = 'Clases Online <javier.chavarino.1991@gmail.com>';
 
@@ -212,7 +213,7 @@ Accounts.emailTemplates.verifyEmail = {
       return `¡Hola ${user.username}! Verifica tu cuenta de correo en el siguiente link: ${url}`;
    }
 };
-
+*/
 
 
 //
