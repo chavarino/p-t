@@ -29,6 +29,11 @@ interface Rtc {
    
 }
 
+enum Navegador {
+  CHROME = 1,
+  MOZILLA = 2,
+  SAFARI = 3
+}
 export enum VideoType {
   CAM = 1,
   SCREEN = 2
@@ -50,7 +55,7 @@ export class RtcService {
     offerToReceiveVideo : true
     }
 
-    
+    private navegador : Navegador = -1;
     private audioConfig = {   
       echoCancellation: true,
       autoGainControl: true,
@@ -102,7 +107,9 @@ export class RtcService {
     {
 
       Log.logStatic(this.module, "pushServers: " + JSON.stringify(servers))
-      this.configuration.iceServers.push(...servers)
+      //this.configuration.iceServers.push(...servers)
+      this.configuration.iceServers = servers;
+      for(;this.configuration.iceServers.length>4;) this.configuration.iceServers.pop();
     }
     isConnected() :boolean
     {
@@ -118,7 +125,7 @@ export class RtcService {
       {
 
         //this.l.log("isConnected True");
-        return vm.rct.pc.connectionState === "connected";
+        return  vm.navegador=== Navegador.MOZILLA || vm.rct.pc.connectionState === "connected";
 
       }
     }
@@ -131,6 +138,7 @@ export class RtcService {
             audio: true,
             video: true,
           });
+          
         Log.logStatic(this.module, "getPermisos: getUserMedia OK");
         stream.getTracks().forEach(function (track) { track.stop(); });
           fn(true);
@@ -200,7 +208,17 @@ export class RtcService {
       startWebRTC() {
 
         let vm =this;
-
+        if(navigator.userAgent.includes("Mozilla"))
+        {
+          this.navegador = Navegador.MOZILLA
+        }
+        else if(navigator.userAgent.includes("Chrome"))
+        {
+          this.navegador = Navegador.CHROME
+        }
+        else  {
+          this.navegador = Navegador.SAFARI;
+        }
         this.l.log("startWebRTC  INI");
         //this.setVideoTypeScreen();
         this.rct.pc = new RTCPeerConnection(RtcService.configuration);
@@ -248,7 +266,7 @@ export class RtcService {
             pc.onnegotiationneeded = async () => {
               vm.l.log(`rtc onnegotiationneeded() signalingState : ${vm.rct.pc.signalingState}, conectionState: ${vm.rct.pc.connectionState}, iceConnectionState: ${vm.rct.pc.iceConnectionState},`);
               
-              if (vm.negotiating) return;
+              if ( vm.negotiating) return;
 
               vm.l.log("rtc onnegotiationneeded() negotiating" );
               vm.l.log("rtc onnegotiationneeded() pc.signalingState=" +pc.signalingState );
@@ -503,6 +521,7 @@ export class RtcService {
     if(fn)
     {
       fn();
+      
     }
     this.l.log("mediaUser  fin");
     }
