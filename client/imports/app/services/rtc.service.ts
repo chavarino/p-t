@@ -84,7 +84,7 @@ export class RtcService {
     localVideo;
     stream : MediaStream
     switchVideo : Map<VideoType, MediaStreamTrack>;
-    
+    trasmitiendo : boolean ;
     caller : boolean;
     videoSender : RTCRtpSender;
     remoteVideoTrack : MediaStreamTrack;
@@ -107,9 +107,10 @@ export class RtcService {
     {
 
       Log.logStatic(this.module, "pushServers: " + JSON.stringify(servers))
-      //this.configuration.iceServers.push(...servers)
-      this.configuration.iceServers = servers;
-      for(;this.configuration.iceServers.length>4;) this.configuration.iceServers.pop();
+      
+      this.configuration.iceServers.push(...servers)
+      //this.configuration.iceServers = servers;
+      //for(;this.configuration.iceServers.length>4;) this.configuration.iceServers.pop();
     }
     isConnected() :boolean
     {
@@ -125,8 +126,8 @@ export class RtcService {
       {
 
         //this.l.log("isConnected True");
-	this.l.log("Estado de conexion: " + vm.rct.pc.connectionState);
-        return  vm.navegador=== Navegador.MOZILLA || vm.navegador=== Navegador.SAFARI || vm.rct.pc.connectionState === "connected";
+	      //this.l.log("Estado de conexion: " + vm.rct.pc.connectionState);
+        return  (vm.navegador=== Navegador.MOZILLA || vm.navegador=== Navegador.SAFARI) && vm.trasmitiendo || vm.rct.pc.connectionState === "connected";
 
       }
     }
@@ -220,6 +221,8 @@ export class RtcService {
         else  {
           this.navegador = Navegador.SAFARI;
         }
+
+        this.trasmitiendo = false;
         this.l.log("startWebRTC  INI");
         //this.setVideoTypeScreen();
         this.rct.pc = new RTCPeerConnection(RtcService.configuration);
@@ -295,12 +298,27 @@ export class RtcService {
           // When a remote stream arrives display it in the #remoteVideo element
           pc.ontrack = event => {
 
-           // if (remoteVideo.srcObject) return;
-           vm.l.log("rtc ontrack() Remote Stream");
+            if(this.navegador===Navegador.MOZILLA || this.navegador===Navegador.SAFARI)
+            {
+              event.track.onunmute = () => {
+                // if (remoteVideo.srcObject) return;
+                vm.l.log("navegador MOZILLA  || SAFARI\n rtc ontrack() Remote Stream");
+                console.log('track unmuted');
+                remoteVideo.srcObject = event.streams[0];
+                vm.remoteVideoTrack = event.streams[0].getVideoTracks()[0]
+                vm.l.log("rtc ontrack() OK");
+                vm.trasmitiendo =true;
+              }
+
+            }
+            else{
+              vm.l.log("CHROME \n rtc ontrack() Remote Stream");
+              remoteVideo.srcObject = event.streams[0];
+              vm.remoteVideoTrack = event.streams[0].getVideoTracks()[0]
+
+              vm.l.log("rtc ontrack() OK");
+            }
            
-            remoteVideo.srcObject = event.streams[0];
-            vm.remoteVideoTrack = event.streams[0].getVideoTracks()[0]
-            vm.l.log("rtc ontrack() OK");
           };
         }
         try {
@@ -572,7 +590,7 @@ export class RtcService {
       let vm=this;
       this.l.log("close Close");
       vm.negotiating = false;
-      
+      vm.trasmitiendo = false;
      // await vm.rct.pc.setRemoteDescription(null);
     // await vm.rct.pc.setLocalDescription(null);
       this.closeTracks();
