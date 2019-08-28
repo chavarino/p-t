@@ -125,7 +125,8 @@ export class RtcService {
       {
 
         //this.l.log("isConnected True");
-        return  vm.navegador=== Navegador.MOZILLA || vm.rct.pc.connectionState === "connected";
+	this.l.log("Estado de conexion: " + vm.rct.pc.connectionState);
+        return  vm.navegador=== Navegador.MOZILLA || vm.navegador=== Navegador.SAFARI || vm.rct.pc.connectionState === "connected";
 
       }
     }
