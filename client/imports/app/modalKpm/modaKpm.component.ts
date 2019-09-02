@@ -32,6 +32,8 @@ export class ModalKpm implements OnInit, OnDestroy {
 
    
   ];*/
+
+  updated : boolean= false;
   scores : number[]  =[ 1,2 ,3,4,5]
   closeResult: string;
 
@@ -49,7 +51,8 @@ export class ModalKpm implements OnInit, OnDestroy {
 
       vm.activeModal.close({
         kpms : kpms  as Kpm[],
-        comentario : vm.comentario
+        comentario : vm.comentario,
+        updated : vm.updated
       })
         
     })
@@ -84,6 +87,7 @@ export class ModalKpm implements OnInit, OnDestroy {
         
     }
 
+  
   isChecked(kpm :Kpm, score: number): boolean
   {
  
@@ -93,6 +97,7 @@ export class ModalKpm implements OnInit, OnDestroy {
   {
       kpm.answer = score;
       
+      this.updated = true
   }
   private getDismissReason(reason: any): string {
     if (reason === ModalDismissReasons.ESC) {
