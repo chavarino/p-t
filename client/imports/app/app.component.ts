@@ -23,6 +23,7 @@ export class AppComponent implements OnInit, OnDestroy {
   rol:RolesService
   rolSubs : Subscription
   flags  : BanderasService;
+  idInterval: NodeJS.Timer;
   constructor(rol:RolesService, flags : BanderasService)
   {
     this.rol = rol;
@@ -42,39 +43,46 @@ export class AppComponent implements OnInit, OnDestroy {
   }
     ngOnInit() {
 
-
+      
       MethodsClass.call("getServers", (res) =>{
 
         RtcService.pushServers(res.data.v.iceServers) ;
        // console.log(JSON.stringify(res))
       });
 
-      
-      //cargar rol
-      /*
-      read : number,
-  write : number*/
-  this.rolSubs = MeteorObservable.subscribe('rolByUser').subscribe(() => {
-    //this.todos = Todos.findOne();
-    let rol = 1;
-    if(this.loggedIn())
-    {
-      rol = Meteor.user().profile.rol;
-    }
-    
-    Roles.find({codigo: rol}).subscribe((data)=>{
-
-      if(!data[0])
+      this.idInterval = setInterval(()=>{
+          if(this.loggedIn())
+          {
+            console.log("Setting alive")
+            MethodsClass.call("setAlive", (res) =>{
+            });
+          }
+      },30000)
+        //cargar rol
+        /*
+        read : number,
+    write : number*/
+    this.rolSubs = MeteorObservable.subscribe('rolByUser').subscribe(() => {
+      //this.todos = Todos.findOne();
+      let rol = 1;
+      if(this.loggedIn())
       {
-          this.rol.setIniRoles();
+        rol = Meteor.user().profile.rol;
       }
-      else{
-        this.rol.setRoles(data[0].rol);
+      
+      Roles.find({codigo: rol}).subscribe((data)=>{
 
-      }
-    })
-    
-  });
+        if(!data[0])
+        {
+            this.rol.setIniRoles();
+        }
+        else{
+          this.rol.setRoles(data[0].rol);
+
+        }
+      })
+      
+    });
 
     Tracker.autorun(()=>{
       if(Meteor.user())
@@ -112,6 +120,11 @@ logginIn()
   ngOnDestroy() {
     if (this.rolSubs) {
       this.rolSubs.unsubscribe();
+    }
+
+    if(this.idInterval)
+    {
+      clearInterval(this.idInterval)
     }
   }
   

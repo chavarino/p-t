@@ -1,5 +1,7 @@
 
 import { HTTP } from 'meteor/http'
+import { MethodsClass } from 'imports/functions/methodsClass';
+import { Users } from 'imports/collections/users';
 
 // Node Get ICE STUN and TURN list
 let o = {
@@ -45,9 +47,10 @@ export let getServers = () =>{
         }
   }
   
-
   Meteor.methods(
     {
+
+      
         getDiffTimeInSeconds(date1 : Date) {
     
              //TODO GENERAR TIEMPO EN SERVIDOR.
@@ -78,6 +81,18 @@ export let getServers = () =>{
               }
 
                 
+        },
+        setAlive()
+        {
+
+          if(!Meteor.user())
+          {  
+              MethodsClass.noLogueado();
+          }
+
+          
+
+              Users.update({_id : Meteor.userId()}, {$set : { lastUpdate : new Date()}});
         }
     }
     )

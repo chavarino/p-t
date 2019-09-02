@@ -18,5 +18,6 @@ export  interface  Score
 {
     kpms : Kpm[],
     comentario : string,
-    dateScore ?: Date
+    dateScore ?: Date,
+    updated ?: boolean
 }

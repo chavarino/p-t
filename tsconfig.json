@@ -27,7 +27,7 @@
   "include": [
     "imports/**/*.ts",
     "client/**/*.ts",
-    "server/**/*.ts"
+    "server/**/*.ts","types/types.d.ts"
   ],
   "exclude": [
     "node_modules"
@@ -35,5 +35,8 @@
   "compileOnSave": false,
   "atom": {
     "rewriteTsconfig": false
-  }
+  },
+  "files": [
+    "types/types.d.ts"
+  ]
 }

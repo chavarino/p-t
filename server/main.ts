@@ -31,8 +31,15 @@ import { Roles, RolesObj } from 'imports/collections/rol';
 import { getServers } from './imports/methods/general';
 import { Perfil } from 'imports/models/perfil';
 import { iniProfesorModel } from 'imports/functions/commonFunctions';
+import { Users } from 'imports/collections/users';
 
 
+
+import { SyncedCron } from 'meteor/percolate:synced-cron';
+
+import { User } from 'imports/models/User';
+//import {SyncedCron} from 'meteor/percolate:synced-cron';
+//)
 
 
 
@@ -106,8 +113,10 @@ else{
 }
 
 
+
 if(Meteor.isServer)
 {
+    
   console.log("isServer");
   Meteor.startup(()=>{
    /* console.log("inicio startup");
@@ -132,13 +141,77 @@ if(Meteor.isServer)
         //process.env.url = "https://marcos.alvaco.org";
 
       }
+ 
+        /*Meteor.setInterval(()=>{
+           Meteor.call("borrarNoConectados")
+        }, 30000)*/
+        
+   
     console.log("url absoluta :" +Meteor.absoluteUrl());
     //process.env.MAIL_URL="smtp://javier.chavarino.martinez@gmail.com:Albaricoke91@smtp.gmail.com:587/";
+
+    let  fn = async ()=>{
+      try {
+        // 
+          let arrayIds  : Array<string> = []
+          
+          //console.log("usuarios disponibles: " +  Meteor.users.find( {"profile.disponible" : !!true }).count())
+          //Users.aggregate()
+          let ids : Array<any> = await (Meteor.users.rawCollection().aggregate([{ $match : {  "profile.disponible" : !!true } },
+              { $project: { _id: 1, dateDifference: { $subtract: [  new Date(), "$lastUpdate" ] } } },
+          { $match : { $or: [ {dateDifference : { $gt : 30000}}, {dateDifference : { $type: 10 }} ]} } ], { allowDiskUse: true }).toArray());
+          
+          
+          console.log("desconectando ususuarios: " + JSON.stringify(ids))
+          for(let i = 0 ; i<ids.length ; i++)
+          {
+           //console.log("pASA")
+              arrayIds.push(ids[i]._id);
+          }
+          if(arrayIds.length===0)
+          {
+            return;
+          }
+          // console.log("desconectando ususuarios.")
+          Users.update({"_id": { "$in": arrayIds }}, {$set : { "profile.disponible" : false}})
+          
+        } catch (error) {
+          console.log(error);
+          //throw e;
+        
+        }
+    }
+
+    SyncedCron.config({
+      // Log job run details to console
+      //log: true,
+     // collectionName: "users"
+  
+      
+    });
+
+
+    SyncedCron.add({
+      name: 'Desconectando usuarios no conectados y si disponibles',
+      schedule: function(parser) {
+        // parser is a later.parse object
+        return parser.recur().on(30).second();
+      },
+      job: function() {
+        fn();
+        return "";
+      }
+    }); 
+
+    SyncedCron.start();
   });
   
 }
 //https://docs.mongodb.com/manual/reference/operator/query/regex/
 //https://docs.mongodb.com/manual/tutorial/query-arrays/
+
+
+
 
 Accounts.onCreateUser(function (options, user) {
 
