@@ -175,6 +175,10 @@
                     <div class="col">
                         <h3>
                             En clase.
+                            
+                            <span class="alert alert-danger float-right" *ngIf="estado.campos.ping>1">
+                                Conexión perdida, reintento ({{estado.campos.ping-1}})
+                            </span>
                         </h3>
 
                     </div>

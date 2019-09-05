@@ -421,7 +421,7 @@ export class RoomAlumnoComponent extends RoomClass implements OnInit, OnDestroy,
 
             }
         }
-        const time = 30000;
+        
         let  idAux;
         let mServ : MsgClass =  this.msgServ;
         let funciones : Map<Number, (m :Message)=> void > ;
@@ -700,7 +700,7 @@ export class RoomAlumnoComponent extends RoomClass implements OnInit, OnDestroy,
                         cancelarCall();
                         
 
-                    }, time)
+                    }, vm.timeWaitCall)
                 };
                 nextState.dispatcher = function()
                 {
@@ -779,7 +779,7 @@ export class RoomAlumnoComponent extends RoomClass implements OnInit, OnDestroy,
                    
                 }, 500);
 
-                vm.estado.campos.idIntervalPing= setInterval(fnInterval, time)
+                vm.estado.campos.idIntervalPing= setInterval(fnInterval, vm.timePing)
             };
 
 

@@ -34,6 +34,8 @@ export enum ETipo  {
 
 export class RoomClass extends Generic {
     cd: ChangeDetectorRef;
+    timePing : number;
+    timeWaitCall : number;
     maxPing: number;
     //RtcService
      temp: object;
@@ -54,12 +56,14 @@ export class RoomClass extends Generic {
     {
         super(1, 1, modulo, rol)
         let vm=this;
-        vm.maxPing = 3;
+        vm.maxPing = 3; //numero maximo de pings, empezando en 0 son 4.
+        vm.timePing = 6000; // tiempo en lanzar cada ping.
+        vm.timeWaitCall = 20000; // tiempo entre esperas maximo 20 segundos
         this.cd = cd ;
         this.rutas =rutas;
         this.temp = {
             tipo :Tipo.TEMP,
-            secondsIni : 30,
+            secondsIni : 20, //  segundos de los temporizadores visibles hacia atras de las clases y esperas.
             mostrar : true
         }
         vm.localVideoId ="localVideo"
