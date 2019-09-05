@@ -34,5 +34,9 @@
       .close:after {
         transform: rotate(-45deg);
       }
+
+      span.alert.alert-danger.float-right {
+        font-size: 10pt;
+    }
       
 }

@@ -174,7 +174,7 @@ export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy ,
 
             }
         }
-        const time = 30000;
+       
         let  idAux;
         let mServ : MsgClass =  this.msgServ;
         let funciones : Map<Number, (m :Message)=> void > ;
@@ -499,7 +499,7 @@ export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy ,
                         cancelarCall();
                         
 
-                    }, time)
+                    }, vm.timeWaitCall)
                 };
                 nextState.dispatcher = function()
                 {
@@ -537,7 +537,7 @@ export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy ,
                             cancelarCall();
                             
 
-                        }, time)
+                        }, vm.timeWaitCall)
                     };
                     nextState.dispatcher = function()
                     {
@@ -606,7 +606,7 @@ export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy ,
                         
                     }, 500);
 
-                    vm.redux.estado.campos.idIntervalPing= setInterval(fnInterval, time)
+                    vm.redux.estado.campos.idIntervalPing= setInterval(fnInterval, vm.timePing)
                 };
 
 

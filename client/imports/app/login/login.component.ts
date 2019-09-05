@@ -75,10 +75,16 @@ export class LoginComponent implements OnInit{
 
   unirse()
   {
-     
+     let vm=this;
     if (this.addForm.valid) {
 
-      MethodsClass.call("unirse", this.userLogin);
+      MethodsClass.call("unirse", this.userLogin,  (res)=>{
+          console.log("Registrado con existo");
+          alert("Usuario registrado con exito.")
+          vm.loginWithPassword();
+      }, (error)=>{
+          console.log('Handle errors here: ', error);
+      });
       
     }
     

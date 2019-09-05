@@ -24,7 +24,7 @@ export class MethodsClass {
     static call(method : string , ...args: any[])
     {
 
-        let fn = undefined;
+        let fn, fn2 = undefined;
         let input = undefined;
         
         
@@ -56,12 +56,16 @@ export class MethodsClass {
         
         for (let i = 0; i < args.length; i++) {
             const element = args[i];
-            if(isFunction(element))
+            if(isFunction(element) && !fn)
             {
                 
                 fn = element;
                 
                 
+            }
+            else if(isFunction(element))
+            {
+                fn2 = element;
             }
             else if(!isUndefined(element)){
                // input = element
@@ -70,7 +74,7 @@ export class MethodsClass {
             
         }
         args2.push((error,result) => {
-            MethodsClass.frontHandle(error, fn, result)
+            MethodsClass.frontHandle(error, fn, result, fn2)
         })
         /*if(!isUndefined(input))
         {
@@ -91,7 +95,7 @@ export class MethodsClass {
 
         Meteor.call(method, ...args2 );
     }
-    static frontHandle(error, fn, result)
+    static frontHandle(error, fn, result, fnError)
     {
         
         
@@ -99,6 +103,11 @@ export class MethodsClass {
             {
                 alert(error);
                 console.error(error);
+                if(fnError)
+                {
+                    fnError(error)
+
+                }
                 throw new Meteor.Error(error);
             }
             else{

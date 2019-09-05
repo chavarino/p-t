@@ -133,7 +133,9 @@
         <div  *ngIf="isEstadoClass()">
             <div class="row">
                <h3>
-                   Clase:
+                   Clase:   <span class="alert alert-danger float-right" *ngIf="estado.campos.ping>1">
+                                Conexión perdida, reintento ({{estado.campos.ping-1}})
+                            </span>
                </h3>
             </div>
             <videoCall  [secondsIni]="secondsIniClass" [rtc]="rtc" >Video</videoCall>
