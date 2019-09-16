@@ -4,6 +4,9 @@ import {RtcService, VideoType} from "../services/rtc.service"
 import { isUndefined } from 'util';
 import {MethodsClass} from "../../../../imports/functions/methodsClass"
 import { Tipo } from 'imports/models/enums';
+import { Room } from 'imports/models/room';
+import { FilesI } from 'imports/models/fileI';
+import { FactoryCommon } from 'imports/functions/commonFunctions';
 
 
 @Component({
@@ -16,7 +19,13 @@ export class VideoCall implements OnInit, OnDestroy {
   
     private _rtc: RtcService;
     private contador;
-    
+    private _clase : Room = {
+      alumnoId : "",
+      files : [],
+      profId : "",
+      chat : [],
+      titulo : "",      
+    }; 
     private videos ={
       remote : {
         isFullScreen : false
@@ -48,6 +57,27 @@ export class VideoCall implements OnInit, OnDestroy {
         
     }
 
+
+    addFile(files : Array<FilesI>)
+    {
+        if(files && files.length>0 && FactoryCommon.isDocCorrect(files[0]))
+        {
+            // image/png
+            //this.perfil.foto = files[0].valueUrl;
+            // uploadFile(claseId :string ,filesIn: Array<RoomFile>)
+            MethodsClass.call("uploadFile",  this._clase._id,  files, (res)=>{
+                
+            }, (error)=>{
+
+            });
+        }
+        else{
+            alert("Imagen incorrecta. La imagen debe ser un formato compatible (*.png, .jpg ...) y de un tamaño máximo de 5MB ");
+        }
+    }
+
+
+    
     @Input()
     set secondsIni(seconds: number) {
         if(isUndefined(seconds) || seconds<0)
@@ -64,6 +94,28 @@ export class VideoCall implements OnInit, OnDestroy {
        return this.contador.secondsIni; 
      
      }
+
+
+
+
+     @Input()
+     set  clase( c : Room) 
+     {
+
+        if(c !== null && c._id!==null)
+        {
+          this._clase = c;
+
+        }
+     }
+
+    
+     get clase(): Room { 
+       
+       
+      return this._clase; 
+    
+    }
 
     @Input()
     set rtc(rtc: RtcService) {

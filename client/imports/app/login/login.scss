@@ -17,19 +17,42 @@
     height: 40px;
     font-size: 20px;
 }*/
-
+.container
+{
+  z-index: 10;
+}
 .separador {
     margin-top: 5%
 }
+
+.fondo1 {
+  opacity: 0.3;
+  background: black;
+  z-index: 9;
+}
 .float-fondo {
     position: fixed;
-    background: black;
-    width: 100%;
-    top: 0;
-    opacity: 0.3;
-    height: 100%;
+    
+    
+    
 } 
 
+.fondo1,.fondo2{
+  top: 0;
+    
+  right: 0;
+  width: 100%;
+    
+    height: 100%;
+}
+
+.fondo3{
+  left: 20%;
+}
+.fondo2 {
+  z-index: 8;
+  background: white
+}
 
 .float-cont {
     /*left: 34%;*/
@@ -43,6 +66,7 @@
     height: 248px;
     background: white;
     border-radius: 10px;
+    z-index: 10;
 }
 
 .close {
