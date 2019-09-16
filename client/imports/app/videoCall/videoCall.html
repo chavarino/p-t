@@ -28,9 +28,28 @@
 
     </div>
     <div class="row">
+        
+        <div class="col-3">
+            
+        </div>
+        <div class="col-6">
+            <div>
+                <div class="row" *ngFor="let f of _clase.files">
+                    <div class="col-12">
+                        <a [href]="f.valueUrl">{{f.filename}}</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-3">
+
+        </div>
+    </div>
+    <div class="row">
 
         <div class="col-8">
-            
+                <fileInput [multiple]="false" (onSelectFile)="addFile($event)"></fileInput>
             
         </div>
         <div class="col-4">
