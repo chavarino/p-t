@@ -22,7 +22,7 @@ export class LoginComponent implements OnInit{
   constructor(rol:RolesService, private formBuilder: FormBuilder)
   {
     this.rol = rol;
-
+    //this._mostrar = false;
     this.userLogin = {
       username : "",
       password: ""
@@ -34,9 +34,7 @@ export class LoginComponent implements OnInit{
   }
  
   get mostrar(): boolean { 
-    
     return this._mostrar; 
-  
   }
   @Output() cambio = new EventEmitter<boolean>();
 

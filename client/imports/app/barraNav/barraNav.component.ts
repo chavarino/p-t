@@ -12,7 +12,7 @@ import { Generic } from 'imports/clases/generic.class';
 })
 export class BarraNavComponent extends Generic implements OnInit, OnDestroy{
   
-    mostrarLogin : boolean = true;
+    mostrarLogin : boolean = false;
 
     constructor( rol : RolesService)
     {
