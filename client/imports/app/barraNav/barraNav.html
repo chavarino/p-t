@@ -1,9 +1,11 @@
 
 <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" routerLink="/inicio">Inicio</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+  <a class="navbar-brand" routerLink="/inicio">
+    <img src="/images/Sapens.png" width="130px" height="65px">
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
   
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav ml-auto">
@@ -15,7 +17,7 @@
             <a class="nav-link"  routerLink="/room/prof">Atender Clases</a>
           </li>
         <li class="nav-item" *ngIf="canReadC('login')">
-            <a class="nav-link" style="cursor: pointer" (click)="mostrarLoginAc(true)">Login</a>
+              <button type="button" class="btn btn-success" style="background-color: #37F093; border: #37F093" (click)="mostrarLoginAc(true)">Iniciar sesión</button>
         </li>
         <li class="nav-item" *ngIf="canReadC('suscripcion')">
             <a class="nav-link" href="#">Suscripción</a>
@@ -59,9 +61,7 @@
     </div>
     
   </nav>
-  <login [mostrar] = "mostrarLogin" (cambio)="mostrarLoginAc($event)" >
-    
-    </login>
+  <login [mostrar] = "mostrarLogin" (cambio)="mostrarLoginAc($event)"></login>
    <!--
 
      <login-buttons [hidden]="true"></login-buttons>

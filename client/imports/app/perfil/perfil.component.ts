@@ -33,7 +33,7 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy{
     {
 
         super(1, 1, "comun", rol);
-       this.perfil = {
+        this.perfil = {
             foto : "",
             rol : 0,
             email : "",
