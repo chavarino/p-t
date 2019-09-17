@@ -276,7 +276,7 @@ Meteor.methods({
 
 
           //Nos aseguramos que tenga permisos para cerrar  la clase (Que sea el creador.)
-        if(room ==null || room.alumnoId != Meteor.userId() && room.profId != Meteor.userId()  || room.comenzado || !room.activo)
+        if(room ==null || room.alumnoId != Meteor.userId() && room.profId != Meteor.userId()  || !room.comenzado || !room.activo)
         {
             //Error.noPermisos();
             throw "La clase no existe o no tiene permisos"

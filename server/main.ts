@@ -195,7 +195,7 @@ if(Meteor.isServer)
       name: 'Desconectando usuarios no conectados y si disponibles',
       schedule: function(parser) {
         // parser is a later.parse object
-        return parser.recur().on(30).second();
+        return parser.recur().on(60).second();
       },
       job: function() {
         fn();

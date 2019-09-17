@@ -57,6 +57,19 @@ export class VideoCall implements OnInit, OnDestroy {
         
     }
 
+    download(f : FilesI)
+    {
+      var link = document.createElement("a");
+      link.download = f.filename;
+      link.href = f.valueUrl;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+
+    }
+
+
 
     addFile(files : Array<FilesI>)
     {
