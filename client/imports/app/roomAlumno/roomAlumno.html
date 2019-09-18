@@ -132,8 +132,10 @@
         
         <div  *ngIf="isEstadoClass()">
             <div class="row">
-               <h3>
-                   Clase:   <span class="alert alert-danger float-right" *ngIf="estado.campos.ping>1">
+               <h3 class="col-12">
+                   Clase:   
+                   
+                   <span class="alert alert-danger float-right" *ngIf="estado.campos.ping>1">
                                 Conexión perdida, reintento ({{estado.campos.ping-1}})
                             </span>
                </h3>

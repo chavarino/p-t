@@ -1,7 +1,7 @@
-<div class="video-call container" [hidden]="!mostrar()" [ngClass]="{'full-screen': isFullScreen()}">
+<div class="video-call" [hidden]="!mostrar()" [ngClass]="{'full-screen': isFullScreen()}">
     <div class="row">
-        <div class="col">
-            <timeCounter  [tipo]="contador.tipo" [secondsIni]="contador.secondsIni"  [mostrar]="mostrar()">
+        <div class="col-12" style="    padding-left: 30px;">
+            <timeCounter   [tipo]="contador.tipo" [secondsIni]="contador.secondsIni"  [mostrar]="mostrar()">
 
             </timeCounter>
         </div>
@@ -61,37 +61,41 @@
 
    
     <div class="row">
-            <div class="col-3"> 
+            <div class="col-4" style="height: 80%"> 
 
             </div>
-            <div class="col-6" style="text-align: right">
+            <div class="col-4" style="text-align: right">
                 <!-- caja de acciones -->
                 <fileInput [multiple]="false" (onSelectFile)="addFile($event)"></fileInput>
             </div>
-            <div class="col-3"> 
+            <div class="col-4"> 
 
                 </div>
         </div>    
         
     <div class="row">
             
-            <div class="col-9">
+            <div class="col-7">
                 <!-- caja de escritura -->
+                
                 <div class="row">
-                     <div class="col-1">
-
+                    
+                     <div class="col-10">
+                         <textarea name="" id="" cols="30" rows="10" style="margin-top: 0px; margin-bottom: 0px; height: 106px; width: 100%;" ></textarea>
+                        
                      </div>
-                     <div class="col-12">
-                        <input type="text">
-                     </div>
                      <div class="col-1">
-                            <i class="material-icons"  style="color: #38f094;">
+                            <i class="material-icons"  style="color: #38f094;font-size: 90px;">
                                     play_circle_outline
                                     </i>
                      </div>
                 </div>
             </div>
-            <div class="col-3"> 
+            <div class="col-3">
+                <!-- caja de escritura -->
+                
+            </div>
+            <div class="col-2"> 
              <!-- CAJA DE VIDEO local-->
              <div class="box-local-video" >
                     <!--[ngClass]="{'no-video': !isVideoOn()}"-->
