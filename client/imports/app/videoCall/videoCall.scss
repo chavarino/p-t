@@ -9,7 +9,7 @@ video {
 
   video#remoteId {
     max-width : 1920px;
-    width: calc(50% - 100px);
+    width: calc(75% - 100px);
     min-width: 200px;
 }
 
@@ -76,6 +76,12 @@ video {
   .video-call
   {
 
+    .caja * {
+        font-size: 25pt;
+    }
+    .time-counter {
+        margin-left: 1.5rem!important;
+    }
         .material-icons{
             cursor: pointer;
         }
@@ -84,5 +90,16 @@ video {
             opacity: 0.8;
         }
 
+        textarea {
+          margin-top: 0px;
+          margin-bottom: 0px;
+          height: 123px;
+          width: 100%;
+          min-height: 87px;
+          max-height: 87px;
+          border-radius: 5px;
+          border-color: rgb(56, 240, 148);
+          background: rgb(249, 242, 242);
+        }
 
   }
