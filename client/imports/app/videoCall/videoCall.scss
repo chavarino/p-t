@@ -75,6 +75,12 @@ video {
 
   .video-call
   {
+    .msg-cont {
+        border: 1px solid #b5afaf;
+        padding: 10px;
+        border-radius: 5px;
+    }
+   
 
     .caja * {
         font-size: 25pt;

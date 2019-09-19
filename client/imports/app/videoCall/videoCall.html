@@ -37,9 +37,14 @@
                     <!-- CAJA chat-->
                 </div>
             </div>
-            <div class="row">
-                <div class="col-12" style="max-height : 100%; overflow-y :auto;">
-                   <div class="row" [ngClass]="{'owner': imOwner(f.owner)}" *ngFor="let m of chat" >
+            <div class="row" style="height: 325px;
+            max-height: 325px;
+            min-width: 325px;
+            overflow-y: auto;
+            border: 1px solid #38f094;
+            border-radius: 5px;">
+                <div class="col-12" >
+                   <div class="row" [ngClass]="{'owner': imOwner(m)}" *ngFor="let m of chat" >
                             
                             <div *ngIf="isMsg(m)" class="msg-cont msg-text">
                                     <span>
@@ -94,7 +99,8 @@
                         
                      </div>
                      <div class="col-1">
-                            <i (click)="newMsg()" [disabled]="isSendDisabled()" class="material-icons"  style="color: #38f094;font-size: 90px;">
+                         <!--[disabled]="isSendDisabled()"-->
+                            <i (click)="newMsg()"  class="material-icons"  style="color: #38f094;font-size: 90px;">
                                     play_circle_outline
                                     </i>
                      </div>
