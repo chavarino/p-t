@@ -73,10 +73,10 @@ export class VideoCall implements OnInit, OnDestroy{
 
     }
 
-    imOwner(user : string) : boolean
+    imOwner(e:MsgChat) : boolean
     { 
 
-      return Meteor.userId() === user;
+      return Meteor.userId() === e.owner;
       
     } 
 
