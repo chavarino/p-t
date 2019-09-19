@@ -38,16 +38,25 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-12" style="max-height : 150px; overflow-y :auto;">
-                   <div class="row" *ngFor="let f of _clase.files" (click)="download(f)" style="border-bottom: 1px solid #d4d4d4;width: 100%">
-                            <div class="col-1">
-                                    <i class="material-icons" style="color: #38f094;">
-                                            <!--cloud_download-->get_app
-                                            </i>
+                <div class="col-12" style="max-height : 100%; overflow-y :auto;">
+                   <div class="row" [ngClass]="{'owner': imOwner(f.owner)}" *ngFor="let m of chat" >
+                            
+                            <div *ngIf="isMsg(m)" class="msg-cont msg-text">
+                                    <span>
+                                        {{m.msg}}
+                                    </span>
                             </div>
-                            <div class="col-11">
-                                
-                                {{f.filename}}
+                            <div class="msg-cont msg-file " *ngIf="isFile(m)" (click)="download(m)" style="border-bottom: 1px solid #d4d4d4;width: 100%">
+                                <div class="col-1">
+                                        <i class="material-icons" style="color: #38f094;">
+                                                <!--cloud_download-->get_app
+                                                </i>
+                                </div>
+                                <div class="col-11">
+                                    
+                                    {{m.filename}}
+                                </div>
+
                             </div>
                     </div>     
                    
@@ -81,11 +90,11 @@
                 <div class="row">
                     
                      <div class="col-10">
-                         <textarea name="" id="" cols="30" rows="10" style="margin-top: 0px; margin-bottom: 0px; height: 106px; width: 100%;" ></textarea>
+                         <textarea [(ngModel)]="msg" name="" id="" cols="30" rows="10" style="margin-top: 0px; margin-bottom: 0px; height: 106px; width: 100%;" ></textarea>
                         
                      </div>
                      <div class="col-1">
-                            <i class="material-icons"  style="color: #38f094;font-size: 90px;">
+                            <i (click)="newMsg()" [disabled]="isSendDisabled()" class="material-icons"  style="color: #38f094;font-size: 90px;">
                                     play_circle_outline
                                     </i>
                      </div>

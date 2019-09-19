@@ -2,14 +2,15 @@ import { Meteor } from 'meteor/meteor';
 
 import { Rooms } from '../../../imports/collections/room';
 import { Users } from '../../../imports/collections/users';
-import { Room } from '../../../imports/models/room';
+import { Room, RoomFile, MessageRoom, TypeMsgChat } from '../../../imports/models/room';
 import { MethodsClass } from '../../../imports/functions/methodsClass'
 
 import { User } from 'imports/models/User';
 import { Perfil } from 'imports/models/perfil';
 import { Kpm, Score } from 'imports/models/kpm';
-import { RoomFile } from 'imports/models/fileI';
+
 import { FactoryCommon } from 'imports/functions/commonFunctions';
+
 function getTexto(room : Room)
 {
   if(!room.comenzado && room.activo)
@@ -28,6 +29,28 @@ function getTexto(room : Room)
     return "Estado desconocido";
 
   }
+}
+
+let getRoom = (claseId :string) : Room =>{
+
+      if(!Meteor.user())
+        {  
+             throw "No logueado";
+        }
+
+        let room : Room = Rooms.findOne({ _id : claseId});
+
+
+
+          //Nos aseguramos que tenga permisos para cerrar  la clase (Que sea el creador.)
+        if(room ==null || room.alumnoId != Meteor.userId() && room.profId != Meteor.userId()  || !room.comenzado || !room.activo)
+        {
+            //Error.noPermisos();
+            throw "La clase no existe o no tiene permisos"
+           
+        }
+
+        return room;
 }
 
 const MAX_FILES = 10;
@@ -258,30 +281,34 @@ Meteor.methods({
    // console.log("insertando " + room);
    Rooms.update({_id: room._id}, room,{ upsert: false });
   },
+  newMsgChat(claseId: string, msg : MessageRoom )
+  {
+    let room = getRoom(claseId);
 
+    if(!msg.msg || msg.msg.trim() === "")
+    {
+        return;
+    }
+    msg.msg = FactoryCommon.limpiar(msg.msg.trim());
+    msg.owner = Meteor.userId();
+    msg.fecha = new Date();
+    msg.type = TypeMsgChat.MSG
+    if(!room.chat)
+    {
+      room.chat = []
+    }
+
+    room.chat.push(msg)
+    Rooms.update({_id: room._id}, room,{ upsert: false });
+
+  },
   uploadFile(claseId :string ,filesIn: Array<RoomFile>)
   {
    // && profile.foto.includes("data:image/") && FactoryCommon.getSizeFileB64(profile.foto) <=  FactoryCommon.MAX_SIZE_FOTO)
     
     try {
 
-      //PUEDE EMPEZAR SOLO EL ALUMNO
-        if(!Meteor.user())
-        {  
-             throw "No logueado";
-        }
-
-        let room : Room = Rooms.findOne({ _id : claseId});
-
-
-
-          //Nos aseguramos que tenga permisos para cerrar  la clase (Que sea el creador.)
-        if(room ==null || room.alumnoId != Meteor.userId() && room.profId != Meteor.userId()  || !room.comenzado || !room.activo)
-        {
-            //Error.noPermisos();
-            throw "La clase no existe o no tiene permisos"
-           
-        }
+      let room = getRoom(claseId);
 
 
         let files : Array<RoomFile> = room.files;
@@ -295,27 +322,30 @@ Meteor.methods({
         let flag :boolean = false;
         for (let i = 0; i < filesIn.length; i++) {
           const f = filesIn[i];
-            flag =false;
-                if(files.length > MAX_FILES)
-                {
-                    flag_excedidos = true;
-                    flag = true;
-                    msg1.push(f.filename);
-                }
-        
-                if(!FactoryCommon.isDocCorrect(f))
-                {
-        
-                  flag=true;
-                  flag_formato_bad = true;
-                  msg2.push(f.filename);
-                }
-                if(!flag)
-                {
-                  f.owner = Meteor.userId();
-                  array.push(f)
 
-                }
+          flag =false;
+          if(files.length > MAX_FILES)
+          {
+            flag_excedidos = true;
+            flag = true;
+            msg1.push(f.filename);
+          }
+          
+          if(!FactoryCommon.isDocCorrect(f))
+          {
+            
+            flag=true;
+            flag_formato_bad = true;
+            msg2.push(f.filename);
+          }
+          if(!flag)
+          {
+            f.owner = Meteor.userId();
+            f.fecha = new Date();
+            f.type = TypeMsgChat.FILE
+            array.push(f)
+
+          }
          
           
         }
