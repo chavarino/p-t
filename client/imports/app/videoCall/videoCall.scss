@@ -89,8 +89,23 @@ video {
         .material-icons:hover{
             opacity: 0.8;
         }
+        .msg-cont 
+            {
+                max-width: 80%;
+
+                margin: 5px;
+            }
+        .owner {
+            .msg-cont 
+            {
+
+                background: #d3ff88;
+                margin-left: 3%;
+            }
+        }
 
         textarea {
+            resize: none;
           margin-top: 0px;
           margin-bottom: 0px;
           height: 123px;

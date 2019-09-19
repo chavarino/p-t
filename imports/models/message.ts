@@ -29,6 +29,8 @@ export interface Message  {
 
 }
 
+
+
 export enum MsgTipo {
 
     CANDIDATE = 1,

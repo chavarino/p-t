@@ -1,12 +1,13 @@
-import { Component, OnInit, OnDestroy, Input,Output,EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import {RtcService, VideoType} from "../services/rtc.service"
 
 import { isUndefined } from 'util';
 import {MethodsClass} from "../../../../imports/functions/methodsClass"
 import { Tipo } from 'imports/models/enums';
-import { Room } from 'imports/models/room';
+import { Room, RoomFile, MessageRoom, MsgChat, TypeMsgChat } from 'imports/models/room';
 import { FilesI } from 'imports/models/fileI';
 import { FactoryCommon } from 'imports/functions/commonFunctions';
+
 
 
 @Component({
@@ -14,7 +15,7 @@ import { FactoryCommon } from 'imports/functions/commonFunctions';
   templateUrl: 'videoCall.html',
   styleUrls: ['videoCall.scss']
 })
-export class VideoCall implements OnInit, OnDestroy {
+export class VideoCall implements OnInit, OnDestroy{
   
   
     private _rtc: RtcService;
@@ -26,6 +27,8 @@ export class VideoCall implements OnInit, OnDestroy {
       chat : [],
       titulo : "",      
     }; 
+
+    private chat : Array<MsgChat>= [];
     private videos ={
       remote : {
         isFullScreen : false
@@ -44,6 +47,7 @@ export class VideoCall implements OnInit, OnDestroy {
         videoType : 1 
       }
     }
+  msg: string = "";
 
    
     constructor()
@@ -69,7 +73,12 @@ export class VideoCall implements OnInit, OnDestroy {
 
     }
 
+    imOwner(user : string) : boolean
+    { 
 
+      return Meteor.userId() === user;
+      
+    } 
 
     addFile(files : Array<FilesI>)
     {
@@ -81,7 +90,7 @@ export class VideoCall implements OnInit, OnDestroy {
             MethodsClass.call("uploadFile",  this._clase._id,  files, (res)=>{
                 
             }, (error)=>{
-
+                alert(error);
             });
         }
         else{
@@ -89,7 +98,57 @@ export class VideoCall implements OnInit, OnDestroy {
         }
     }
 
+   
+    isFile(e:MsgChat)
+    {
+        return e.type === TypeMsgChat.FILE;
+    }
+    isMsg(e:MsgChat)
+    {
+        return e.type === TypeMsgChat.MSG;
+    }
 
+    newMsg()
+    {
+        let msgSend  : MessageRoom ={
+            msg : this.msg,
+            type : TypeMsgChat.MSG
+        }
+
+
+        MethodsClass.call("newMsgChat",  this._clase._id, msgSend, (res)=>{
+                  
+        }, (error)=>{
+            alert(error);
+        });
+
+        this.msg ="";
+    }
+
+    isSendDisabled() : boolean
+    {
+        return !this.msg || this.msg.trim() === "";
+    }
+    createChat()
+    {
+
+      let vm=this;
+
+      vm.chat = [...vm._clase.chat, ... vm._clase.files];
+      let fnSort = (a : MsgChat, b : MsgChat) :number =>{
+
+           if(!a.fecha)
+           {
+             return 1
+           }
+           if(!b.fecha)
+           {
+             return -1
+           }
+          return a.fecha.getTime()-b.fecha.getTime();
+      }
+      vm.chat.sort(fnSort)
+    }
     
     @Input()
     set secondsIni(seconds: number) {
@@ -117,7 +176,10 @@ export class VideoCall implements OnInit, OnDestroy {
 
         if(c !== null && c._id!==null)
         {
+          
           this._clase = c;
+
+          this.createChat()
 
         }
      }

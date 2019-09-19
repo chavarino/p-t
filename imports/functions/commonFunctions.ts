@@ -206,7 +206,24 @@ export class FactoryCommon
     {
 
     }
+    /**
+     * 
+     * @param strIn param a limpiar
+     * 
+     * limmpiar la cadena de etiquetas mal intencionadas como scrip.
+     */
+    static limpiar( strIn : string, onlyScript ?: boolean) : string
+    {
+        if(onlyScript)
+        {
+            return strIn.replace(/<\/?[script^>]+(>|$)/g, "");
+        }
+        else{
+            return strIn.replace(/<\/?[^>]+(>|$)/g, "");
 
+        }
+        
+    }
     static getSizeFileB64(encoded_string: string) : number
     {
         return 3 * encoded_string.length / 4

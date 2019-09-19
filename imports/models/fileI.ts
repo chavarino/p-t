@@ -9,7 +9,3 @@ export interface FilesI {
 }
 
 
-export interface RoomFile extends FilesI{
-
-    owner ?: string
-}
