@@ -23,6 +23,18 @@ nav.navbar {
 }
 
 // login styles
+
+.btn-inicio-sesion{
+    background-color: #37F093;
+    border: #37F093;
+}
+
+.btn-inicio-sesion-modal{
+    background-color: white;
+    color: #37F093;
+    font-weight: 100;
+}
+
 .btn-google {
     color: black;
     background-color: white;
@@ -44,8 +56,10 @@ nav.navbar {
     border: none;
     cursor: pointer;
     text-decoration: underline;
+    color: rgb(0, 0, 0);
 }
 
 .small-title{
+    color: rgb(110, 110, 110);
     font-size: 14px;
 }
