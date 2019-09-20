@@ -16,6 +16,9 @@ video {
 
 .full-screen {
 
+
+
+
     timeCounter{
         left: 10px;
     top: 65px;
@@ -81,7 +84,9 @@ video {
         border-radius: 5px;
     }
    
-
+    .msg-cont {
+        box-shadow: 1px 1px 3px 0px #c3c1c1;
+    }
     .caja * {
         font-size: 25pt;
     }
@@ -101,12 +106,23 @@ video {
 
                 margin: 5px;
             }
-        .owner {
             .msg-cont 
             {
 
-                background: #d3ff88;
-                margin-left: 3%;
+                background: white;
+              
+            }
+         .owner {
+            .msg-cont 
+            {
+
+                background: #e0fdae;;
+                margin-left: auto;
+                text-align: right
+            }
+
+            span{
+                text-align: right
             }
         }
 

@@ -77,7 +77,7 @@
               </div>
           </div>
           <div class="modal-body">
-                <form>
+                <form  #claseForm="ngForm" [formGroup]="addForm">
                     <div class="form-group">
                         <button class="btn btn-lg btn-facebook btn-block" (click)="loginFacebook()"  type="submit"><i class="fa fa-facebook mr-2 pull-left mt-1 ml-1"></i> Continuar con Facebook</button>
                       </div>
@@ -128,7 +128,7 @@
               </div>                    
             </div>
             <div class="modal-body">
-                  <form>
+                  <form  #claseForm="ngForm" [formGroup]="addForm">
                       <div class="form-group">
                           <button class="btn btn-lg btn-facebook btn-block" (click)="loginFacebook()"  type="submit"><i class="fa fa-facebook mr-2 pull-left mt-1 ml-1"></i> Continuar con Facebook</button>
                       </div>
@@ -172,7 +172,7 @@
                 </div>                    
               </div>
               <div class="modal-body">
-                    <form>
+                    <form  #claseForm="ngForm" [formGroup]="addForm">
                         <div class="form-group">
                             <input formControlName="firstname" name="firstname" [(ngModel)]="userLogin.firstname" type="text" id="inputNombre" class="form-control" placeholder="Nombre (Por ejemplo: Juan)">
                         </div>   

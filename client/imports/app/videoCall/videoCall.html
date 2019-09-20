@@ -42,7 +42,7 @@
             min-width: 325px;
             overflow-y: auto;
             border: 1px solid #38f094;
-            border-radius: 5px;">
+            border-radius: 5px;    background: #f9f2f2;">
                 <div class="col-12" >
                    <div class="row" [ngClass]="{'owner': imOwner(m)}" *ngFor="let m of chat" >
                             
@@ -51,7 +51,9 @@
                                         {{m.msg}}
                                     </span>
                             </div>
-                            <div class="msg-cont msg-file " *ngIf="isFile(m)" (click)="download(m)" style="border-bottom: 1px solid #d4d4d4;width: 100%">
+                            <div class="msg-cont msg-file row " *ngIf="isFile(m)" (click)="download(m)" style="border-bottom: 1px solid #d4d4d4;width: 100%">
+                                
+                                
                                 <div class="col-1">
                                         <i class="material-icons" style="color: #38f094;">
                                                 <!--cloud_download-->get_app
