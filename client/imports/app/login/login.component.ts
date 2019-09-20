@@ -14,19 +14,16 @@ import {MethodsClass} from "../../../../imports/functions/methodsClass"
   styleUrls: ['login.scss']
   
 })
-export class LoginComponent implements OnInit{
+export class LoginComponent {
   rol:RolesService
   private _mostrar :boolean;
-  userLogin : User;
-  addForm: FormGroup;
+  
+  
   constructor(rol:RolesService, private formBuilder: FormBuilder)
   {
     this.rol = rol;
     //this._mostrar = false;
-    this.userLogin = {
-      username : "",
-      password: ""
-    }
+    
   }
   @Input()
   set mostrar(mostrar: boolean) {
@@ -48,94 +45,5 @@ export class LoginComponent implements OnInit{
     return !!Meteor.user();
   }
 
-  recargarPermisos()
-  {
-
-    //TODO 
-    location.reload();
-    /*
-    let input  = {codigo: Meteor.user().profile.rol};
-    let rol =  Roles.findOne(input);
-    this.rol.setRoles(rol.rol);*/
-  }
-  loginFacebook()
-  {
-    let vm = this;
-      Meteor.loginWithFacebook({requestPermissions: ['public_profile', 'email']}, function(err){
-        if (err) {
-            console.log('Handle errors here: ', err);
-        }
-        else{
-          vm.recargarPermisos()
-        }
-    });
-  }
-
-  unirse()
-  {
-     let vm=this;
-    if (this.addForm.valid) {
-
-      MethodsClass.call("unirse", this.userLogin,  (res)=>{
-          console.log("Registrado con existo");
-          alert("Usuario registrado con exito.")
-          vm.loginWithPassword();
-      }, (error)=>{
-          console.log('Handle errors here: ', error);
-      });
-      
-    }
-    
-  }
-  loginWithPassword()
-  {
-    let vm =this;
-    if (this.addForm.valid) {
-    
-        
-        Meteor.loginWithPassword(this.userLogin.username, this.userLogin.password, function(err){
-          if (err) {
-              console.log('Handle errors here: ', err);
-              alert(err)
-          }else{
-            vm.recargarPermisos();
-              //alert("Loguea")
-          }
-      });
-    
-    }
-  }
-  loginGoogle()
-  {
-    let vm = this;
-      Meteor.loginWithGoogle({requestPermissions: ['email', 'profile']}, function(err){
-        if (err) {
-            console.log('Handle errors here: ', err);
-        }else{
-          vm.recargarPermisos()
-        }
-    });
-  }
-
-  ngOnInit()
-    {
-      this.addForm = new FormGroup({
-        'username': new FormControl(this.userLogin.username, [
-        Validators.required,
-        Validators.minLength(10),
-        Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$")
-        ]),
-        'password': new FormControl(this.userLogin.password, [
-            Validators.required,
-            Validators.minLength(5),
-            Validators.maxLength(20),
-            //Validators.pattern('^[A-Za-zñÑáéíóúÁÉÍÓÚ ]+$')
-            ])
-        
-    });
-    }
-    isValid()
-    {
-        return this.addForm.valid;
-    }
+  
 }
