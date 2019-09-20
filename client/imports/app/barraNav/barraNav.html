@@ -17,7 +17,8 @@
             <a class="nav-link"  routerLink="/room/prof">Atender Clases</a>
           </li>
         <li class="nav-item" *ngIf="canReadC('login')">
-              <button type="button" class="btn btn-success" style="background-color: #37F093; border: #37F093" (click)="mostrarLoginAc(true)">Iniciar sesión</button>
+              <!--button type="button" class="btn btn-success" style="background-color: #37F093; border: #37F093" (click)="mostrarLoginAc(true)">Iniciar sesión</button-->
+              <a href="#myModal" role="button" class="btn btn-success" data-toggle="modal" style="background-color: #37F093; border: #37F093">Iniciar sesión</a>
         </li>
         <li class="nav-item" *ngIf="canReadC('suscripcion')">
             <a class="nav-link" href="#">Suscripción</a>
@@ -61,8 +62,85 @@
     </div>
     
   </nav>
-  <login [mostrar] = "mostrarLogin" (cambio)="mostrarLoginAc($event)"></login>
+  <div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+          <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">
+                  &times;
+              </button>
+              <!--h4 class="modal-title pull-right"></h4-->
+          </div>
+          <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <button class="btn btn-lg btn-google btn-block" (click)="loginGoogle()" type="submit"><img class="icon-google pull-left mt-1" src="https://img.icons8.com/color/48/000000/google-logo.png">Continuar con Google</button>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-lg btn-facebook btn-block" (click)="loginFacebook()"  type="submit"><i class="fa fa-facebook mr-2 pull-left mt-1 ml-1"></i> Continuar con Facebook</button>
+                      </div>
+                    <div class="form-group">
+                        <input formControlName="username" name="username" [(ngModel)]="userLogin.username" type="email" id="inputEmail" class="form-control" placeholder="Correo electŕonico">
+                    </div>
+                    <div class="form-group">
+                        <input formControlName="password" name="password" type="password" [(ngModel)]="userLogin.password" id="inputPassword" class="form-control" placeholder="Contraseña">
+                        <a href="#" class="pull-right small-title mb-4">¿Olvidaste tu contraseña?</a>
+                    </div>
+                    <!--div class="form-group">
+                        <a href="#" class="pull-right forgot-pass ">¿Olvidaste tu contraseña?</a>                   
+                    </div--> 
+                    <div class="form-group">
+                      <button  class="btn btn-lg btn-success btn-block" [disabled]="!isValid()" (click)="loginWithPassword()">Iniciar sesión</button>
+                    </div>   
+                </form>
+          </div>
+          <div class="modal-footer">
+              <div class="form-group">
+                  <span class="small-title">
+                      ¿No tienes cuenta con nosotros? <button class="boton-link" role="link" [disabled]="!isValid()" (click)="loginWithPassword()">Regístrate</button>
+                  </span>                    
+              </div> 
+          </div>
+      </div>
+    </div>
+  </div>
+  <!--login [mostrar] = "mostrarLogin" (cambio)="mostrarLoginAc($event)"></login-->
    <!--
 
      <login-buttons [hidden]="true"></login-buttons>
    --> 
+
+
+
+              <!--div class="container float-fondo fondo3">
+                <div class="row ">
+                  <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+                    <div class="card card-signin my-5">
+                      <div class="card-body">
+                        <h5 class="card-title text-center">¿Cómo quieres iniciar sesión?<a  style="float:right" class="close" (click)="cerrar()"></a></h5>
+                        <form class="form-signin" #claseForm="ngForm" [formGroup]="addForm">
+                            <button class="btn btn-lg btn-google btn-block" (click)="loginGoogle()" type="submit"><i class="fa fa-google mr-2"></i> Continuar con Google</button>
+                            <button class="btn btn-lg btn-facebook btn-block" (click)="loginFacebook()"  type="submit"><i class="fa fa-facebook mr-2"></i> Continuar con Facebook</button>
+                            <hr class="my-4">
+                            <input formControlName="username" name="username" [(ngModel)]="userLogin.username" type="email" id="inputEmail" class="form-control" placeholder="Correo electŕonico">
+                            <div class="my-2"></div>
+                            <input formControlName="password" name="password" type="password" [(ngModel)]="userLogin.password" id="inputPassword" class="form-control" placeholder="Contraseña">
+                            <div class="my-2"></div-->
+                                          <!--<div class="custom-control custom-checkbox mb-3"            required   required autofocus> 
+                                            <input type="checkbox" class="custom-control-input" id="customCheck1">
+                                            <label class="custom-control-label" for="customCheck1">Remember password</label>
+                                          </div>-->
+                          <!--button  class="btn btn-lg btn-success btn-block" [disabled]="!isValid()" (click)="loginWithPassword()">Iniciar sesión</button>
+                          <div class="my-3">
+                            <span>
+                              ¿No tienes cuenta con nosotros? <button class="boton-link" role="link" [disabled]="!isValid()" (click)="loginWithPassword()">Regístrate</button>
+                            </span>
+                          </div>
+                          <hr class="my-4">
+
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div-->
