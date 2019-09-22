@@ -1,6 +1,6 @@
 <script src="https://www.google.com/recaptcha/api.js"></script>
 
-<nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-light bg-light ml-3 mr-3">
   <a class="navbar-brand" routerLink="/inicio">
     <img src="/images/Sapens.png" width="130px" height="65px">
   </a>
@@ -9,6 +9,17 @@
   </button>
   
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
+		<ul class="navbar-nav">
+			<li>
+				<a class="nav-link" href="#section2">Cómo funciona</a>
+			</li>
+			<li>
+				<a class="nav-link" href="#">Asignaturas</a>
+			</li>
+			<li>
+				<a class="nav-link" href="#">Precios</a>
+			</li>
+		</ul>
       <ul class="navbar-nav ml-auto">
         
         <li class="nav-item" *ngIf="canReadC('peticion')">
