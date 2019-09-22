@@ -1,4 +1,4 @@
-<div class="video-call" [hidden]="!mostrar()" [ngClass]="{'full-screen': isFullScreen()}">
+<div class="video-call" [hidden]="!mostrar()" [ngClass]="{'full-screen': isFullScreen()}"  >
     <div class="row">
         <div class="col-12" style="    padding-left: 30px;">
             <timeCounter   [tipo]="contador.tipo" [secondsIni]="contador.secondsIni"  [mostrar]="mostrar()">
@@ -14,13 +14,13 @@
             <!-- CAJA DE VIDEO-->
             <div class="row">
                 <div class="col">
-                    <video  id="remoteId" autoplay>
+                    <video  id="remoteId" autoplay >
        
                    </video>
-
+                   
                 </div>
             </div>
-            <div class="row box-full-screen">
+            <div class="row box-full-screen"   >
                     <div class="col" (click)="switchFullScreen()">
                             <i class="material-icons fullscreen-on" [ngClass]="{'md-48': isFullScreen()}">
                                     {{ isFullScreen() ? "fullscreen_exit" : "fullscreen"}}
@@ -97,7 +97,7 @@
                 <div class="row">
                     
                      <div class="col-10">
-                         <textarea [(ngModel)]="msg" name="" id="" cols="30" rows="10" style="margin-top: 0px; margin-bottom: 0px; height: 106px; width: 100%;" ></textarea>
+                         <textarea keyDectect [fn]="fnKeyDetectChat" [(ngModel)]="msg" name="" id="" cols="30" rows="10" style="margin-top: 0px; margin-bottom: 0px; height: 106px; width: 100%;" ></textarea>
                         
                      </div>
                      <div class="col-1">

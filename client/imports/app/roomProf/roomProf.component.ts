@@ -1,6 +1,6 @@
 
 import { Meteor } from 'meteor/meteor';
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, DoCheck } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, DoCheck, HostListener } from '@angular/core';
 import  {RolesService} from "../services/roles.service";
 import {RtcService} from "../services/rtc.service"
 
@@ -42,8 +42,8 @@ export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy ,
     
     interval : any;
     
+    
 
-  
   
    
     //audios : Map<string, AudioC>;

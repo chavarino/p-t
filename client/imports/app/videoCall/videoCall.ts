@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, HostListener } from '@angular/core';
 import {RtcService, VideoType} from "../services/rtc.service"
 
 import { isUndefined } from 'util';
@@ -27,6 +27,9 @@ export class VideoCall implements OnInit, OnDestroy{
       chat : [],
       titulo : "",      
     }; 
+
+
+
 
     private chat : Array<MsgChat>= [];
     private videos ={
@@ -60,7 +63,30 @@ export class VideoCall implements OnInit, OnDestroy{
 
         
     }
+    @HostListener('document:keydown', ['$event']) 
+    onKeydownHandler(event: KeyboardEvent) {
 
+        
+      this.fnKeyDetectPEntera(event);
+  }
+    fnKeyDetectPEntera = (event: KeyboardEvent) =>{
+          if(event.key === "Escape" && this.isFullScreen())
+          {
+            event.preventDefault();
+            console.log("ESCAPE")
+
+            this.switchFullScreen();
+          }
+      }
+    fnKeyDetectChat = (event: KeyboardEvent) =>{
+        if(event.key === "Enter")
+        {
+          event.preventDefault();
+          console.log("enter")
+
+          this.newMsg();
+        }
+    }
     download(f : FilesI)
     {
       var link = document.createElement("a");
@@ -114,7 +140,10 @@ export class VideoCall implements OnInit, OnDestroy{
             msg : this.msg,
             type : TypeMsgChat.MSG
         }
-
+        if(this.isSendDisabled())
+        {
+          return false;
+        }
 
         MethodsClass.call("newMsgChat",  this._clase._id, msgSend, (res)=>{
                   
