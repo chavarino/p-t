@@ -2,11 +2,104 @@
     font-family: Roboto;
 }*/
 
+
+
+.dropdown-toggle::after {
+   
+    float: right;
+}
+
+nav.navbar {
+    //box-shadow: 0px 1px 1px 1px #ada9a9;
+}
+
+// login styles
+
+.btn-inicio-sesion{
+    background-color: #37F093;
+    border: #37F093;
+}
+
+.btn-inicio-sesion-modal{
+    background-color: white;
+    color: #37F093;
+    font-weight: 100;
+}
+
+.btn-google {
+    color: black;
+    background-color: white;
+    border-color: black;
+  }
+  
+  .btn-facebook {
+    color: white;
+    background-color: #3b5998;
+  }
+  
+  .icon-google{
+      width: 21.44px;
+      height: 20px;
+  }
+
+  .boton-link {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+    color: rgb(0, 0, 0);
+}
+
+.small-title{
+    color: rgb(110, 110, 110);
+    font-size: 14px;
+}
+
+// login end
+
+
+.home{
+    
+}
+
 .letra-titulo{
     font-family: Arial, Helvetica, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    color: white;
 }
 
 .tamaño-titulo-big{
     font-size: 500%;
+    -webkit-font-smoothing: antialiased;
+    color: white;
 }
+
+.imagen-inicio{
+    background-image:url(/images/imagen-inicio.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    position: relative;
+    min-width: 100%;
+    left: 0%;
+    top: 12%;
+    //z-index: -1;
+    height: 560px;
+}
+
+.imagen-inicio::before{
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(8, 109, 94, 0.5);
+}
+
+.imagen-inicio h1 h3{
+    position: relative;
+}
+
+
 
