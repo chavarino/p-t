@@ -18,7 +18,10 @@ video {
 
 
 
-
+    .jaleo{
+        z-index: 55; position: fixed !important;
+        top: 0px;
+    }
     timeCounter{
         left: 10px;
     top: 65px;

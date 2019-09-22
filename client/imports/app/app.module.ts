@@ -34,6 +34,7 @@ import { TagInputModule } from 'ngx-chips';
 import { ModalKpm} from './modalKpm/modaKpm.component';
 import { FileInput } from './file.component/file.component';
 import { TimeCounter } from './timeCounter/timeCounter.component';
+import { KeyDectect } from './directivas/keyDetect.directive';
 
 
 export const ROUTES_PROVIDERS = [];
@@ -97,7 +98,8 @@ export const ROUTES_PROVIDERS = [];
     RoomAlumnoComponent,
     RoomProfComponent,
     ModalKpm,
-    FileInput
+    FileInput,
+    KeyDectect
   ],
   bootstrap: [
     AppComponent
