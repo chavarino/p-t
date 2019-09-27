@@ -54,7 +54,7 @@ export const ROUTES_PROVIDERS = [];
     RouterModule.forRoot([
       {
         path: 'inicio',
-        component: InicioComponent, canActivate: [canActivateNone]
+        component: InicioComponent
       },
       {
           path: 'opciones/perfil',

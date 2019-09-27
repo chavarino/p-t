@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Rol, Permisos} from "../../../../imports/models/rol";
+import { isUndefined } from 'util';
 
 interface Map<T> {
     [key: string]: T;
@@ -29,7 +30,7 @@ export class RolesService {
     
     setRoles(permisos: Permisos)
     {
-        if(!permisos)
+        if(isUndefined(permisos))
         {
             this.setIniRoles();
         }
@@ -40,14 +41,21 @@ export class RolesService {
 
 
 
-    canRead(min:Permisos)
+    canRead(min:Permisos, estricto ?:boolean)
     {
-        if(!this.permisos)
+        if(isUndefined(this.permisos))
         {
             return false;
         }
     
-        return this.permisos >= min;
+        if(estricto)
+        {
+            return this.permisos === min;
+        }
+        else{
+
+            return this.permisos >= min;
+        }
     }
     
 }
