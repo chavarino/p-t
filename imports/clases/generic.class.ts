@@ -6,6 +6,7 @@ import { Map } from '../models/map';
 
 import { MsgTipo} from "../models/message"
 import {MsgClass, Log} from "../functions/commonFunctions"
+import { isUndefined } from 'util';
 
 
 
@@ -55,16 +56,16 @@ export class Generic {
    
 
 
-    canReadC(name)
+    canReadC(name, estricto ?:boolean)
     {
         let minPerm : Permisos = this.rolesElemnt[name];
-        if(!minPerm)
+        if(isUndefined(minPerm))
         {
             return false;
         }
         
         
-        return this.rol.canRead(minPerm);
+        return this.rol.canRead(minPerm, estricto);
     }
 
 
