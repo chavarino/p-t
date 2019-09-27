@@ -16,6 +16,9 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import { AccountsModule, LoginButtons } from 'angular2-meteor-accounts-ui';
 
 import { RolesService } from './services/roles.service';
+import { canActivateNone, canActivateLogin,
+   canActivateAlumno, canActivateProf, canActivateAdmin, canActivateSAdmin  } 
+   from './services/canActivate/canActivatePages';
 import { BanderasService } from './services/flags.service';
 //import { MaterialModule } from './material.module';
 //import { MatInputModule } from '@angular/material'
@@ -51,19 +54,19 @@ export const ROUTES_PROVIDERS = [];
     RouterModule.forRoot([
       {
         path: 'inicio',
-        component: InicioComponent
+        component: InicioComponent, canActivate: [canActivateNone]
       },
       {
           path: 'opciones/perfil',
-           component: PerfilComponent//, canActivate: ['canActivateForLoggedIn']
+           component: PerfilComponent, canActivate: [canActivateLogin]
        },
        {
         path: 'room/alumno',
-         component: RoomAlumnoComponent//, canActivate: ['canActivateForLoggedIn']
+         component: RoomAlumnoComponent, canActivate: [canActivateNone]
         },
       {
         path: 'room/prof',
-         component: RoomProfComponent//, canActivate: ['canActivateForLoggedIn']
+         component: RoomProfComponent, canActivate: [canActivateProf]
         },
       // Home Page
       {
@@ -74,7 +77,8 @@ export const ROUTES_PROVIDERS = [];
       // 404 Page
       {
         path: '**',
-        component: PageNotFoundComponent
+        redirectTo: '/inicio',
+        //component: PageNotFoundComponent
       }
     ]),
     AccountsModule,
@@ -106,11 +110,10 @@ export const ROUTES_PROVIDERS = [];
   ],
   providers: [
     RolesService,
-    BanderasService,
-    {
-      provide: 'canActivateForLoggedIn',
-      useValue: (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => { return !! Meteor.userId()}
-    }
+    canActivateNone, canActivateLogin,
+   canActivateAlumno, canActivateProf, 
+   canActivateAdmin, canActivateSAdmin,
+    BanderasService
   ],
   entryComponents: [ModalKpm]
 })

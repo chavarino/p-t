@@ -77,7 +77,7 @@ export class AppComponent implements OnInit, OnDestroy {
             this.rol.setIniRoles();
         }
         else{
-          this.rol.setRoles(data[0].rol);
+          this.rol.setRoles(data[0].perm);
 
         }
       })
@@ -95,7 +95,7 @@ export class AppComponent implements OnInit, OnDestroy {
               this.rol.setIniRoles();
           }
           else{
-            this.rol.setRoles(data[0].rol);
+            this.rol.setRoles(data[0].perm);
     
           }
         })
