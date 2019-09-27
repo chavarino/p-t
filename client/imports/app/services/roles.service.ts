@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Rol} from "../../../../imports/models/rol";
+import { Rol, Permisos} from "../../../../imports/models/rol";
 
 interface Map<T> {
     [key: string]: T;
@@ -13,7 +13,7 @@ interface Map<T> {
 })
 export class RolesService {
 
-    roles : Map<Rol>
+    private permisos : Permisos;
 
 
     
@@ -24,50 +24,30 @@ export class RolesService {
 
     setIniRoles()
     {
-        this.roles = {
-
-            comun : {
-                read : 0,
-                write : 0
-            }
-        };
+        this.permisos = Permisos.NONE
     }
     
-    setRoles(roles: Map<Rol>)
+    setRoles(permisos: Permisos)
     {
-        if(!roles)
+        if(!permisos)
         {
             this.setIniRoles();
         }
         else{
-            this.roles =  {};
-
-            Object.assign(this.roles, roles);
-            //NO PILLA EL TEMA
-
+            this.permisos =  permisos;
         }
     }
 
-    canWrite(modulo: string,min: number)
+
+
+    canRead(min:Permisos)
     {
-        if(!this.roles)
+        if(!this.permisos)
         {
             return false;
         }
-        let rol =  this.roles[modulo];
-
-        return rol &&  rol.write >=min
-    }
-
-    canRead(modulo: string,min: number)
-    {
-        if(!this.roles)
-        {
-            return false;
-        }
-        let rol =  this.roles[modulo];
-
-        return rol &&  rol.read >=min
+    
+        return this.permisos >= min;
     }
     
 }
