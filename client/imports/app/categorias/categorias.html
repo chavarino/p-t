@@ -4,7 +4,7 @@
     [autocompleteItems]="autoComplete"
 -->
     <div>
-        <tag-input (onSelect)="onSelectItem($event)" [hideForm]="_readOnly" [removable]="!_readOnly" [onAdding]="onAdding" [ngModel]="_config.listCat"  [secondaryPlaceholder]="'Categorias*'"  [placeholder]="'+Categoria'"  (onTextChange)="onTextChange($event)"
+        <tag-input (onSelect)="onSelectItem($event)" [hideForm]="_readOnly" [removable]="!_readOnly" [onAdding]="onAdding" [ngModel]="_config.listCat"  [secondaryPlaceholder]="_placeHolder"  [placeholder]="'+Categoria'"  (onTextChange)="onTextChange($event)"
          (onRemove)="onRemoveTag($event)" (onAdd)="onAddTag($event)">
             <tag-input-dropdown
             

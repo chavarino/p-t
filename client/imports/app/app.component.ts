@@ -23,7 +23,7 @@ export class AppComponent implements OnInit, OnDestroy {
   rol:RolesService
   rolSubs : Subscription
   flags  : BanderasService;
-  idInterval: NodeJS.Timer;
+  
   constructor(rol:RolesService, flags : BanderasService)
   {
     this.rol = rol;
@@ -50,14 +50,7 @@ export class AppComponent implements OnInit, OnDestroy {
        // console.log(JSON.stringify(res))
       });
 
-      this.idInterval = setInterval(()=>{
-          if(this.loggedIn())
-          {
-            console.log("Setting alive")
-            MethodsClass.call("setAlive", (res) =>{
-            });
-          }
-      },30000)
+  
         //cargar rol
         /*
         read : number,
@@ -122,10 +115,7 @@ logginIn()
       this.rolSubs.unsubscribe();
     }
 
-    if(this.idInterval)
-    {
-      clearInterval(this.idInterval)
-    }
+    
   }
   
 }

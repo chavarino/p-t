@@ -56,8 +56,9 @@ Meteor.methods({
         //Borramos todos nuestro mensajes de entrada
 
         if(!Meteor.user())
-        {  
-            MethodsClass.noLogueado();
+        {    console.log("borrarAllMsg : no logueado")
+            return;
+            //MethodsClass.noLogueado();
           }
 
        
