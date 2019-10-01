@@ -185,6 +185,15 @@ export class RoomClass extends Generic {
         
         let vm=this;
         this.l.log("IniRoom setTimeout  nextStatus INIT");
+
+        if(!vm.loggedIn())
+        {
+            this.l.log("iniRoom  nextStatus INIT");
+                vm.redux.nextStatus({ type: ETipo.INIT });
+            return;
+
+        }
+
         let p1 = await new Promise((resolve, reject)=>{
 
 

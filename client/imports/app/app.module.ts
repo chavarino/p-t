@@ -64,6 +64,10 @@ export const ROUTES_PROVIDERS = [];
         path: 'room/alumno',
          component: RoomAlumnoComponent, canActivate: [canActivateNone]
         },
+        {
+          path: 'room/alumno/:categorias',
+           component: RoomAlumnoComponent, canActivate: [canActivateNone]
+          },
       {
         path: 'room/prof',
          component: RoomProfComponent, canActivate: [canActivateProf]

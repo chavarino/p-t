@@ -29,7 +29,7 @@ Meteor.publish('alumnoCall', function() {
 Meteor.publish('allAvalaibleTeacher', function() {
   
 
-  return Users.find({"profile.disponible" : !false,'profile.rol' : { $gte: RolesEnum.PROFFESOR}  , _id : { $ne: Meteor.userId() }}, {fields:  {
+  return Users.find({"profile.disponible" : !false,'profile.rol' : { $gte: RolesEnum.PROFFESOR}  /*, _id : { $ne: Meteor.userId() }*/}, {fields:  {
     'profile.name' : 1,
     "profile.foto" : 1,
     'profile.nombre' : 1,

@@ -1,4 +1,4 @@
-<div class=" room-alumno">
+<div class=" room-alumno padding-pag">
     
 
 
@@ -15,7 +15,7 @@
                     <!--
                         
                     -->
-                    <categorias [select]="selectedTag" (onAdd)="findProf()" [config]="configTags"></categorias>  
+                    <categorias [generarInput]="!!true" [select]="selectedTag" (onAdd)="findProf()" [config]="configTags"></categorias>  
 
                 </div>
             </div>
@@ -62,11 +62,26 @@
                         <div  class="row">
                             
                             <div class="col">
-                                    <span >
-                                            <i class="material-icons iconos" data-toggle="modal" (click)="setModalConfig(prof)" data-target="#m-confirm" style="cursor: pointer" > 
+                                    <span  *ngIf="mostrarBotonLlamarNoLogueado()">
+                                        <a data-toggle="modal" href="#singIn" role="button"  style="cursor: pointer">
+                                            <i class="material-icons iconos"  > 
                                                     call
                                             </i>
+
+                                        </a>
                                             
+                                    </span>
+                                    <span  *ngIf="mostrarBotonLlamarLogueadoNoSuscrito()">
+                                        <i class="material-icons iconos" data-toggle="modal" (click)="clickBotonLlamarLogueadoNoSuscrito()" data-target="#m-confirm" style="cursor: pointer" > 
+                                                call
+                                        </i>
+                                        
+                                    </span>
+                                    <span  *ngIf="mostrarBotonLlamarLogueadoSuscrito()">
+                                        <i class="material-icons iconos" data-toggle="modal" (click)="setModalConfig(prof)" data-target="#m-confirm" style="cursor: pointer" > 
+                                                call
+                                        </i>
+                                        
                                     </span>
                             </div>
 

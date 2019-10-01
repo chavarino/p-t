@@ -53,6 +53,7 @@ export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy ,
         listCatBusc : []
     }
     userSuscripcion: Subscription;
+    idIntervalPingAlive: NodeJS.Timer;
    
     constructor( rol : RolesService,  rutas : Router , private formBuilder: FormBuilder, cd :ChangeDetectorRef )
     {
@@ -682,7 +683,19 @@ export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy ,
 
         let vm =this;
 
-
+        this.idIntervalPingAlive = setInterval(()=>{
+            if(this.loggedIn())
+            {
+              console.log("Setting alive")
+              let  p  : Perfil = Meteor.user().profile
+              if(!p.disponible &&  vm.isEstadoWaitCall())
+              {
+                vm.setDisponible(true);  
+              }
+              MethodsClass.call("setAlive", (res) =>{
+              });
+            }
+        },30000)
         this.userSuscripcion =  MeteorObservable.subscribe('usersProfile').subscribe(() => {
 
             Users.find({_id:Meteor.userId()}).subscribe((data)=>{
@@ -734,6 +747,11 @@ export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy ,
     ngOnDestroy()
     {
         let vm =this;
+
+        if(this.idIntervalPingAlive)
+        {
+            clearInterval(this.idIntervalPingAlive)
+        }
         vm.setDisponible(false)
 
          if (this.alumnoSus) {

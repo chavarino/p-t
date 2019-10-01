@@ -26,6 +26,34 @@ export class Categorias{
   private autoComplete = [];
   private _readOnly : boolean  = false;
   private _select : string  = "";
+
+  private _placeHolder = 'Categorias*';
+
+  private _generarInput = false
+
+ @Input()
+  set generarInput(_generarInput : boolean)
+  {
+    this._generarInput = _generarInput;
+  }
+
+  get generarInput() :boolean
+  {
+     return this._generarInput;
+  }
+  
+  @Input()
+  set placeHolder(_placeHolder : string)
+  {
+    this._placeHolder = _placeHolder;
+  }
+
+  get placeHolder() :string
+  {
+     return this._placeHolder;
+  }
+
+
   @Input()
   set readOnly(readOnly : boolean)
   {
@@ -73,23 +101,36 @@ get array () : Array<string>
   @Input()
   set config(config : ConfigTags) {
     
-
+      let vm=this;
       this._config =  config || {
       listCat  : [],
       listCatBusc : []
   
     };
     
+    if(!this._config.listCatBusc)
+    {
+        this._config.listCatBusc = [];
+    }
 
     if(!this._config.listCat)
     {
       this._config.listCat = [];
     }
-    
-    if(!this._config.listCatBusc)
-    {
-        this._config.listCatBusc = [];
+    else if(this._generarInput){
+
+      let aux : Array<string>= this._config.listCat;
+      this._config.listCat =[]
+
+      aux.forEach((e : string)=>{
+        vm.onAddTag(e)
+
+      })
     }
+    
+
+
+
   }
  
 

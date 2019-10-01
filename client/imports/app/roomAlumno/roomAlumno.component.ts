@@ -27,7 +27,7 @@ import { ConfigTags } from '../categorias/categorias.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalKpm } from '../modalKpm/modaKpm.component';
 import { Score } from 'imports/models/kpm';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { RoomClass, ETipo } from 'imports/clases/room.class';
 
 
@@ -64,14 +64,14 @@ export class RoomAlumnoComponent extends RoomClass implements OnInit, OnDestroy,
   
     
  
-    constructor( private modalService: NgbModal,  rutas : Router  , rol : RolesService, private formBuilder: FormBuilder, sanitizer : DomSanitizer,flags : BanderasService, cd :ChangeDetectorRef)
+    constructor( private modalService: NgbModal,  rutas : Router ,private route: ActivatedRoute , rol : RolesService, private formBuilder: FormBuilder, sanitizer : DomSanitizer,flags : BanderasService, cd :ChangeDetectorRef)
     {
 
         super("alumno", rol, cd, rutas);
 
         
         
-      
+       // 
         
        
         this.sanitizer = sanitizer;
@@ -149,10 +149,6 @@ export class RoomAlumnoComponent extends RoomClass implements OnInit, OnDestroy,
     }
   
 
-    canActivate() {
-        //const party = Parties.findOne(this.partyId);
-        return this.canRead() && this.loggedIn();
-      }
 
 
 
@@ -227,7 +223,7 @@ export class RoomAlumnoComponent extends RoomClass implements OnInit, OnDestroy,
        
         let input = {
             $and : [
-                {_id: { $ne: Meteor.userId() }},
+                {_id: { $ne: vm.loggedIn() ? Meteor.userId() : "-" }},
                 ...vm.configTags.listCatBusc
 
             ]
@@ -271,6 +267,13 @@ export class RoomAlumnoComponent extends RoomClass implements OnInit, OnDestroy,
 
         let vm =this;
         
+        let categorias  = this.route.snapshot.paramMap.get('categorias');
+        
+        if(categorias)
+        {
+            this.configTags.listCat = categorias.split(",")
+
+        }
         let fnFind = () => {
             this.l.log("ngOnInit  fnFind"); 
                 vm.findProf();
@@ -283,35 +286,39 @@ export class RoomAlumnoComponent extends RoomClass implements OnInit, OnDestroy,
        
    
         this.l.log("ngOnInit suscribe getRoomForAlumno"); 
-        this.roomAlumno =  MeteorObservable.subscribe('getRoomForAlumno').subscribe(() => {
+        if(vm.loggedIn())
+        {
+            this.roomAlumno =  MeteorObservable.subscribe('getRoomForAlumno').subscribe(() => {
+                
+    
+                this.l.log("ngOnInit suscribe  Rooms.find()"); 
+                    Rooms.find({alumnoId : Meteor.userId(), activo : true}).subscribe((data) => { 
+                        vm.clase = data[0];
+    
+    
+                        if(vm.clase && vm.clase.comenzado)
+                        {
+                            
+                        this.l.log("ngOnInit subscribe clase " + JSON.stringify(vm.clase) );
+                            
+                        this.l.log("ngOnInit getDiffTimeInSeconds...");
+                            MethodsClass.call("getDiffTimeInSeconds", vm.clase.fechaCom,(result)=>{
+                                vm.secondsIniClass = result;
+                                this.l.log("ngOnInit getDiffTimeInSeconds... ok sec:" +vm.secondsIniClass );
+                            })
+                        }
+                        else{
+                            vm.secondsIniClass = 0; 
+                        }
+                });
+    
+    
+                
+               // this.rol.setRoles(Roles.findOne().rol);
+              
+              });
             
-
-            this.l.log("ngOnInit suscribe  Rooms.find()"); 
-                Rooms.find({alumnoId : Meteor.userId(), activo : true}).subscribe((data) => { 
-                    vm.clase = data[0];
-
-
-                    if(vm.clase && vm.clase.comenzado)
-                    {
-                        
-                    this.l.log("ngOnInit subscribe clase " + JSON.stringify(vm.clase) );
-                        
-                    this.l.log("ngOnInit getDiffTimeInSeconds...");
-                        MethodsClass.call("getDiffTimeInSeconds", vm.clase.fechaCom,(result)=>{
-                            vm.secondsIniClass = result;
-                            this.l.log("ngOnInit getDiffTimeInSeconds... ok sec:" +vm.secondsIniClass );
-                        })
-                    }
-                    else{
-                        vm.secondsIniClass = 0; 
-                    }
-            });
-
-
-            
-           // this.rol.setRoles(Roles.findOne().rol);
-          
-          });
+        }
 
           vm.iniRoom()
           vm.intervalUpdAction()
@@ -319,6 +326,28 @@ export class RoomAlumnoComponent extends RoomClass implements OnInit, OnDestroy,
 
     
     
+    clickBotonLlamarNoLogueado()
+    {
+        alert("NO logueado")
+    }
+
+    clickBotonLlamarLogueadoNoSuscrito()
+    {
+        alert("logueado No suscrito")
+    }
+    mostrarBotonLlamarNoLogueado(): boolean
+    {
+        return !this.loggedIn();
+    }
+
+    mostrarBotonLlamarLogueadoNoSuscrito(): boolean
+    {
+        return this.loggedIn() && false;
+    }
+    mostrarBotonLlamarLogueadoSuscrito(): boolean
+    {
+        return this.loggedIn() && true;
+    }
     
     ngOnDestroy()
     {
@@ -595,7 +624,10 @@ export class RoomAlumnoComponent extends RoomClass implements OnInit, OnDestroy,
                 {
                    
             
-                    
+                    if(!vm.loggedIn() )
+                    {
+                        vm.redux.nextStatus({ type: ETipo.SEL_PROFESOR})
+                    }
                     
                     //esta en una clase?
                     //borramos mensajes
@@ -606,8 +638,8 @@ export class RoomAlumnoComponent extends RoomClass implements OnInit, OnDestroy,
                         })
                     }
                     let fn2 = resolve =>{
-                        let perfil : Perfil =   Meteor.user().profile;
-                        if(perfil.claseId && perfil.claseId !== "")
+                        let perfil : Perfil =  vm.loggedIn() ? Meteor.user().profile : undefined;
+                        if(perfil && perfil.claseId && perfil.claseId !== "")
                         {
                             //si
                             
