@@ -28,8 +28,8 @@ export interface Perfil {
 
 export enum RolesEnum {
 
-    ALUMNO = 1,
-    PROFFESOR = 5
+    ALUMNO = 3,
+    PROFFESOR = 4
   }
 
 export interface AutoCompleteModel {
