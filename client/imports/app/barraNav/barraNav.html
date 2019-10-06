@@ -189,26 +189,32 @@
                 </div>                    
               </div>
               <div class="modal-body">
-                    <form  #claseForm="ngForm" [formGroup]="addForm">
+                    <form  #claseForm2="ngForm" [formGroup]="addForm2">
                         <div class="form-group">
-                            <input formControlName="firstname" name="firstname" [(ngModel)]="userLogin.firstname" type="text" id="inputNombre" class="form-control" placeholder="Nombre (Por ejemplo: Juan)">
+                            <input formControlName="nombre" name="nombre" [(ngModel)]="userLogin.profile.nombre" type="text" id="inputNombre" class="form-control" placeholder="Nombre (Por ejemplo: Juan)">
                         </div>   
                         <div class="form-group">
-                            <input formControlName="lastname" name="lastname" [(ngModel)]="userLogin.lastname" type="text" id="inputApellidos" class="form-control" placeholder="Apellidos (Por ejemplo: García Robles)">
+                            <input formControlName="apellidos" name="apellidos" [(ngModel)]="userLogin.profile.apellidos" type="text" id="inputApellidos" class="form-control" placeholder="Apellidos (Por ejemplo: García Robles)">
                         </div>  
                         <div class="form-group">
-                            <input formControlName="useremail" name="useremail" [(ngModel)]="userLogin.email" type="email" id="inputUserEmail" class="form-control" placeholder="Correo electrónico (Por ejemplo: juan.garciarobles@juangarcia.juan)">
+
+                            <input formControlName="username" name="username" [(ngModel)]="userLogin.username" type="email" id="inputUserEmail" class="form-control" placeholder="Correo electrónico (Por ejemplo: juan.garciarobles@juangarcia.juan)">
                         </div>
                         <div class="form-group">
-                            <input formControlName="userpassword" name="userpassword" [(ngModel)]="userLogin.userpassword" type="password" id="inputUserPassword" class="form-control" placeholder="Contraseña">
+                            <input (ngModelChange)="comprobarFortalezaPass()" formControlName="password" name="password" [(ngModel)]="userLogin.password" type="password" id="inputUserPassword" class="form-control" placeholder="Contraseña">
+                            <span>
+                                Fortaleza: <strong [ngStyle]="fortalezaPassSel.style">{{fortalezaPassSel.texto}}</strong>
+                            </span> 
                         </div>
                         <div class="form-group">
                             <div class="g-recaptcha" data-sitekey="6Lcjd30UAAAAAIWm....."></div>
                         </div>
                         <div class="form-group">
-                            <button  class="btn btn-lg btn-success btn-block" [disabled]="!isValid()" (click)="loginWithPassword()">Regístrate</button>  
+                            <button  class="btn btn-lg btn-success btn-block" [disabled]="!isValidReg()" (click)="unirse()">Regístrate</button>  
                         </div>
                     </form>
+                    <p class="card-text text-muted" style="font-size: 10pt;">Un correo electrónico válido será necesario debido a que éste se enviarán: correo de validación,  facturas, uso de la aplicación, etc </p>
+                    <p class="card-text text-muted" style="font-size: 10pt;">La contraseña debe tener un mínimo de 8 caracteres. Introducir letras en mayúscula, números y simbolos hará una contraseña más segura</p>
               </div>
               <div class="modal-footer">
                   <div class="form-group">

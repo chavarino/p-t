@@ -4,7 +4,7 @@ import { Users } from '../../../imports/collections/users';
 import { Perfil,RolesEnum, AutoCompleteModel } from '../../../imports/models/perfil';
 import { User } from 'imports/models/User';
 import {Accounts} from 'meteor/accounts-base';
-import { iniProfesorModel, Elo, FactoryCommon } from 'imports/functions/commonFunctions';
+import { iniProfesorModel, Elo, FactoryCommon, PATTERN } from 'imports/functions/commonFunctions';
 import { Kpm } from 'imports/models/kpm';
 
 
@@ -183,21 +183,48 @@ Meteor.methods({
   {
     let regex =/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 
-    let patt = new RegExp(regex)
+    //let patt = new RegExp(regex)
     //TODO VALIDAR
     //Accounts.findUserByEmail(user.em)
    // console.log(JSON.stringify(user));
     //console.log("email val:" +  patt.test(user.username))
-    if(!user ||!user.username || user.username === ""  || !patt.test(user.username) || user.password.length>20 || user.password.length<5 )
-    {
-        console.log("ERROR : CAMPOS MAL INTRODUCIDOS")
+    try{
+      if(!user )
+      {
+          console.log("ERROR : CAMPOS MAL INTRODUCIDOS")
+          throw "";
+        }
+        console.log("user: " + JSON.stringify(user))
+        
+        check(user.username, String);
+        console.log("email correcto")
+        check(user.password, String);
+        console.log("pass correcto")
+        check(user.profile.nombre.trim(), String);
+        console.log("nombre correcto")
+        check(user.profile.apellidos.trim(),String);
+        console.log("apellidos correcto")
+        
+        let flags =[ user.username.match(PATTERN.EMAIL), user.password.match(PATTERN.PASS)
+          , user.profile.nombre.match("^.{3,40}$"), user.profile.apellidos.match("^.{3,40}$") ]
+        
+          if(!flags.reduce((ante,cu)=>{ return  ante && cu}, true))
+          {
+             throw "";
+          }
+          
+      }
+      catch(e){
         MethodsClass.creacionUserGeneral();
+
     }
+
     try{
     
       
       
-     let userId = Accounts.createUser({email :user.username, username:user.username, password:user.password});
+     let userId = Accounts.createUser({email :user.username, username:user.username, password:user.password, profile:{nombre: user.profile.nombre, 
+      apellidos: user.profile.apellidos} });
 
       console.log("generado user correctamente: " +userId);
 

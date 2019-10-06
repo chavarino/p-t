@@ -194,7 +194,18 @@ export class Log{
     }
 }
 
+export enum PATTERN{
 
+    EMAIL = "^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$",
+    MIN_8CHAR = "^.{8,}$",
+    NUMEROS = "[0-9]+",
+    LETRAS = "[a-zA-Z]+",
+    LETRAS_MIN = "[a-z]+",
+    LETRAS_MAY = "[A-Z]+",
+    RARE_CHAR = "[!@#\$%\^\&*\)\(+=._-]+",
+    PASS = "^[0-9a-zA-Z!@#\$%\^\&*\)\(+=._-]{8,20}$"
+
+}
 
 export class FactoryCommon
 {
@@ -202,7 +213,9 @@ export class FactoryCommon
    static  MAX_SIZE_FOTO :number = 5242880 ;
    static   MAX_SIZE_DOCS:number  = 10485760;
    static  MIME_FORMATS : Array<string> = ["application/pdf","application/vnd.openxmlformats-officedocument.wordprocessingml.document","application/msword","application/zip","application/x-7z-compressed","application/x-rar-compressed","application/x-tar"] 
-    constructor()
+   
+   
+   constructor()
     {
 
     }

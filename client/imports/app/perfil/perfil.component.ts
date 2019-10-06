@@ -121,8 +121,11 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy{
                 {
                     
                     this.perfil = data[0].profile;
-                    
-                    this.configTags.listCat = this.perfil.perfClase.categorias || [];
+                    if(this.perfil.perfClase)
+                    {
+
+                        this.configTags.listCat = this.perfil.perfClase.categorias || [];
+                    }
                 }
                 else{
                   //this.rol.setRoles(data[0].rol);

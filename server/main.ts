@@ -29,7 +29,7 @@ import { Kpm } from 'imports/models/kpm';
 import { Rol } from 'imports/models/rol';
 import { Roles, RolesObj } from 'imports/collections/rol';
 import { getServers } from './imports/methods/general';
-import { Perfil } from 'imports/models/perfil';
+import { Perfil, RolesEnum } from 'imports/models/perfil';
 import { iniProfesorModel } from 'imports/functions/commonFunctions';
 import { Users } from 'imports/collections/users';
 
@@ -213,19 +213,19 @@ if(Meteor.isServer)
 
 
 
-Accounts.onCreateUser(function (options, user) {
+Accounts.onCreateUser(function (options, user : User) {
 
   
   let profile : Perfil= {
     foto : "https://lh3.googleusercontent.com/-OOti6sgi1g0/AAAAAAAAAAI/AAAAAAAAAAA/AGDgw-jC9_q1efO3BBff2F0OBFE4p0QxOA/s64-c-mo/photo.jpg",
-    rol : 2,
+    rol : RolesEnum.ALUMNO,
     email : "",
     nombre : "",
     apellidos : "",
     disponible : false,
     descripcion : ""
   };
-  
+
    if (user.services.facebook) {
     console.log("entra Faceboo");
     user.username = user.services.facebook.name;
@@ -249,6 +249,14 @@ Accounts.onCreateUser(function (options, user) {
     }
     profile.nombre =  user.services.google.given_name || "";
     profile.apellidos =  user.services.google.family_name || "";
+  }
+  else{
+
+   // console.log(JSON.stringify(user))
+   // console.log(JSON.stringify(options))
+   // let userAux = Meteor.users.findOne(user._id);
+    profile.nombre =  options.profile.nombre//user.profile.nombre;
+    profile.apellidos =  options.profile.apellidos;
   }
  // if (user.profile == undefined) user.profile = {rol:2};
   profile.email =  user.emails[0].address;
