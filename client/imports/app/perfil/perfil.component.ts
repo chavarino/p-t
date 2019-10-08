@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import  {RolesService} from "../services/roles.service";
 
@@ -29,7 +29,7 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy{
         listCat : [],
         listCatBusc : []
     }
-    constructor( rol : RolesService, private formBuilder: FormBuilder,flags : BanderasService)
+    constructor( rol : RolesService, private formBuilder: FormBuilder,flags : BanderasService,private cd :ChangeDetectorRef )
     {
 
         super(1, 1, "comun", rol);
@@ -88,8 +88,19 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy{
         /*this.addForm = this.formBuilder.group({
             nombre: ['', Validators.required],
             apellidos: ['', Validators.required],
-          });*/
+          });
+          let vm=this;
+          Tracker.autorun(()=>{
+            if(Meteor.user() )
+            {
+                let rol =  Meteor.user().profile.rol;
+                setTimeout(()=>{
 
+                    vm.cd.reattach();
+            
+                  }, 500)
+            }
+        });*/
           this.addForm = new FormGroup({
                     'nombre': new FormControl(this.perfil.nombre, [
                     Validators.required,

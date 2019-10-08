@@ -106,6 +106,7 @@ export class RoomClass extends Generic {
             vm.estado.id = estado.id;
 
         }
+        
         this.cd.reattach();//.detectChanges();
         //console.log("update cd " + vm.estado.id)
     }

@@ -14,7 +14,7 @@ interface Map<T> {
 })
 export class RolesService {
 
-    private permisos : Permisos;
+     permisos : Permisos;
 
 
     
@@ -22,7 +22,10 @@ export class RolesService {
     {
         this.setIniRoles();
     }
-
+    getPermisos()
+    {
+        return this.permisos;
+    }
     setIniRoles()
     {
         this.permisos = Permisos.NONE
