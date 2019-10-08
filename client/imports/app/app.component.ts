@@ -1,16 +1,15 @@
 
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
-import { Subscription } from 'rxjs/Subscription';
+
 import  {RolesService} from "./services/roles.service";
 import  {BanderasService} from "./services/flags.service";
 import { Meteor } from 'meteor/meteor';
-import { MeteorObservable } from 'meteor-rxjs';
 
-import { Roles } from '../../../imports/collections/rol';
 import "material-design-icons";
 import { MethodsClass } from 'imports/functions/methodsClass';
 import { RtcService } from './services/rtc.service';
+import { Permisos } from 'imports/models/rol';
 
 
 
@@ -21,7 +20,7 @@ import { RtcService } from './services/rtc.service';
 })
 export class AppComponent implements OnInit, OnDestroy {
   rol:RolesService
-  rolSubs : Subscription
+  
   flags  : BanderasService;
   
   constructor(rol:RolesService, flags : BanderasService)
@@ -41,6 +40,23 @@ export class AppComponent implements OnInit, OnDestroy {
       }
   })
   }
+
+
+
+  setRoles(permisos :Permisos)
+  { 
+    let vm=this;
+
+    if(!permisos)
+    {
+              this.rol.setIniRoles();
+      }
+      else{
+        this.rol.setRoles(permisos);
+  
+      }
+  }
+
     ngOnInit() {
 
       
@@ -51,50 +67,7 @@ export class AppComponent implements OnInit, OnDestroy {
       });
 
   
-        //cargar rol
-        /*
-        read : number,
-    write : number*/
-    this.rolSubs = MeteorObservable.subscribe('rolByUser').subscribe(() => {
-      //this.todos = Todos.findOne();
-      let rol = 1;
-      if(this.loggedIn())
-      {
-        rol = Meteor.user().profile.rol;
-      }
       
-      Roles.find({codigo: rol}).subscribe((data)=>{
-
-        if(!data[0])
-        {
-            this.rol.setIniRoles();
-        }
-        else{
-          this.rol.setRoles(data[0].perm);
-
-        }
-      })
-      
-    });
-
-    Tracker.autorun(()=>{
-      if(Meteor.user())
-      {
-        this.rol.setIniRoles();
-        Roles.find({codigo: Meteor.user().profile.rol}).subscribe((data)=>{
-  
-          if(!data[0])
-          {
-              this.rol.setIniRoles();
-          }
-          else{
-            this.rol.setRoles(data[0].perm);
-    
-          }
-        })
-
-      }
-    });
       
   }
   retornar ($event)
@@ -111,9 +84,7 @@ logginIn()
 }
 
   ngOnDestroy() {
-    if (this.rolSubs) {
-      this.rolSubs.unsubscribe();
-    }
+    
 
     
   }
