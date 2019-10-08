@@ -38,7 +38,7 @@ import { ModalKpm} from './modalKpm/modaKpm.component';
 import { FileInput } from './file.component/file.component';
 import { TimeCounter } from './timeCounter/timeCounter.component';
 import { KeyDectect } from './directivas/keyDetect.directive';
-
+import { LoadRoles} from './loadRolesComponent/loadRoles.component'
 
 export const ROUTES_PROVIDERS = [];
 @NgModule({
@@ -107,7 +107,8 @@ export const ROUTES_PROVIDERS = [];
     RoomProfComponent,
     ModalKpm,
     FileInput,
-    KeyDectect
+    KeyDectect,
+    LoadRoles
   ],
   bootstrap: [
     AppComponent
