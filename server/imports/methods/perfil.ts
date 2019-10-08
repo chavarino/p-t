@@ -6,6 +6,7 @@ import { User } from 'imports/models/User';
 import {Accounts} from 'meteor/accounts-base';
 import { iniProfesorModel, Elo, FactoryCommon, PATTERN } from 'imports/functions/commonFunctions';
 import { Kpm } from 'imports/models/kpm';
+import { Roles } from 'imports/collections/rol';
 
 
 const modulo = "Methods-Perfil";
@@ -295,6 +296,12 @@ Meteor.methods({
          
           MethodsClass.except(modulo, "calcularElo : " + error);
       }  
+  }, 
+  getPermisosByRol()
+  {
+
+    this.unblock();
+      return Roles.findOne({codigo: Meteor.user() ? Meteor.user().profile.rol :1}).perm;
   }
 })
 

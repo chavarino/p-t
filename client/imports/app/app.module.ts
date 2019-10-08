@@ -17,7 +17,7 @@ import { AccountsModule, LoginButtons } from 'angular2-meteor-accounts-ui';
 
 import { RolesService } from './services/roles.service';
 import { canActivateNone, canActivateLogin,
-   canActivateAlumno, canActivateProf, canActivateAdmin, canActivateSAdmin  } 
+   canActivateAlumno, canActivateProf, canActivateAdmin, canActivateSAdmin, HnResolver  } 
    from './services/canActivate/canActivatePages';
 import { BanderasService } from './services/flags.service';
 //import { MaterialModule } from './material.module';
@@ -33,7 +33,7 @@ import { VideoCall } from './videoCall/videoCall';
 import { AppComponent } from './app.component';
 //import { MdButtonModule} from "@angular/material/button";
 import { TagInputModule } from 'ngx-chips';
-
+import { PadreComponent} from './padre/padreComponent';
 import { ModalKpm} from './modalKpm/modaKpm.component';
 import { FileInput } from './file.component/file.component';
 import { TimeCounter } from './timeCounter/timeCounter.component';
@@ -53,37 +53,52 @@ export const ROUTES_PROVIDERS = [];
    // MatCheckboxModule,
     RouterModule.forRoot([
       {
-        path: 'inicio',
-        component: InicioComponent
-      },
-      {
-          path: 'opciones/perfil',
-           component: PerfilComponent, canActivate: [canActivateLogin]
-       },
-       {
-        path: 'room/alumno',
-         component: RoomAlumnoComponent, canActivate: [canActivateNone]
-        },
-        {
-          path: 'room/alumno/:categorias',
-           component: RoomAlumnoComponent, canActivate: [canActivateNone]
-          },
-      {
-        path: 'room/prof',
-         component: RoomProfComponent, canActivate: [canActivateProf]
-        },
-      // Home Page
-      {
         path: '',
-        redirectTo: '/inicio',
-        pathMatch: 'full'
-      },
-      // 404 Page
-      {
-        path: '**',
-        redirectTo: '/inicio',
-        //component: PageNotFoundComponent
-      }
+        component: PadreComponent,
+        resolve: { perm: HnResolver },
+        children: [
+          // Home Page
+          {
+            path: '',
+            redirectTo: 'inicio',
+            pathMatch : "full"
+          },
+          
+          {
+            path: 'inicio',
+            component: InicioComponent
+          },
+          {
+              path: 'opciones/perfil',
+               component: PerfilComponent, canActivate: [canActivateLogin]
+           },
+           {
+            path: 'room/alumno',
+             component: RoomAlumnoComponent, canActivate: [canActivateNone]
+            },
+            {
+              path: 'room/alumno/:categorias',
+               component: RoomAlumnoComponent, canActivate: [canActivateNone]
+              },
+          {
+            path: 'room/prof',
+             component: RoomProfComponent, canActivate: [canActivateProf]
+            }
+            
+          ]
+        } ,
+       {
+          path: '',
+          redirectTo: 'inicio',
+           pathMatch : "full"
+         
+        },
+        // 404 Page
+        {
+          path: '**',
+          redirectTo: '/',
+          //component: PageNotFoundComponent
+        }
     ]),
     AccountsModule,
     NgbModule
@@ -94,6 +109,7 @@ export const ROUTES_PROVIDERS = [];
   ],
   declarations: [
     AppComponent,
+    PadreComponent,
     InicioComponent,
     PageNotFoundComponent,
     LoginComponent,
@@ -118,6 +134,7 @@ export const ROUTES_PROVIDERS = [];
     canActivateNone, canActivateLogin,
    canActivateAlumno, canActivateProf, 
    canActivateAdmin, canActivateSAdmin,
+   HnResolver,
     BanderasService
   ],
   entryComponents: [ModalKpm]

@@ -12,14 +12,11 @@ Meteor.publish('rolByUser', function() {
     //4 admin common, perfil , alumno , profesor y admin
     /*let rol = 1;
 
-    if(!!Meteor.user())
-    {
-      let user : User = Meteor.user();
-      console.log(user);
-      rol = user.profile.rol;
-    }*/
+  */
+
   
-  return Roles.find({ });
+  
+  return Roles.find({codigo: Meteor.user() ? Meteor.user().profile.rol :1});
 });
 
 

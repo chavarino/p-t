@@ -2,28 +2,28 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 
 
-import  {RolesService} from "./services/roles.service";
-import  {BanderasService} from "./services/flags.service";
+import  {RolesService} from "../services/roles.service";
+import  {BanderasService} from "../services/flags.service";
 import { Meteor } from 'meteor/meteor';
 
 import "material-design-icons";
 import { MethodsClass } from 'imports/functions/methodsClass';
-import { RtcService } from './services/rtc.service';
+import { RtcService } from '../services/rtc.service';
 import { Permisos } from 'imports/models/rol';
 
-
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app',
-  templateUrl: 'app.html',
-  styleUrls: ['app.scss']
+  selector: 'padre',
+  templateUrl: 'padre.html',
+  styleUrls: ['padre.scss']
 })
-export class AppComponent implements OnInit, OnDestroy {
+export class PadreComponent implements OnInit, OnDestroy {
   rol:RolesService
   
   flags  : BanderasService;
   
-  constructor(rol:RolesService, flags : BanderasService, private cd :ChangeDetectorRef)
+  constructor(rol:RolesService, flags : BanderasService, private cd :ChangeDetectorRef, private route: ActivatedRoute)
   {
     this.rol = rol;
     this.flags = flags;
@@ -53,18 +53,14 @@ export class AppComponent implements OnInit, OnDestroy {
       }
       else{
         this.rol.setRoles(permisos);
-  
+        
       }
     }
     
     ngOnInit() {
       
-     /* setInterval(()=>{
-  
-        this.cd.reattach();
-  
-      }, 500)*/
-      
+     /* */
+      this.setRoles(this.route.snapshot.data.perm);
       MethodsClass.call("getServers", (res) =>{
 
         RtcService.pushServers(res.data.v.iceServers) ;
