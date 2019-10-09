@@ -7,6 +7,6 @@
 <div class="router-cont">
     <router-outlet></router-outlet>
 
-    <loadRoles  ></loadRoles>
+    <loadRoles (onRoles)="onRoles($event)" ></loadRoles>
     <modal *ngIf="flags.getModalConfig()" [config] = "flags.getModalConfig().config" (retorno)="flags.getModalConfig().fn($event)" ></modal>
 </div>

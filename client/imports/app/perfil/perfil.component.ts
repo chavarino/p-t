@@ -165,7 +165,7 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy{
         let msg =  MethodsClass.msg.modal.confirm;
         MethodsClass.call("changePerfilToProfesor", ()=>{
             //TODO HACER QUE SEA SIN RECARGAR.
-            location.reload();
+            //location.reload();
             vm.perfil = Meteor.user().profile;
         })
       /*

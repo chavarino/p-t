@@ -107,7 +107,7 @@ export class RoomClass extends Generic {
 
         }
         
-        this.cd.reattach();//.detectChanges();
+        //this.cd.reattach();.detectChanges();
         //console.log("update cd " + vm.estado.id)
     }
 
@@ -119,9 +119,9 @@ export class RoomClass extends Generic {
         let vm = this;
         if(!this.intervalUpd)  
         {
-            this.intervalUpd = setInterval(()=>{
+            /*this.intervalUpd = setInterval(()=>{
                 vm.cdUpdate(vm.estado)
-            },500)
+            },500)*/
 
         }
         else {
