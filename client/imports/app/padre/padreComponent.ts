@@ -11,7 +11,7 @@ import { MethodsClass } from 'imports/functions/methodsClass';
 import { RtcService } from '../services/rtc.service';
 import { Permisos } from 'imports/models/rol';
 
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'padre',
@@ -22,45 +22,46 @@ export class PadreComponent implements OnInit, OnDestroy {
   rol:RolesService
   
   flags  : BanderasService;
-  
-  constructor(rol:RolesService, flags : BanderasService, private cd :ChangeDetectorRef, private route: ActivatedRoute)
+  navigationSubscription;
+  constructor(rol:RolesService, flags : BanderasService, private cd :ChangeDetectorRef, 
+    private router: Router, private route: ActivatedRoute)
   {
     this.rol = rol;
     this.flags = flags;
     this.flags.setModalConfig({
 
-      config : {
-          title : "",
-          msg : "",
-          tipo : -1
-      },
-      fn : function()
-      {
-         console.log ("Main")
-      }
-  })
+        config : {
+            title : "",
+            msg : "",
+            tipo : -1
+        },
+        fn : function()
+        {
+          console.log ("Main")
+        }
+    })
   }
 
 
 
-  setRoles(permisos :Permisos)
-  { 
-    let vm=this;
-
-    if(!permisos)
-    {
-              this.rol.setIniRoles();
-      }
-      else{
-        this.rol.setRoles(permisos);
-        
-      }
-    }
+  
     
     ngOnInit() {
       
      /* */
-      this.setRoles(this.route.snapshot.data.perm);
+
+
+     this.navigationSubscription = this.router.events.subscribe((e: any) => {
+      // If it is a NavigationEnd event re-initalise the component
+      
+        console.log(e)
+      
+      /*if (e instanceof NavigationEnd) {
+        this.initialiseInvites();
+      }*/
+    });
+
+      //this.setRoles(this.route.snapshot.data.perm);
       MethodsClass.call("getServers", (res) =>{
 
         RtcService.pushServers(res.data.v.iceServers) ;
@@ -86,7 +87,9 @@ logginIn()
 
   ngOnDestroy() {
     
-
+    if (this.navigationSubscription) {  
+        this.navigationSubscription.unsubscribe();
+    }
     
   }
   

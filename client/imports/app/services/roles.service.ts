@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Rol, Permisos} from "../../../../imports/models/rol";
 import { isUndefined } from 'util';
+import { ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 
 interface Map<T> {
     [key: string]: T;
@@ -15,13 +16,11 @@ interface Map<T> {
 export class RolesService {
 
      permisos : Permisos;
+        redirectUrl: string;
 
 
     
-    contructor()
-    {
-        this.setIniRoles();
-    }
+   
     getPermisos()
     {
         return this.permisos;
@@ -42,7 +41,32 @@ export class RolesService {
         }
     }
 
+    checkCanActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot, permisos :Permisos) :boolean
+    {
 
+        let can = this.canRead(permisos);
+        if(!can)
+        {
+
+            this.redirectUrl = state.url;
+
+            // Create a dummy session id
+            //let sessionId = 123456789;
+
+            // Set our navigation extras object
+            // that contains our global query params and fragment
+           /* let navigationExtras: NavigationExtras = {
+            queryParams: { 'session_id': sessionId },
+            fragment: 'anchor'
+            };*/
+
+            // Navigate to the login page with extras
+            this.router.navigate(['/inicio']);
+        }
+
+
+        return can;
+    }
 
     canRead(min:Permisos, estricto ?:boolean)
     {
@@ -59,6 +83,11 @@ export class RolesService {
 
             return this.permisos >= min;
         }
+    }
+
+    contructor(private router: Router)
+    {
+        this.setIniRoles();
     }
     
 }
