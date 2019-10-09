@@ -56,7 +56,7 @@ export const ROUTES_PROVIDERS = [];
         path: '',
         component: PadreComponent,
         //resolve: { perm: HnResolver },
-        runGuardsAndResolvers : "always", 
+       // runGuardsAndResolvers : "always", 
         children: [
           // Home Page
           {
@@ -100,7 +100,7 @@ export const ROUTES_PROVIDERS = [];
           redirectTo: 'app',
           //component: PageNotFoundComponent
         }
-    ], {onSameUrlNavigation: "reload"}),
+    ]/*, {onSameUrlNavigation: "reload"}*/),
     AccountsModule,
     NgbModule
    // MatButtonModule

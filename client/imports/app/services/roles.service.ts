@@ -17,8 +17,12 @@ export class RolesService {
 
      permisos : Permisos;
         redirectUrl: string;
+    
 
+        constructor(private router: Router) {
 
+    
+        }
     
    
     getPermisos()
@@ -40,8 +44,8 @@ export class RolesService {
             this.permisos =  permisos;
         }
     }
-
-    checkCanActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot, permisos :Permisos) :boolean
+    
+    checkCanActivate( state: RouterStateSnapshot, permisos :Permisos) :boolean
     {
 
         let can = this.canRead(permisos);
@@ -85,10 +89,6 @@ export class RolesService {
         }
     }
 
-    contructor(private router: Router)
-    {
-        this.setIniRoles();
-    }
     
 }
 

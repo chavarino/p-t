@@ -41,7 +41,7 @@ export class canActivateNone implements CanActivate {
     
     
     
-    return this.permissions.checkCanActivate(route, state, Permisos.LOG)
+    return this.permissions.checkCanActivate( state, Permisos.NONE)
   }
   constructor(private permissions: RolesService) {
 
@@ -58,7 +58,7 @@ export class canActivateLogin implements CanActivate {
 
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | Observable<boolean> | Promise<boolean> {
-     return this.permissions.checkCanActivate(route, state, Permisos.LOG)
+     return this.permissions.checkCanActivate( state, Permisos.LOG)
   }
   constructor(private permissions: RolesService) {
 
@@ -75,7 +75,7 @@ export class canActivateAlumno implements CanActivate {
 
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | Observable<boolean> | Promise<boolean> {
-    return this.permissions.checkCanActivate(route, state, Permisos.ALUMNO) 
+    return this.permissions.checkCanActivate(state, Permisos.ALUMNO) 
   
   }
   constructor(private permissions: RolesService) {
@@ -94,7 +94,7 @@ export class canActivateProf implements CanActivate {
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | Observable<boolean> | Promise<boolean> {
      
-    return this.permissions.checkCanActivate(route, state, Permisos.PROFES) 
+    return this.permissions.checkCanActivate( state, Permisos.PROFES) 
     
   }
   constructor(private permissions: RolesService) {
@@ -112,7 +112,7 @@ export class canActivateAdmin implements CanActivate {
 
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | Observable<boolean> | Promise<boolean> {
-    return this.permissions.checkCanActivate(route, state, Permisos.ADMIN)  
+    return this.permissions.checkCanActivate( state, Permisos.ADMIN)  
   
   }
   constructor(private permissions: RolesService) {

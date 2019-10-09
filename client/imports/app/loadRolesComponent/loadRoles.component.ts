@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, EventEmitter} from '@angular/core';
 import { Meteor } from 'meteor/meteor';
-import { Subscription } from 'rxjs/Subscription';
+
 import { MeteorObservable } from 'meteor-rxjs';
 import {Roles} from "../../../../imports/collections/rol"
 import { Permisos } from '../../../../imports/models/rol';
@@ -12,36 +12,21 @@ import { RolesService } from '../services/roles.service';
     selector: 'loadRoles',
     template: "",
     styleUrls: [],
-    outputs : []
+    outputs : ["onRoles"]
   })
 export class LoadRoles  implements OnInit, OnDestroy{
 
    
     
     
-    //onRoles: EventEmitter<Permisos> = new EventEmitter<Permisos>();
-    
+    onRoles: EventEmitter< Observable<Permisos>> = new EventEmitter<Observable<Permisos>>();
     rolAnterior : number
-    rolSubs : Subscription;
+
     ngOnDestroy(): void {
-        if (this.rolSubs) {
-            this.rolSubs.unsubscribe();
-          }
+        
     }
 
-    setRoles(permisos :Permisos)
-    { 
-      let vm=this;
-  
-      if(!permisos)
-      {
-                this.rol.setIniRoles();
-        }
-        else{
-          this.rol.setRoles(permisos);
-          
-        }
-      }
+ 
 
     ngOnInit(): void {
             //cargar rol
@@ -75,7 +60,12 @@ export class LoadRoles  implements OnInit, OnDestroy{
         });*/
         
         
-        this.rolSubs =  new Observable<Permisos>((obs)=>{
+   
+
+
+
+          
+        let o = new Observable<Permisos>((obs)=>{
           
           MethodsClass.call("getPermisosByRol", (res)=>{
             //TODO HACER QUE SEA SIN RECARGAR.
@@ -114,41 +104,20 @@ export class LoadRoles  implements OnInit, OnDestroy{
           }
           });
 
-        }).subscribe((res) => {
-          //this.setMessage();
+        })
 
-            //this.onRoles.emit(res)
-            this.setRoles(res)
-            this.redirectUrl();
-          
-        });
-
-
+        this.onRoles.emit(o);
         
         
     }
-    redirectUrl()
-    { 
-        // Get the redirect URL from our auth service
-            // If no redirect has been set, use the default
-            let redirect = this.rol.redirectUrl ?
-             this.router.parseUrl(this.rol.redirectUrl) : '/inicio';
+
     
-            // Set our navigation extras ñobject
-            // that passes on our global query params and fragment
-            let navigationExtras: NavigationExtras = {
-              queryParamsHandling: 'preserve',
-              preserveFragment: true
-            };
-    
-            // Redirect the user
-            this.router.navigateByUrl(redirect, navigationExtras);
-    }
+
     loggingIn()
     {
       return Meteor.loggingIn()
     }
-    constructor(private rol:RolesService, private router: Router)
+    constructor(private rol:RolesService)
     {
         
 
