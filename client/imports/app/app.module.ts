@@ -55,7 +55,8 @@ export const ROUTES_PROVIDERS = [];
       {
         path: '',
         component: PadreComponent,
-        resolve: { perm: HnResolver },
+        //resolve: { perm: HnResolver },
+        runGuardsAndResolvers : "always", 
         children: [
           // Home Page
           {
@@ -87,19 +88,19 @@ export const ROUTES_PROVIDERS = [];
             
           ]
         } ,
-       {
+       /*{
           path: '',
           redirectTo: 'inicio',
            pathMatch : "full"
          
-        },
+        },*/
         // 404 Page
         {
           path: '**',
-          redirectTo: '/',
+          redirectTo: 'app',
           //component: PageNotFoundComponent
         }
-    ]),
+    ], {onSameUrlNavigation: "reload"}),
     AccountsModule,
     NgbModule
    // MatButtonModule
