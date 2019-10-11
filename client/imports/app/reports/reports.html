@@ -1,0 +1,79 @@
+<div class="reports">
+
+
+    <div class="lista-reports">
+
+        <!--
+            Perfil del cliente
+
+            si es profesor que muestre el datos actuales de precio(ult), elo y categorias
+
+        -->
+
+        <table class="table">
+            <thead>
+              <tr>
+                  <!-- TODO GUARDAR EN EL CLASE LAS CATEGORIAS DEL PROFESOR en ese momento, y el nombre del  profsor.-->
+                <th scope="col">Fecha Inicio</th>
+                <th scope="col">Fecha Fin</th>
+                <th scope="col">Profesor</th>
+                <th scope="col">Elo Profesor</th>
+                <th scope="col">Alumno</th>
+                <th scope="col">Minutos</th>
+                <th scope="col">Precio(€)/min</th>
+                <th scope="col">Precio(€) total</th>
+                <th scope="col">Puntuación</th>
+                <th scope="col">Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+                <!--
+
+_id ?: string,
+    titulo : string,
+    //categoria ?: number,
+    profId : string,
+    alumnoId: string,
+    peticion? : string,
+    fechaIni ?: Date,
+    fechaCom ?: Date,
+    fechaFin ?: Date,
+    activo ?: boolean,
+    rechazado ?: boolean,
+    comenzado ?: boolean,
+    estadoText ?: string,
+    urlVideo ?: string,
+    elo ?: number,
+    precio ?: number,
+    
+    files: RoomFile[];
+    chat : Array<MessageRoom>,
+    scores ?: {
+        alumno : Score
+
+        profesor : Score
+    }
+
+                -->
+              <tr *ngFor="let clas of clases | async">
+                <th scope="row">1</th>
+                <td>{{clas.fechaIni}}</td>
+                <td>{{clas.fechaFin}}</td>
+                <td>{{clas.profId}}</td>
+                <td>{{clas.elo}}</td>
+              </tr>
+              
+            </tbody>
+          </table>
+
+          <!-- 
+
+            boton de cobar si es profesor y cumple premisas.
+          -->
+    </div>
+
+    <div class="detalle">
+
+    </div>
+
+</div>
