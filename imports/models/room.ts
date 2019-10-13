@@ -9,7 +9,12 @@ export enum TypeMsgChat {
     FILE = 2
 
 }
+export enum TipoBusqueda {
 
+    ALUMNO = 1,
+    PROFES = 2,
+    ALL =3
+  }
 export interface MsgChat
 {
      type : TypeMsgChat
@@ -25,6 +30,8 @@ export interface MessageRoom extends MsgChat  {
     msg : string
 }
 export interface Room {
+  nomProfe: string;
+  nomAlumn: string;
     _id ?: string,
     titulo : string,
     //categoria ?: number,

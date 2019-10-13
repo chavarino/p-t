@@ -67,6 +67,10 @@ export class RolesService {
             // Navigate to the login page with extras
             this.router.navigate(['/inicio']);
         }
+        else if(state.url !== "/inicio")
+        {
+            this.redirectUrl = state.url;
+        }
 
 
         return can;

@@ -158,6 +158,7 @@ export class RoomAlumnoComponent extends RoomClass implements OnInit, OnDestroy,
         try {
 
             this.l.log("openModalPuntuacion  modalService ModalKpm...")
+            
             let result : Score = await this.modalService.open(ModalKpm, {size: 'lg',ariaLabelledBy: 'modal-basic-title'}).result;
 
             if(!result.updated)
