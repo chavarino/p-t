@@ -63,8 +63,8 @@
                   -->
                 <tr *ngFor="let clas of clases | async">
                  
-                  <td>{{clas.fechaIni | date:"dd/MM/yy hh:mm:ss"}}</td>
-                  <td>{{clas.fechaFin | date:"dd/MM/yy hh:mm:ss"}}</td>
+                  <td>{{clas.fechaIni | date:"dd/MM/yy hh:mm:ss a"}}</td>
+                  <td>{{clas.fechaFin | date:"dd/MM/yy hh:mm:ss a"}}</td>
                   <td [ngClass]="{'strong': imI(clas.profId)}">{{ imI(clas.profId) ? "Usted":clas.nomProfe}}</td>
                   <td>{{clas.elo | number:'1.0-2'}}</td>
                   <td [ngClass]="{'strong': imI(clas.alumnoId)}">{{imI(clas.alumnoId) ? "Usted":clas.nomAlumn}}</td>
