@@ -157,7 +157,9 @@ Meteor.methods({
           room.fechaCom = null;
           room.fechaFin = null;
           room.estadoText = getTexto(room);
-
+          let perfilAlumn = Meteor.user().profile 
+          room.nomAlumn =   `${perfilAlumn.nombre} ${perfilAlumn.apellidos}`;
+          room.nomProfe =  `${p.nombre} ${p.apellidos}`;
           if(p.perfClase)
           {
               room.elo = p.perfClase.ultElo || 0;

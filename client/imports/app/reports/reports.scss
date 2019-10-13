@@ -1,0 +1,20 @@
+td.strong
+{
+    font-weight: bold;
+}
+
+td.red-text {
+    color: red;
+}
+td.red-text::before {
+    content: "-";
+}
+
+td.green-text {
+    color: green;
+}
+
+td.green-text::before {
+    content: "+";
+}
+

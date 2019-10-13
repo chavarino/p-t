@@ -39,6 +39,7 @@ import { FileInput } from './file.component/file.component';
 import { TimeCounter } from './timeCounter/timeCounter.component';
 import { KeyDectect } from './directivas/keyDetect.directive';
 import { LoadRoles} from './loadRolesComponent/loadRoles.component'
+import { ReportsComponent } from './reports/reports.component';
 
 export const ROUTES_PROVIDERS = [];
 @NgModule({
@@ -80,10 +81,14 @@ export const ROUTES_PROVIDERS = [];
             {
               path: 'room/alumno/:categorias',
                component: RoomAlumnoComponent, canActivate: [canActivateNone]
-              },
-          {
+            },
+            {
             path: 'room/prof',
              component: RoomProfComponent, canActivate: [canActivateProf]
+            },
+            {
+            path: 'room/report',
+             component: ReportsComponent, canActivate: [canActivateLogin]
             }
             
           ]
@@ -125,6 +130,7 @@ export const ROUTES_PROVIDERS = [];
     ModalKpm,
     FileInput,
     KeyDectect,
+    ReportsComponent,
     LoadRoles
   ],
   bootstrap: [

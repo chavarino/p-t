@@ -5,6 +5,25 @@ import { Rooms } from '../../../imports/collections/room';
 import {MethodsClass} from "../../../imports/functions/methodsClass"
 
 
+Meteor.publish('getRoomReport', function() {
+
+  /*if(!Meteor.user())
+  {  
+     MethodsClass.noLogueado();
+  }*/
+
+  let or = { $or : [  
+    { profId : Meteor.userId()}, 
+    { alumnoId : Meteor.userId()} ]
+                  }
+
+  
+  // { profId : Meteor.userId(), activo : true}
+  // { alumnoId : Meteor.userId(), activo : true}
+  //{ $and : [{ activo: !true} , or ]}
+  return Rooms.find({ $and : [{ activo: !true} , or ]});
+});
+
 
 Meteor.publish('getRoomForAlumno', function() {
 

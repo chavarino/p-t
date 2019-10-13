@@ -39,7 +39,7 @@ export class ModalKpm implements OnInit, OnDestroy {
 
   constructor(  public activeModal: NgbActiveModal) {
 
-      
+     
 
   }
 
