@@ -1,12 +1,10 @@
 
-<div class="reports row">
+<div class="reports container">
+    <h2>
+        Historial de clases
+    </h2>
 
-    <div class="col-2">
-
-
-    </div>
-    
-    <div class="col-8">
+    <div class="content" >
       <div class="lista-reports">
   
           <!--
@@ -15,7 +13,15 @@
               si es profesor que muestre el datos actuales de precio(ult), elo y categorias
   
           -->
-  
+          <div class="tag">
+              <span *ngFor="let t of tags; let first = first; let last = last"
+              [ngClass]="{ first: first, last: last, center : !first && !last, selected: tBusqueda === t.tBusqueda}"
+                  (click)="setTBusqueda(t)"
+              >
+                  {{t.texto}}
+              </span>
+            
+         </div>
           <table class="table">
               <thead>
                 <tr>
@@ -33,34 +39,7 @@
                 </tr>
               </thead>
               <tbody>
-                  <!--
-  
-  _id ?: string,
-      titulo : string,
-      //categoria ?: number,
-      profId : string,
-      alumnoId: string,
-      peticion? : string,
-      fechaIni ?: Date,
-      fechaCom ?: Date,
-      fechaFin ?: Date,
-      activo ?: boolean,
-      rechazado ?: boolean,
-      comenzado ?: boolean,
-      estadoText ?: string,
-      urlVideo ?: string,
-      elo ?: number,
-      precio ?: number,
-      
-      files: RoomFile[];
-      chat : Array<MessageRoom>,
-      scores ?: {
-          alumno : Score
-  
-          profesor : Score
-      }
-  
-                  -->
+             
                 <tr *ngFor="let clas of clases | async">
                  
                   <td>{{clas.fechaIni | date:"dd/MM/yy hh:mm:ss a"}}</td>
@@ -90,8 +69,6 @@
 
 
     </div>
-    <div class="col-2">
+    
 
-
-    </div>
 </div>
