@@ -24,18 +24,23 @@ td.green-text::before {
     
     padding : 10px;
     border : 1px solid #dfdfdf;
+    border-bottom : 0.2px !important;
     
 }
 .tag span {
     cursor:pointer;
 }
 .tag span.selected {
-    background: /*#c7c4c4;*/#dfdfdf;
+    background: #f8f9fa;
+    color: #38f094;
+    font-weight: bold;
+    border-bottom: 0px;
+    
 }
 .tag span.first  {
 
     border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
+    //border-bottom-left-radius: 5px;
     border-right:0px
 }
 .tag span.center  {
@@ -43,5 +48,18 @@ td.green-text::before {
 .tag span.last {
     border-left:0px;
     border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
+    //border-bottom-right-radius: 5px;
+}
+
+.reports {
+
+    thead tr {
+        background: #f8f9fa;
+        color: #38f094;
+    }
+    table {
+
+        border-collapse: collapse;
+        border: 1px solid #dfdfdf;
+    }
 }

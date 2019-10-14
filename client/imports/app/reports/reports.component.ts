@@ -24,19 +24,19 @@ import { RolesService } from '../services/roles.service';
         {
           tBusqueda :  TipoBusqueda.PROFES,
           texto : "Profesor",
-          mostrar : ()=> this.tBusqueda === TipoBusqueda.PROFES
+          mostrar : ()=> this.canReadC('prof')
 
         },
         {
           tBusqueda :  TipoBusqueda.ALUMNO,
           texto : "Alumno",
-          mostrar : ()=> this.tBusqueda === TipoBusqueda.PROFES
+          mostrar : ()=> this.canReadC('prof')
 
         },
         {
           tBusqueda :  TipoBusqueda.ALL,
           texto : "Todos",
-          mostrar : ()=> this.tBusqueda === TipoBusqueda.PROFES
+          mostrar : ()=> this.canReadC('prof')
 
         }
 
@@ -47,7 +47,14 @@ import { RolesService } from '../services/roles.service';
     }
     ngOnInit() {
       
-      this.tBusqueda = TipoBusqueda.ALL//this.canReadC("prof")  ? TipoBusqueda.PROFES : TipoBusqueda.ALUMNO;
+      if(this.canReadC('prof'))
+      {
+        this.tBusqueda = TipoBusqueda.ALL//this.canReadC("prof")  ? TipoBusqueda.PROFES : TipoBusqueda.ALUMNO;
+      }
+      else{
+        this.tBusqueda = TipoBusqueda.ALUMNO//this.canReadC("prof")  ? TipoBusqueda.PROFES : TipoBusqueda.ALUMNO;
+      }
+        
       this.roomAlumnoSuscript =  MeteorObservable.subscribe('getRoomReport').subscribe(() => {
                 
     

@@ -3,7 +3,7 @@
     <h2>
         Historial de clases
     </h2>
-
+    <br>
     <div class="content" >
       <div class="lista-reports">
   
@@ -13,7 +13,7 @@
               si es profesor que muestre el datos actuales de precio(ult), elo y categorias
   
           -->
-          <div class="tag">
+          <div class="tag" style="    margin-bottom: -1px;">
               <span *ngFor="let t of tags; let first = first; let last = last"
               [ngClass]="{ first: first, last: last, center : !first && !last, selected: tBusqueda === t.tBusqueda}"
                   (click)="setTBusqueda(t)"
@@ -22,7 +22,8 @@
               </span>
             
          </div>
-          <table class="table">
+        
+          <table class="table" style="    margin-top: 8px;">
               <thead>
                 <tr>
                     <!-- TODO GUARDAR EN EL CLASE LAS CATEGORIAS DEL PROFESOR en ese momento, y el nombre del  profsor.-->
