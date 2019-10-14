@@ -18,3 +18,30 @@ td.green-text::before {
     content: "+";
 }
 
+
+
+.tag span {
+    
+    padding : 10px;
+    border : 1px solid #dfdfdf;
+    
+}
+.tag span {
+    cursor:pointer;
+}
+.tag span.selected {
+    background: /*#c7c4c4;*/#dfdfdf;
+}
+.tag span.first  {
+
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-right:0px
+}
+.tag span.center  {
+}
+.tag span.last {
+    border-left:0px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}

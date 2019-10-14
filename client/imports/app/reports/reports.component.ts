@@ -19,6 +19,28 @@ import { RolesService } from '../services/roles.service';
     roomAlumnoSuscript: Subscription;
     tBusqueda : TipoBusqueda; 
     private conversion :number = 60000.00;
+
+    tags = [ 
+        {
+          tBusqueda :  TipoBusqueda.PROFES,
+          texto : "Profesor",
+          mostrar : ()=> this.tBusqueda === TipoBusqueda.PROFES
+
+        },
+        {
+          tBusqueda :  TipoBusqueda.ALUMNO,
+          texto : "Alumno",
+          mostrar : ()=> this.tBusqueda === TipoBusqueda.PROFES
+
+        },
+        {
+          tBusqueda :  TipoBusqueda.ALL,
+          texto : "Todos",
+          mostrar : ()=> this.tBusqueda === TipoBusqueda.PROFES
+
+        }
+
+    ]
     constructor( rol : RolesService)
     {
       super(0,  0, "report", rol );
@@ -36,7 +58,11 @@ import { RolesService } from '../services/roles.service';
       });
     }
 
-
+    setTBusqueda(t)
+    {
+        this.tBusqueda = t.tBusqueda;
+        this.getRoomReport();
+    }
     getRoomReport()
     {
       let input = {};
@@ -97,4 +123,6 @@ import { RolesService } from '../services/roles.service';
           this.roomAlumnoSuscript.unsubscribe()
         }
     }
+
+    
   }
