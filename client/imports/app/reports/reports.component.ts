@@ -30,7 +30,7 @@ import { RolesService } from '../services/roles.service';
         {
           tBusqueda :  TipoBusqueda.ALUMNO,
           texto : "Alumno",
-          mostrar : ()=> this.canReadC('prof')
+          mostrar : ()=> this.canReadC('login')
 
         },
         {

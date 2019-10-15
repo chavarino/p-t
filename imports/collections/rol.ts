@@ -9,3 +9,8 @@ export interface RolesObj {
     _id
 }
 export const Roles = new MongoObservable.Collection<RolesObj>('rol');
+Roles.deny({
+    insert() { return true; },
+    update() { return true; },
+    remove() { return true; },
+  });
