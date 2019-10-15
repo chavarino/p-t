@@ -5,14 +5,22 @@ import { User } from '../models/User';
 export const Users = MongoObservable.fromExisting<User>(Meteor.users);
 
 
+/* TODO 
 
-Users.allow({
-    insert: loggedIn,
-    update: loggedIn,
-    remove: loggedIn
-  })
+Lists.publicFields = {
+  name: 1,
+  incompleteCount: 1,
+  userId: 1
+};
 
-
-function loggedIn() {
-    return !!Meteor.user();
-  }
+*/
+Meteor.users.deny({
+  insert() { return true; },
+  update() { return true; },
+  remove() { return true; },
+});
+Users.deny({
+  insert() { return true; },
+  update() { return true; },
+  remove() { return true; },
+});
