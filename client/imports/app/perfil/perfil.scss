@@ -1,3 +1,4 @@
+@import '../../../../imports/scss/shared.scss';
 .ng-valid[required], .ng-valid.required  {
     border-left: 5px solid #42A948; /* green */
   }
@@ -13,4 +14,10 @@
     min-height: 169px;
   }
 
- 
+ .email{
+
+  background: #38f094;
+    padding: 10px;
+    border-radius: 5px;
+    color: white;
+ }

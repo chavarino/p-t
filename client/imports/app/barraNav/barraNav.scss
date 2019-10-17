@@ -1,3 +1,4 @@
+@import '../../../../imports/scss/shared.scss';
 /*.gb_ab {
     -webkit-background-size: 32px 32px;
     background-size: 32px 32px;
@@ -20,6 +21,7 @@
 
 nav.navbar {
     //box-shadow: 0px 1px 1px 1px #ada9a9;
+    box-shadow: 0px 1px 4px 1px #efecec;
 }
 
 // login styles
