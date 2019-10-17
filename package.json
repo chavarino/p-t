@@ -1,4 +1,6 @@
 {
+  "name": "Sapens",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "start": "meteor run",
@@ -46,7 +48,8 @@
     "rxjs": "6.1.0",
     "rxjs-compat": "6.1.0",
     "tslib": "^1.10.0",
-    "zone.js": "0.8.26"
+    "zone.js": "0.8.26",
+    "stripe": "^7.10.0"
   },
   "devDependencies": {
     "@angular/compiler-cli": "^7.2.15",
