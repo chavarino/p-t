@@ -51,7 +51,10 @@
                   <td>{{calcTiempo(clas) }}</td>
                   <td>{{clas.precio}}</td>
                   <td [ngClass]="{'red-text': imI(clas.alumnoId),'green-text': imI(clas.profId) }">{{calcPrecioTotal(clas) | number:'1.0-2'}}</td>
-                  <td>{{calcularPuntuacion(clas)| number:'1.0-2'}}</td>
+                  <td> 
+                      <starView [score]="calcularPuntuacion(clas)">
+                       </starView>   <!--{{calcularPuntuacion(clas)| number:'1.0-2'}}-->
+                  </td>
                   <td></td>
                 </tr>
                 

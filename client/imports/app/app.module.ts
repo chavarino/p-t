@@ -41,6 +41,8 @@ import { KeyDectect } from './directivas/keyDetect.directive';
 import { LoadRoles} from './loadRolesComponent/loadRoles.component'
 import { ReportsComponent } from './reports/reports.component';
 
+import { StarView } from '../app/starView/starView.component';
+
 export const ROUTES_PROVIDERS = [];
 @NgModule({
   imports: [
@@ -131,7 +133,8 @@ export const ROUTES_PROVIDERS = [];
     FileInput,
     KeyDectect,
     ReportsComponent,
-    LoadRoles
+    LoadRoles,
+    StarView
   ],
   bootstrap: [
     AppComponent
