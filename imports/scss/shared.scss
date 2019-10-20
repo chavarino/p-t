@@ -10,6 +10,16 @@ body {
     font-family: Roboto;
 }
 
+*{
+
+  font-family: Roboto,Arial,sans-serif;
+}
+
+.fa {
+
+  font-family: FontAwesome;
+}
+
 .truncate {
     width: 250px;
     white-space: nowrap;
@@ -28,7 +38,15 @@ body {
     -o-transition: all 1s ease-out;
     transition: all 1s ease-out;
   }
+  label {
+    letter-spacing: .07272727em;
   
+    font-size: .6875rem;
+    font-weight: 500;
+    line-height: 1rem;
+    text-transform: uppercase;
+}
+
 /*
   * {
     -webkit-transition: all 0.5s ease-out;

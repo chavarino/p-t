@@ -1,10 +1,11 @@
 <div class="starView">
 	<div [title]="_score | number:'1.0-2'" >
-				<span *ngFor="let ampScore of enteras; let first = first; let last = last" style="color: #ffaf38;" ng-style="last ? estrella : {}" 
+				<span *ngFor="let ampScore of enteras; let first = first; let last = last" style="color: #ffaf38;" [ngStyle]="last ? estrella : {}" 
 											class="fa fa-star">
 				</span>
 				        	
-			<span *ngFor="let ampScore of vacias; let first = first; let last = last" ng-style="first ? styleSVacia() : {}" style="color: #ffaf38;" class="fa fa-star-o first-empty" ng-class="{'first-empty' : first}">
+			<span *ngFor="let ampScore of vacias; let first = first; let last = last" [ngStyle]="first ? styleSVacia() : {}" style="color: #ffaf38;" 
+			class="fa fa-star-o first-empty" [ngClass]="{'first-empty' : first}">
 				        					</span>		
 	</div>
 </div>
