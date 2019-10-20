@@ -80,7 +80,7 @@ import { isUndefined } from "util";
 		styleSVacia = function()
 		{
 			let vm=this;
-				return {'margin-left': vm.startMargin ? vm.startMargin + 'px' : '-24px'}; 
+				return {'margin-left': vm.startMargin ? vm.startMargin + 'px' : '-14px'}; 
 		}
 
 
