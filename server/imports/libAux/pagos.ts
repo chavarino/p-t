@@ -1,19 +1,15 @@
 let api_key = 'sk_test_wFBgb0r4Kv2YgY5EIWEVsaYb00KkSnycJv';
 const stripe = require('stripe')(api_key);
 
-   
+   /*
         interface Customer {
-            email : string
-            
-            payment_method : string
+            email
+            source
+            payment_method
         }
-   
-    /***
-     *  Crea un customer en la plataforma stripe
-     * 
-     *  c : objecto Customer, actuqalmente solo teine email y el metodo de pago.
-     */
-   const crearCustomer = async (c : Customer) =>
+   */
+
+   const crearCustomer = async (c) =>
     {
         //this.unblock();
         const customer = await stripe.customers.create({
@@ -32,7 +28,7 @@ const stripe = require('stripe')(api_key);
 
         return customer;  
     }
-    const getCustomer = async (c : Customer) =>
+    const getCustomer = async (c) =>
     {
         //this.unblock();
         const customer = await stripe.customers.create({
@@ -135,15 +131,16 @@ const stripe = require('stripe')(api_key);
                 quantity: obj.quantity,
                 timestamp: /*1522893428*/Math.floor((new  Date).getTime()/1000),
                 action: obj.action || "increment"
-              },{
+                
+              }/*,{
                 idempotency_key: "4pNfq2rEopfe3xsX2" // TODOOOOOOO generar por V4 UUIDs,
                 
-              }
+              }*/
             );
 
             return res;
     }
-    const attachSucriptionToCustomer = async (idCustomer, idPlan) =>
+    const attachSucriptionToCustomer = async (idCustomer, idPlan, idPM) =>
     {
       //TODO IMPORTANTE GUARDAR EL ID DE LA SUSCRIPCION CREADA
             const res = await stripe.subscriptions.create({
@@ -152,9 +149,9 @@ const stripe = require('stripe')(api_key);
                 {
                   plan: idPlan,
                   // quantity: 1 (PARA SUSCRIPCIONES FIJAS.)
-
                 },
-              ]
+              ],
+              default_payment_method : idPM
             }
             );
 
@@ -167,7 +164,11 @@ const stripe = require('stripe')(api_key);
    const removeSus  = async (idSus) =>
     {
       //TODO IMPORTANTE GUARDAR EL ID DE LA SUSCRIPCION CREADA
-            const res = await stripe.subscriptions.del(idSus);
+            const res = await stripe.subscriptions.del(
+              idSus,
+              {
+                invoice_now : true
+              });
 
             return res;
     }
@@ -182,7 +183,20 @@ const stripe = require('stripe')(api_key);
             return res;
     }
 
+
+    const getInvoice = async (id) =>
+    {
+      //TODO IMPORTANTE GUARDAR EL ID DE LA SUSCRIPCION CREADA
+            const res = await stripe.invoices.retrieve(
+              id
+            );
+
+            return res;
+    }
+
+    
+
     module.exports = {crearCustomer,setupIntent, getAllCardsFromCustomer,
              removeCardFromCustomer, removeCustomer, getCustomer, getPlanesCobro,
              attachSucriptionToCustomer, chargeAmountToCustomer, getSuscriptionItem, removeSus,
-             getCustomerInvoices};
+             getCustomerInvoices, getInvoice};
