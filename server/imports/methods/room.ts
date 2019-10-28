@@ -119,7 +119,7 @@ Meteor.methods({
       Meteor.call("calcularElo", clase.profId,clase.scores.profesor.kpms);
     } catch (error) {
       //  console.log(error);
-      MethodsClass.except(modulo, "saveScoreFromAlumno : " + error);
+      MethodsClass.except(500,modulo, "saveScoreFromAlumno : " + error, "");
        
     }
 
@@ -131,7 +131,9 @@ Meteor.methods({
     alumnoId :"",
     titulo : "",
     chat : [],
-    files : []
+    files : [],
+    nomAlumn :"",
+    nomProfe :"",
   };
     try
     {
@@ -367,7 +369,7 @@ Meteor.methods({
         
  
     } catch (error) {
-        MethodsClass.except(modulo, "uploadFile : " + error);
+        MethodsClass.except(500, modulo, "uploadFile : " + error, "");
     }
 
   }

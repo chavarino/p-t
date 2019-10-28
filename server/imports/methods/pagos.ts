@@ -12,6 +12,10 @@ let isLogged = () : boolean=>
 {
   return !!Meteor.userId();
 }
+const modulo = "PagosMethods"
+/*
+
+ MethodsClass.except(500, modulo, "calcularElo : " + error, logPrivate);*/
 
 Meteor.methods({
 
