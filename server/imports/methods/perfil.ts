@@ -294,7 +294,7 @@ Meteor.methods({
 
       } catch (error) {
          
-          MethodsClass.except(modulo, "calcularElo : " + error);
+          MethodsClass.except(500, modulo, "calcularElo : " + error, "");
       }  
   }, 
   getPermisosByRol()

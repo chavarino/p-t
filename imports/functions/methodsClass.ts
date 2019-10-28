@@ -122,56 +122,65 @@ export class MethodsClass {
     static camposInsuficientes() 
     {
         
-        throw new Meteor.Error('Error', 'No logueado');
+        throw new Meteor.Error(500, 'No logueado');
     }
     static noLogueado() 
     {
         
-        throw new Meteor.Error('Error', 'No logueado');
+        throw new Meteor.Error(500, 'No logueado');
     }
     
     static duplic() 
     {
         
-        throw new Meteor.Error('Error', 'No se puede crear más de una clase a la vez');
+        throw new Meteor.Error(500, 'No se puede crear más de una clase a la vez');
     }
 
     static noPermisos() 
     {
         
-        throw new Meteor.Error('Error', 'No tienes permisos para hacer dicha acción');
+        throw new Meteor.Error(500, 'No tienes permisos para hacer dicha acción');
     }
 
     static creacionUserGeneral() 
     {
         
-        throw new Meteor.Error('Error', 'No se pudo crear usuario, usuario/contraseña incorrectos.');
+        throw new Meteor.Error(500, 'No se pudo crear usuario, usuario/contraseña incorrectos.');
     }
-    static except(modulo: string, src :string, user ?:string)
+    /**
+     * 
+     * @param cod Codigo de error
+     * @param modulo modulo donde se ha producido
+     * @param src descripcion del error
+     * @param logPrivate texto de error que solo se imprimirá en el log privado del servidor
+     * @param user  usuarios
+     */
+    static except(cod:number ,modulo: string, src :string, logPrivate: string, user ?:string)
     {
-        Log.logStatic(modulo, (user|| "") + " - " + src, true)
-        throw new Meteor.Error(src);
+        let logPrivateError = logPrivate && logPrivate !== "" ? ` [ ${logPrivate} ]` : "";
+        Log.logStatic(modulo, (user|| "") + " - " + src + logPrivateError, true)
+        throw new Meteor.Error(cod || 500, src);
     }
     static errorSetDisponible() 
     {
         
-        throw new Meteor.Error('Error', 'Error al cambiar de estado');
+        throw new Meteor.Error(500, 'Error al cambiar de estado');
     }
 
     static errorSala() 
     {
         
-        throw new Meteor.Error('Error', 'Error Sala inexistente');
+        throw new Meteor.Error(500, 'Error Sala inexistente');
     }
     static errorProfesorNoDisponible() 
     {
         
-        throw new Meteor.Error('Error', 'El profesor seleccionado no está disponible');
+        throw new Meteor.Error(500, 'El profesor seleccionado no está disponible');
     }
     static creacionUserYaExiste() 
     {
         
-        throw new Meteor.Error('Error', 'Usuario ya existente');
+        throw new Meteor.Error(500, 'Usuario ya existente');
     }
 
     static getConfigConfirm(title: string, body :string, fn : (evento)=> void) : modalObj
