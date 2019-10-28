@@ -64,12 +64,12 @@ export class AppComponent implements OnInit, OnDestroy {
         this.cd.reattach();
   
       }, 500)*/
-      
+     /* 
       MethodsClass.call("getServers", (res) =>{
 
         RtcService.pushServers(res.data.v.iceServers) ;
        // console.log(JSON.stringify(res))
-      });
+      });*/
 
   
       

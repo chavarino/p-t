@@ -2,8 +2,19 @@ import { Customer, PerfilPagos } from 'imports/models/perfilPagos.model';
 import { async } from '@angular/core/testing';
 import { PerfilPagosColl } from 'imports/collections/perfilPagos.collection';
 
+export enum COD_ERROR 
+{
+    GENERIC = "Generico - ",
+    PARAM ="Parametros incorrectos - ",
+    
+
+}
+
+
 let api_key = 'sk_test_wFBgb0r4Kv2YgY5EIWEVsaYb00KkSnycJv';
 const stripe = require('stripe')(api_key);
+
+
 
   
     const attachPayMethodToCustomer = async (idPM :string , cId :string )  => {
@@ -202,8 +213,43 @@ const stripe = require('stripe')(api_key);
 
             return res;
     }
-
+    const getUsage = async (id) =>
+    {
+      //TODO IMPORTANTE GUARDAR EL ID DE LA SUSCRIPCION CREADA
+            const res = await stripe.usageRecordSummaries.list(
+              id,
+              {limit: 10}
+            );
+            return res;
+    }
     
+    
+
+    const borrarEntornoDePago = async ( ) =>
+    {
+     
+      let perfilPago : PerfilPagos = PerfilPagosColl.findOne({idCliente: Meteor.userId() })
+
+      if(!perfilPago || !perfilPago.idSuscription || !perfilPago.idPayment_method)
+      {
+        throw COD_ERROR.PARAM + " ";
+
+      }
+      // NO PERMITIR BORRAR TARJETA SI HAY UN PAGO POR MEDIO.
+      await removeSus(perfilPago.idSuscription);
+      perfilPago.idSuscription=undefined;
+      perfilPago.idSusRecord =undefined;
+      
+      await removeCardFromCustomer(perfilPago.idPayment_method) // borramos el emtodo de pago.
+      perfilPago.idPayment_method = undefined;
+      perfilPago.customer.invoice_settings.default_payment_method = undefined;
+      perfilPago.customer = await updateCustomer(perfilPago.customer);
+
+      PerfilPagosColl.update({_id:perfilPago._id }, {$set : perfilPago});
+    }
+
+
+
 
     const generarEntornoDePago = async (payment_method, idPlan) =>
     {
@@ -213,7 +259,7 @@ const stripe = require('stripe')(api_key);
       //existe ya el customer?  si no existe se crea 
       if(!perfilPago)
       {
-
+        // CREACION DE CUSTOMER Y METODO DE PAGO
         let c :Customer = {
           invoice_settings : {
             default_payment_method : payment_method
@@ -228,8 +274,8 @@ const stripe = require('stripe')(api_key);
         
          perfilPago  = {
           idSuscription : sus.id,
-          idPLan : idPlan,
           idSusRecord : sus.items.data[0].id,
+          idPLan : idPlan,
           customer : c,
           idCliente: Meteor.userId(),
           idPayment_method : payment_method,
@@ -244,14 +290,42 @@ const stripe = require('stripe')(api_key);
         PerfilPagosColl.insert(perfilPago);
       }
       else{
-           
+          //ACTUALIZACION DE CUSTOMER Y METODO DE PAGO
         if(perfilPago.idPayment_method)
         {
           
+          // añadimos el metodo de pago al customer Poir si falla
+          await attachPayMethodToCustomer(payment_method, perfilPago.customer.id);
+          // si existe metodo de pago, lo borramos y le añadimos el nuevo. 
           
-          perfilPago.idPayment_method = undefined;
+          await removeCardFromCustomer(perfilPago.idPayment_method) // borramos el emtodo de pago.
+         
+          perfilPago.idPayment_method = payment_method;
+          perfilPago.customer.invoice_settings.default_payment_method = payment_method;
+          perfilPago.customer = await updateCustomer(perfilPago.customer)
 
+          //PerfilPagosColl.insert(perfilPago);
+          
+         // console.log(JSON.stringify(input));
         }
+
+       
+        if(!perfilPago.idSuscription)
+        {
+          let sus = await attachSucriptionToCustomer(perfilPago.customer.id,idPlan);
+
+          perfilPago.idSuscription = sus.id;
+          perfilPago.idSusRecord = sus.items.data[0].id;
+        }
+        
+        PerfilPagosColl.update({_id:perfilPago._id }, {$set : perfilPago});
+
+
+
+
+
+
+
       }
 
       
@@ -260,4 +334,5 @@ const stripe = require('stripe')(api_key);
     export  const PagosFn = {crearCustomer,setupIntent, getAllCardsFromCustomer,
              removeCardFromCustomer, removeCustomer, getCustomer, getPlanesCobro,
              attachSucriptionToCustomer, chargeAmountToCustomer, getSuscriptionItem, removeSus,
-             getCustomerInvoices, getInvoice,   attachPayMethodToCustomer, detachPayMethodToCustomer,updateCustomer, generarEntornoDePago};
+             getCustomerInvoices, getInvoice,   attachPayMethodToCustomer, detachPayMethodToCustomer,updateCustomer,
+              generarEntornoDePago, borrarEntornoDePago, getUsage};

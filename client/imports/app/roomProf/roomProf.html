@@ -1,10 +1,15 @@
 
-<div class="room-prof padding-pag">
+<div class="room-prof padding-pag container" style="text-align: center">
+        <div class="row">
+            <div class="col-2">
+    
+            </div>
+            <div class="col-8">
 
             
-                <h2 class="bd-title">
+                <h1 class="bd-title  text-center">
                     Profesor - Clase
-                </h2>
+                </h1>
 
             <div *ngIf="isEstadoIni()">
                 
@@ -15,55 +20,59 @@
             <div *ngIf="isEstadoPreClass()">
                 
                     
-                <h4>
-                    Confirma el precio.
-                </h4>
-                <form #perfilForm="ngForm" [formGroup]="addForm" (ngSubmit)="save()">
-                    <div >
-                        
-                        <div class="row">
-                            <div class="col-6">
-    
-                                <label for="categorias"><strong>Categorías</strong></label><br>
-                                <categorias id="categorias" [readOnly] ="true" [array]="perfClase.categorias"></categorias>       
+                <div  class="text-muted text-center">
+                    Página pre-clase.  Confirma el precio y comieza a ser visible para los alumnos.
+                </div >
+
+                <section>
+
+                    <form #perfilForm="ngForm" [formGroup]="addForm" (ngSubmit)="save()">
+                        <div >
+                            
+                            <div class="row">
+                                <div class="col-6">
+        
+                                    <label for="categorias"><strong>Categorías</strong></label><br>
+                                    <categorias id="categorias" [readOnly] ="true" [array]="perfClase.categorias"></categorias>       
+                                   
                                
-                           
+                                </div>
+                                <div class="col-4">
+                                    <label for="elo">
+                                        
+                                        <strong>Elo</strong>
+                                    </label><br>
+                                    <span id="elo">
+                                            {{perfClase.ultElo | number:'1.0-2'}}
+                                        
+                                    </span>
+                                    </div>
+                                    
+                                    <div class="col-2">
+                                        <label for="precio"><strong>Precio</strong></label><br>
+                                        <input id="precio"  formControlName="ultPrecio" type="number" class="form-control" id="ultPrecio" name="ultPrecio" required placeholder="Precio" [(ngModel)]="perfClase.ultPrecio">
+        
+                                    </div>
                             </div>
-                            <div class="col-4">
-                                <label for="elo">
-                                    
-                                    <strong>Elo</strong>
-                                </label><br>
-                                <span id="elo">
-                                        {{perfClase.ultElo | number:'1.0-2'}}
-                                    
-                                </span>
+                            <div class="row">
+                                <div class="col-2">
+                                        <button [disabled]="!isValid()" type="submit" class="btn btn-primary">empezar!</button>
+                                    </div>
+                                <div class="col-10">
+        
                                 </div>
                                 
-                                <div class="col-2">
-                                    <label for="precio"><strong>Precio</strong></label><br>
-                                    <input id="precio"  formControlName="ultPrecio" type="number" class="form-control" id="ultPrecio" name="ultPrecio" required placeholder="Precio" [(ngModel)]="perfClase.ultPrecio">
-    
-                                </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-2">
-                                    <button [disabled]="!isValid()" type="submit" class="btn btn-primary">empezar!</button>
-                                </div>
-                            <div class="col-10">
-    
                             </div>
-                            
+    
                         </div>
-
-                    </div>
-                
-                </form>
+                    
+                    </form>
+                </section>
             </div>
             <div *ngIf="isEstadoWaitCall()">
-                    <h4>
+                    <div class="text-muted text-center">
                            Esperando alumno.
-                        </h4>
+                        </div >
                     <div class="row">
                             <div class="col-5">
     
@@ -106,10 +115,10 @@
                 <div *ngIf="isEstadoWaitAcceptCall()">
                     <div class="row">
                         <div class="col">
-                            <h4>
+                            <div class="text-muted text-center">
                                 Tiene una llamada de clase:
     
-                            </h4>
+                            </div >
 
                         </div>
                        
@@ -190,5 +199,8 @@
            </div>
             
             
-        
+        </div>
+        <div class="col-2">
+    
+            </div>
     </div>

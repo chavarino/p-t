@@ -114,7 +114,13 @@ export class PadreComponent implements OnInit, OnDestroy {
         this.initialiseInvites();
       }*/
     });
+//this.setRoles(this.route.snapshot.data.perm);
+      MethodsClass.call("getServerCustom", (res) =>{
 
+        console.log("SERVIDOR CUSTOM " + JSON.stringify(res))
+        //RtcService.pushServers(res.data.v.iceServers) ;
+       // console.log(JSON.stringify(res))
+      });
       //this.setRoles(this.route.snapshot.data.perm);
       MethodsClass.call("getServers", (res) =>{
 
