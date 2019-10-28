@@ -73,7 +73,7 @@ export class RtcService {
     private static configuration  = {
         iceServers: [{
           urls: 'stun:stun.l.google.com:19302'
-          //TODO AÑADIR SERVIDOR TURN.
+       
         }]
     }
     private videoType : VideoType = VideoType.CAM;
