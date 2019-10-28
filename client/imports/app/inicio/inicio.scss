@@ -3,7 +3,6 @@
 }*/
 @import '../../../../imports/scss/shared.scss';
 
-
 .dropdown-toggle::after {
    
     float: right;
@@ -58,11 +57,8 @@ nav.navbar {
 // login end
 
 
-.home{
-    
-}
-
 .letra-titulo{
+    margin-top: 10%;
     font-family: Arial, Helvetica, sans-serif;
     -webkit-font-smoothing: antialiased;
     color: white;
@@ -74,32 +70,45 @@ nav.navbar {
     color: white;
 }
 
+section{
+    margin: 0;
+    padding: 0;
+}
+
 .imagen-inicio{
-    background-image:url(/images/imagen-inicio.jpg);
+    background: url(/images/imagen-inicio.png) no-repeat;
+    width: 100%;
+    height: 100vh;
     background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center center;
-    position: relative;
-    min-width: 100%;
-    left: 0%;
-    top: 12%;
-    //z-index: -1;
-    height: 560px;
+    color: white;
+    text-align: center;
 }
 
-.imagen-inicio::before{
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: rgba(8, 109, 94, 0.5);
-}
-
-.imagen-inicio h1 h3{
+h1 h3{
     position: relative;
 }
 
+.section2, .section2-title, .section2-subtitle{
+    font-family: 'Open Sans Condensed', sans-serif;
+    color: #2E2E2E;
+}
 
+.section2-title{
+    font-size: 2.5rem;
+}
+
+.section2-subtitle{
+    font-size: 2rem;
+    margin-top: -15%;
+}
+
+.imagenes-uso{
+    width: 200%;
+    position: relative;
+}
+
+.imagen-1{background-image: url(/images/2.png);}
+.imagen-2{background-image: url(/images/1.png);}
+.imagen-3{background-image: url(/images/3.png);}
+.imagen-4{background-image: url(/images/4.png);}
 
