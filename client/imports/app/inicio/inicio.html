@@ -1,4 +1,4 @@
-<section class="home imagen-inicio w-100 p-3">
+<section class="imagen-inicio img-fluid p-3">
     <div class="container">
         <div class="container pt-2">
             <div class="row">
@@ -28,8 +28,6 @@
                             <span class="input-group-btn">
                                <a [routerLink]="['/room/alumno/', configTags.listCat.join(',')]">
                                 <button type="button" class="btn btn-primary ml-1" style="height: 100%; background-color: #37F093; border: #37F093">Buscar</button>
-                                
-                            
                                  </a>
                             </span>
                         </div>
@@ -40,24 +38,54 @@
     </div>
 </section>
 
-<section id="section2">
-    <div class="container">
-        <div class="container pt-2">
-            <div class="text-center pt-5">
-                <h3>Cómo funciona Sapens</h3>    
+<!--section-->
+    <div class="section2 container">
+        <div class="pt-2">
+            <div class="text-center pt-5 ">
+                <h3 class="section2-title">Mejora tus notas en sólo 4 pasos</h3>    
             </div>
         </div>
-        <div class="container">
-            <div class="row justify-content-md-center text-center">
-                <div class="col">1</div>
-                <div class="col">2</div>
-                <div class="col">3</div>
+        <div>
+            <div class="row justify-content-md-center">
+                <div class="col-5" style="margin-left: -10%">
+                    <img src="/images/2.png" style="width: 120%;">
+                    <div class="text-center" style="margin-left: 15%; margin-top: -25%">
+                        <h4 class="section2-subtitle">Consulta</h4>
+                        <div class="section2-text">
+                            Indica la categoría a la que pertenece tu duda
+                        </div>
+                    </div>  
+                </div>
+                <div class="col-5">
+                    <img src="/images/1.png" style="width: 120%;">
+                    <div class="text-center" style="margin-left: 15%; margin-top: -25%">
+                        <h4 class="section2-subtitle">Elección</h4>
+                        <div class="section2-text">
+                            Selecciona uno de los profesores disponibles para atenderte
+                        </div>
+                    </div> 
+                </div>
             </div>
+            <div class="row justify-content-md-center">
+                    <div class="col-5" style="margin-left: -10%">
+                        <img src="/images/4.png" style="width: 120%;">
+                        <div class="text-center" style="margin-left: 15%; margin-top: -23%">
+                            <h4 class="section2-subtitle">Clase</h4>
+                            <div class="section2-text">
+                                Resuelve tu duda online y con los recursos que necesites
+                            </div>
+                        </div>   
+                    </div>
+                    <div class="col-5"> 
+                        <img src="/images/3.png" style="width: 120%; padding-top: 2%"> 
+                        <div class="text-center" style="margin-left: 15%; margin-top: -25%">
+                            <h4 class="section2-subtitle">Valoración</h4>
+                            <div class="section2-text">
+                                Puntúa a tu profesor y la calidad de la clase, ¡te lo agradecerá!
+                            </div>
+                        </div>
+                    </div>
+                </div>
         </div>
     </div>
-</section>
 
-
-<div class="container" id="section3">
-
-</div>
