@@ -1,20 +1,18 @@
 import { Customer, PerfilPagos } from 'imports/models/perfilPagos.model';
 import { async } from '@angular/core/testing';
 import { PerfilPagosColl } from 'imports/collections/perfilPagos.collection';
-
-export enum COD_ERROR 
-{
-    GENERIC = "Generico - ",
-    PARAM ="Parametros incorrectos - ",
-    
-
-}
+import { COD_ERROR, ErrorClass} from "../libAux/erroresCod"
 
 
-let api_key = 'sk_test_wFBgb0r4Kv2YgY5EIWEVsaYb00KkSnycJv';
+
+
+
+const modulo = "Pagos"
+let api_key =  Meteor.isProduction ? 'sk_test_wFBgb0r4Kv2YgY5EIWEVsaYb00KkSnycJv'
+    :'sk_test_wFBgb0r4Kv2YgY5EIWEVsaYb00KkSnycJv';
 const stripe = require('stripe')(api_key);
 
-
+stripe.setMaxNetworkRetries(3);
 
   
     const attachPayMethodToCustomer = async (idPM :string , cId :string )  => {
@@ -223,29 +221,96 @@ const stripe = require('stripe')(api_key);
             return res;
     }
     
+    const setBlocked = async ( id: string, input : boolean) =>
+    {
+      PerfilPagosColl.update({_id:id }, {$set : {
+        bloqued : input
+      }});
+    }
     
-
     const borrarEntornoDePago = async ( ) =>
     {
      
-      let perfilPago : PerfilPagos = PerfilPagosColl.findOne({idCliente: Meteor.userId() })
-
-      if(!perfilPago || !perfilPago.idSuscription || !perfilPago.idPayment_method)
-      {
-        throw COD_ERROR.PARAM + " ";
-
-      }
-      // NO PERMITIR BORRAR TARJETA SI HAY UN PAGO POR MEDIO.
-      await removeSus(perfilPago.idSuscription);
-      perfilPago.idSuscription=undefined;
-      perfilPago.idSusRecord =undefined;
       
-      await removeCardFromCustomer(perfilPago.idPayment_method) // borramos el emtodo de pago.
-      perfilPago.idPayment_method = undefined;
-      perfilPago.customer.invoice_settings.default_payment_method = undefined;
-      perfilPago.customer = await updateCustomer(perfilPago.customer);
+      // Te permite BORRAR suscripcion si hay pago
+      //pero no borra la tarjeta ahora mismo
+      let uso = 0;
 
-      PerfilPagosColl.update({_id:perfilPago._id }, {$set : perfilPago});
+      //obtenemos perfil de pagos
+      let perfilPago : PerfilPagos = PerfilPagosColl.findOne({idCliente: Meteor.userId() })
+      
+      try {
+        //Combprobamos que este correcto los perfiles.
+        if(!perfilPago || !perfilPago.idSuscription || !perfilPago.idPayment_method)
+        {
+          throw  new ErrorClass(COD_ERROR.PARAM_IN);
+        }
+        // comprobamos si está bloqueado el perfil (Si esta en uso)
+        if(perfilPago.blocked)
+        {
+          throw  new ErrorClass(COD_ERROR.BLOCKED);
+        }
+        
+        //bloqueamos el perfil.
+        setBlocked(perfilPago._id, true);
+
+        try {
+          //obtenemos si hay algun cargo pendiente.
+            let res = await getUsage(perfilPago.idSusRecord);
+  
+            uso =res.data[0].total_usage;
+        } catch (error) {
+          throw  new ErrorClass(COD_ERROR.USAGE_GET, error);
+        }
+  
+        try {
+          await removeSus(perfilPago.idSuscription);
+          perfilPago.idSuscription=undefined;
+          perfilPago.idSusRecord =undefined;
+        } catch (error) {
+          throw  new ErrorClass(COD_ERROR.SUS_REMOVE, error);
+        }
+
+        if(uso === 0)
+        {
+          try {
+            await removeCardFromCustomer(perfilPago.idPayment_method) // borramos el método de pago.
+            
+          } catch (error) {
+            
+            //"statusCode": 404
+            //vamos s asuponer que siempre sale error 404
+            throw  new ErrorClass(COD_ERROR.MP_CARD_REMOVE, error);
+          }
+          perfilPago.customer.invoice_settings.default_payment_method = undefined;
+          perfilPago.customer = await updateCustomer(perfilPago.customer);
+          await removeCardFromCustomer(perfilPago.idPayment_method) // borramos el emtodo de pago.
+        }
+        perfilPago.idSusRecord = undefined;
+        perfilPago.idSuscription = undefined;
+        perfilPago.idPayment_method = undefined;
+        /*else{
+          TODO mirar a ver lo de estar guardando la anterior tarjeta
+  
+          const perfilPagoConst : PerfilPagos = perfilPago;
+  
+          Meteor.setTimeout(async () =>{
+  
+          }, )
+          perfilPago.idPayment_method = undefined;
+          perfilPago.customer.invoice_settings.default_payment_method = undefined;
+          perfilPago.customer = await updateCustomer(perfilPago.customer);
+  
+        }*/
+          
+  
+        PerfilPagosColl.update({_id:perfilPago._id }, {$set : perfilPago});
+      } catch (error) {
+          throw error;
+      }
+      finally{
+        setBlocked(perfilPago._id, false)
+      }
     }
 
 
@@ -273,6 +338,7 @@ const stripe = require('stripe')(api_key);
     
         
          perfilPago  = {
+          blocked : false,
           idSuscription : sus.id,
           idSusRecord : sus.items.data[0].id,
           idPLan : idPlan,
