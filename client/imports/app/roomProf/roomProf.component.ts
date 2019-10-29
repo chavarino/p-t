@@ -47,6 +47,7 @@ export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy ,
   
    
     //audios : Map<string, AudioC>;
+    perfil : Perfil;
     perfClase : PerfClase ;
     configTags : ConfigTags = {
         listCat : [],
@@ -454,8 +455,8 @@ export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy ,
                 {
                     //
                     vm.perfClase = Meteor.user().profile.perfClase; 
-                   
                     
+                    vm.perfil = Meteor.user().profile;
                 }
 
                 nextState.destroy = ()=>{
