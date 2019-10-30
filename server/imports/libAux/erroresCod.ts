@@ -7,11 +7,14 @@ export enum COD_ERROR
     USAGE_GET_POSITIVO = 604,
     BLOCKED = 605,
     MP_CARD_REMOVE = 606,
-    
-
+    CUSTOMER_CREATE = 607,
+    SUS_CREATE = 608,
+    MP_ATTACH = 609,
+    CUSTOMER_UPDATE = 610,
+    CHARGE_NEW = 611,
 }
 
-export class ErrorClass{
+export class ExceptClass{
     codigo : number;
     error : any;
 

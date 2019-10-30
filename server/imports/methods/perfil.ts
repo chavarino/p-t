@@ -7,7 +7,7 @@ import {Accounts} from 'meteor/accounts-base';
 import { iniProfesorModel, Elo, FactoryCommon, PATTERN } from 'imports/functions/commonFunctions';
 import { Kpm } from 'imports/models/kpm';
 import { Roles } from 'imports/collections/rol';
-
+import  {secretshared} from '../libAux/sharedPass'
 
 const modulo = "Methods-Perfil";
 let savePerfil = (id :string, profile: Perfil, all ?: boolean) =>
@@ -270,11 +270,11 @@ Meteor.methods({
     }
   },
 
-  calcularElo(idProf : string, newNotas : Array<Kpm>)
+  calcularElo(idProf : string, newNotas : Array<Kpm>, secret : string)
   {
       try {
 
-        if(Meteor.isClient || !newNotas)
+        if(secretshared!==secret  || !newNotas)
         {
           return;
         }

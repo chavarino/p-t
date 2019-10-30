@@ -484,12 +484,15 @@ calcularRacha() :number
 logueoCol(col)
 {
     this.modelo.logueo = this.modelo.logueo + `${col}\n`;
-    console.log(col);
+    //console.log(col);
 }
 
 calcularElo()
 {
-
+    if(Meteor.isClient)
+    {
+        return;
+    }
     //si la ultima nota sacada es muy baja y tiene un factor mayor
     let ultimaNota = this.modelo.notas[this.modelo.notas.length-1];
     this.modelo.mediaI = this.media();
