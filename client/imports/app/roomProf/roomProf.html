@@ -1,5 +1,5 @@
 
-<div class="room-prof padding-pag container" style="text-align: center">
+<div class="room-prof padding-pag container">
         <div class="row">
             <div class="col-2">
     
@@ -17,7 +17,7 @@
                         Iniciando.
                     </span>
             </div>
-            <div *ngIf="isEstadoPreClass()">
+            <div *ngIf="isEstadoPreClass() || isEstadoWaitCall()">
                 
                     
                 <div  class="text-muted text-center">
@@ -26,18 +26,38 @@
 
                 <section>
 
-                    <form #perfilForm="ngForm" [formGroup]="addForm" (ngSubmit)="save()">
+                    <form #perfilForm="ngForm" [formGroup]="addForm" >
                         <div >
-                            
-                            <div class="row">
-                                <div class="col-6">
+                            <div class="row mb-3">
+                                <div class="col-6 text-left" >
+                                    <label for="">
+                                        <strong>
+                                            Nombre
+
+                                        </strong>
+                                    </label>
+                                    <br>
+
+                                    <span>
+                                        {{perfil.nombre}} {{perfil.apellidos}}
+                                    </span>
+                                </div>
+                                <div class="col-6  text-right" >
+                                    <img class="foto-perfil"  [src]="perfil.foto" id="foto" alt="Foto perfil" >
+                                    
+                                </div>
+                                
+                            </div>
+                            <div class="row mb-5">
+
+                                <div class="col-6  text-left">
         
                                     <label for="categorias"><strong>Categorías</strong></label><br>
                                     <categorias id="categorias" [readOnly] ="true" [array]="perfClase.categorias"></categorias>       
                                    
                                
                                 </div>
-                                <div class="col-4">
+                                <div class="col-2 text-left">
                                     <label for="elo">
                                         
                                         <strong>Elo</strong>
@@ -48,28 +68,48 @@
                                     </span>
                                     </div>
                                     
-                                    <div class="col-2">
+                                    <div class="col-4 text-left">
                                         <label for="precio"><strong>Precio</strong></label><br>
-                                        <input id="precio"  formControlName="ultPrecio" type="number" class="form-control" id="ultPrecio" name="ultPrecio" required placeholder="Precio" [(ngModel)]="perfClase.ultPrecio">
-        
+
+                                        <input *ngIf="isEstadoPreClass()" id="precio"  formControlName="ultPrecio" type="number" class="form-control" id="ultPrecio" name="ultPrecio" required placeholder="Precio" [(ngModel)]="perfClase.ultPrecio">
+                                        <span *ngIf="isEstadoWaitCall()">{{perfClase.ultPrecio}}</span>
+                                       
                                     </div>
                             </div>
-                            <div class="row">
-                                <div class="col-2">
-                                        <button [disabled]="!isValid()" type="submit" class="btn btn-primary">empezar!</button>
-                                    </div>
-                                <div class="col-10">
-        
+                            <div class="row  mb-3" *ngIf="isEstadoPreClass()">
+                                <div class="col-8">
+                                    <label for="" class="text-muted" style="    line-height: 3rem;">
+                                        ¡Ponte visible y conecta con los alumnos para dar clase!
+                                    </label>
                                 </div>
+                                <div class="col-4 text-center">
+                                    <button class="material-icons btn btn-custom" [disabled]="!isValid()" (click)="save()" title="Empezar">
+                                            arrow_forward_ios
+                                            </button>
+                                    
+                                 </div>
                                 
                             </div>
+                            <div class="row mb-3" *ngIf="isEstadoWaitCall()">
+                                    <div class="col-8">
+                                        <span class="alert alert-info" style="line-height: 3rem;">No existe ninguna llamada para dar clase.</span>
+                                    
+                                        </div>
+                                        <div class="col-4 text-center">
+                                            <button class="material-icons  btn btn-custom" (click)="cancelarEspera()" title="Cancelar">
+                                                    cancel
+                                                    </button>
+                                           
+                                         </div>
+                
+                                </div>
     
                         </div>
                     
                     </form>
                 </section>
             </div>
-            <div *ngIf="isEstadoWaitCall()">
+            <div *ngIf="isEstadoWaitCall() && false">
                     <div class="text-muted text-center">
                            Esperando alumno.
                         </div >
