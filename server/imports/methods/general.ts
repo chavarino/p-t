@@ -2,12 +2,9 @@
 import { HTTP } from 'meteor/http'
 import { MethodsClass } from 'imports/functions/methodsClass';
 import { Users } from 'imports/collections/users';
+import  {secretshared} from '../libAux/sharedPass'
 var crypto = require('crypto');
-let secretshared = "";
-if(Meteor.isServer)
-{
 
-  secretshared ="50343c0ca9e6fb888930b60feef77c03";
   
   // Node Get ICE STUN and TURN list
   let o = {
@@ -128,4 +125,3 @@ if(Meteor.isServer)
       }
       )
 
-}

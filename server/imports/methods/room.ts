@@ -10,6 +10,7 @@ import { Perfil } from 'imports/models/perfil';
 import { Kpm, Score } from 'imports/models/kpm';
 
 import { FactoryCommon } from 'imports/functions/commonFunctions';
+import { secretshared } from '../libAux/sharedPass';
 
 function getTexto(room : Room)
 {
@@ -116,7 +117,7 @@ Meteor.methods({
 
       Rooms.update({_id: clase._id}, clase,{ upsert: false });
 
-      Meteor.call("calcularElo", clase.profId,clase.scores.profesor.kpms);
+      Meteor.call("calcularElo", clase.profId,clase.scores.profesor.kpms, secretshared);
     } catch (error) {
       //  console.log(error);
       MethodsClass.except(500,modulo, "saveScoreFromAlumno : " + error, "");
