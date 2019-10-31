@@ -276,7 +276,7 @@ Meteor.methods({
 
         if(secretshared!==secret  || !newNotas)
         {
-          return;
+          throw "No puede calcular Elo.";
         }
         this.unblock();
 

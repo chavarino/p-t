@@ -19,10 +19,17 @@
     color: #49ffa4;
     background: white !important;
     border-color: #49ffa4;
+    margin-bottom: 8px!important;
+
+    -webkit-transition: all 0.3s ease-out;
+    -moz-transition: all 0.3s ease-out;
+    -o-transition: all 0.3s ease-out;
+    transition: all 0.3s ease-out;
   }
   button.material-icons.btn.btn-custom:hover {
     font-size: 3rem;
     /* border-color: #49ffa4; */
+    margin-bottom: 0px!important;
     color: white;
     background: #49ffa4!important;
 }

@@ -1,6 +1,6 @@
 
 <div class="room-prof padding-pag container">
-        <div class="row">
+        <div class="row" *ngIf="!isEstadoClass()">
             <div class="col-2">
     
             </div>
@@ -59,8 +59,10 @@
                                 </div>
                                 <div class="col-2 text-left">
                                     <label for="elo">
-                                        
-                                        <strong>Elo</strong>
+                                        <label for="elo">
+                                            <strong>Elo</strong>
+
+                                        </label>
                                     </label><br>
                                     <span id="elo">
                                             {{perfClase.ultElo | number:'1.0-2'}}
@@ -109,49 +111,53 @@
                     </form>
                 </section>
             </div>
-            <div *ngIf="isEstadoWaitCall() && false">
-                    <div class="text-muted text-center">
-                           Esperando alumno.
-                        </div >
-                    <div class="row">
-                            <div class="col-5">
-    
-                                <label for="categorias"><strong>Categorías</strong></label><br>
-                                <categorias id="categorias" [readOnly] ="true" [array]="perfClase.categorias"></categorias>       
+            <!--
+
+                <div *ngIf="isEstadoWaitCall() && false">
+                        <div class="text-muted text-center">
+                               Esperando alumno.
+                            </div >
+                        <div class="row">
+                                <div class="col-5">
+        
+                                    <label for="categorias"><strong>Categorías</strong></label><br>
+                                    <categorias id="categorias" [readOnly] ="true" [array]="perfClase.categorias"></categorias>       
+                                   
                                
-                           
-                            </div>
-                            <div class="col-4">
-                                <label for="elo">
-                                    
-                                    <strong>Elo</strong>
-                                </label><br>
-                                <span id="elo">
-                                    {{perfClase.ultElo | number:'1.0-2'}}
-                                    
-                                </span>
                                 </div>
-                                
-                                <div class="col-2">
-                                    <label for="precio"><strong>Precio</strong></label><br>
-                                    
-                                    {{perfClase.ultPrecio}}
-                                </div>
-                                <div class="col-1">
-
-                                        <a  class="close" (click)="cancelarEspera()"></a>
+                                <div class="col-4">
+                                    <label for="elo">
                                         
-                                </div>
-                        </div>
-               
-                <div class="row">
-                    <span class="alert alert-info">No existe ninguna llamada para dar clase.</span>
+                                        <strong>Elo</strong>
+                                    </label><br>
+                                    <span id="elo">
+                                        {{perfClase.ultElo | number:'1.0-2'}}
+                                        
+                                    </span>
+                                    </div>
+                                    
+                                    <div class="col-2">
+                                        <label for="precio"><strong>Precio</strong></label><br>
+                                        
+                                        {{perfClase.ultPrecio}}
+                                    </div>
+                                    <div class="col-1">
+    
+                                            <a  class="close" (click)="cancelarEspera()"></a>
+                                            
+                                    </div>
+                            </div>
+                   
+                    <div class="row">
+                        <span class="alert alert-info">No existe ninguna llamada para dar clase.</span>
+    
+                    </div>
+    
+                        
+                        
+                    </div>
 
-                </div>
-
-                    
-                    
-                </div>
+            -->
                 <div *ngIf="isEstadoWaitAcceptCall()">
                     <div class="row">
                         <div class="col">
@@ -220,28 +226,49 @@
                 
            </div>
            
-           
-           <div  *ngIf="isEstadoClass()">
-                <div class="row">
-                    <div class="col">
-                        <h3>
-                            En clase.
-                            
-                            <span class="alert alert-danger float-right" *ngIf="estado.campos.ping>1">
-                                Conexión perdida, reintento ({{estado.campos.ping-1}})
-                            </span>
-                        </h3>
+           <!--
 
+               <div  *ngIf="isEstadoClass()">
+                    <div class="row">
+                        <div class="col">
+                            <h3>
+                                En clase.
+                                
+                                <span class="alert alert-danger float-right" *ngIf="estado.campos.ping>1">
+                                    Conexión perdida, reintento ({{estado.campos.ping-1}})
+                                </span>
+                            </h3>
+    
+                        </div>
                     </div>
-                </div>
-                <videoCall  [clase]="clase" [secondsIni]="secondsIniClass" [rtc]="rtc" ></videoCall>
-                
-                
-                
-           </div>
+                    <videoCall  [clase]="clase" [secondsIni]="secondsIniClass" [rtc]="rtc" ></videoCall>
+                    
+                    
+                    
+               </div>
+
+           -->
         </div>
         <div class="col-2">
     
             </div>
     </div>
+    <div  *ngIf="isEstadoClass()">
+        <div class="row">
+            <div class="col">
+                <h3>
+                    En clase.
+                    
+                    <span class="alert alert-danger float-right" *ngIf="estado.campos.ping>1">
+                        Conexión perdida, reintento ({{estado.campos.ping-1}})
+                    </span>
+                </h3>
+
+            </div>
+        </div>
+        <videoCall  [clase]="clase" [secondsIni]="secondsIniClass" [rtc]="rtc" ></videoCall>
+        
+        
+        
+   </div>
 </div>
