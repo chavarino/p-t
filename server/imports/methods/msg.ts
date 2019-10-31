@@ -29,9 +29,9 @@ Meteor.methods({
         {  
             MethodsClass.noLogueado();
           }
-          console.log("MENSAJE ID " +id );  
+         // console.log("MENSAJE ID " +id );  
        let message :Message=  Msg.findOne({_id : id});
-       console.log("mensjae a borrar " +JSON.stringify(message))
+       //console.log("mensjae a borrar " +JSON.stringify(message))
        if(!message || message.to !== Meteor.userId())
        {
             MethodsClass.noPermisos();
@@ -48,7 +48,7 @@ Meteor.methods({
         let input : any = {$set : { readed : true}}
         //validar TODO
         
-        console.log(filter + ", " + input)
+       // console.log(filter + ", " + input)
         Msg.update(filter, input);
       },
     borrarAllMsg()
