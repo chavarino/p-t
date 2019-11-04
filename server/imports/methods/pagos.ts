@@ -110,6 +110,17 @@ Meteor.methods({
           
           }
        
+    },
+    async ejecutarPagoProfesor()
+    {
+        this.unblock();
+
+        if(!isLogged())
+        {
+          MethodsClass.noLogueado();
+          
+        }
+       
     }
     
 });
