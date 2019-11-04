@@ -196,10 +196,7 @@ Meteor.methods({
     {
       MethodsClass.noLogueado()
     }
-    if(!disponible)
-    {
-      MethodsClass.parametersError()
-    }
+   
       let profile : Perfil = Meteor.user().profile;
 
       profile.disponible = disponible;

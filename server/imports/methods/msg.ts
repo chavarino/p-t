@@ -15,7 +15,7 @@ Meteor.methods({
         {  
             MethodsClass.noLogueado();
           }
-        check(msg, Message)
+        
         if(!msg || msg ===null || msg.to === null || /*msg.from === null ||*/ msg.msgTipo ===null)
         {
             MethodsClass.camposInsuficientes();
@@ -36,7 +36,11 @@ Meteor.methods({
 
          // console.log("MENSAJE ID " +id );  
        let message :Message=  Msg.findOne({_id : id});
-       
+        if( !message  || !message.to )
+        {
+
+          return;
+        }
        //console.log("mensjae a borrar " +JSON.stringify(message))
        if(!message || message.to !== Meteor.userId())
        {

@@ -167,7 +167,7 @@
             </div>-->
             <div class="row">  
                     <div class="col-sm">
-                        <button class="btn btn-primary" (click)="colgarCall()"> Colgar</button>
+                        <button class="btn btn-primary" *ngIf="canColgar()" (click)="colgarCall()"> Colgar</button>
                     </div>
             </div>
        </div>
