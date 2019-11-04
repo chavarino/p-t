@@ -217,6 +217,11 @@ export class RoomAlumnoComponent extends RoomClass implements OnInit, OnDestroy,
     }
 
 
+    getSecureUrl(url :string)
+    {
+        return this.sanitizer.bypassSecurityTrustUrl(url)
+    }
+
     findProf()
     {
 

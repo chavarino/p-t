@@ -551,6 +551,11 @@ stripe.setMaxNetworkRetries(3);
 
     }
 
+    const pago = async (payment_method, idPlan) =>
+    {
+
+    }
+    
     export  const PagosFn = Meteor.isServer ? {crearCustomer,setupIntent, getAllCardsFromCustomer,
              removeCardFromCustomer, removeCustomer, getCustomer, getPlanesCobro,
              attachSuscriptionToCustomer, chargeAmountToCustomer, getSuscriptionItem, removeSus,

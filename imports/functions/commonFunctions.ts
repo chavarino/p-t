@@ -251,10 +251,10 @@ export class FactoryCommon
         
 
         
-            return   this.isImageCorrect(file) || file.size <= FactoryCommon.MAX_SIZE_DOCS  && this.MIME_FORMATS.reduce((a: boolean,act : string)=>{
+            return  file && file.valueUrl && !file.valueUrl.includes("http") &&(this.isImageCorrect(file) ||  file.size <= FactoryCommon.MAX_SIZE_DOCS  && this.MIME_FORMATS.reduce((a: boolean,act : string)=>{
 
                 return a || file.valueUrl.includes(act);
-            }, false)
+            }, false))
             
             /// menos oigual a 5 MBx
     }
@@ -265,7 +265,7 @@ export class FactoryCommon
         {
             return false;
         }
-       return url.includes("http") || this.isImageCorrect({filename : "", valueUrl : url, filetype: "", valueB64: "", size : this.getSizeFileB64(url.split(",")[1])})
+       return !url.includes("http") && this.isImageCorrect({filename : "", valueUrl : url, filetype: "", valueB64: "", size : this.getSizeFileB64(url.split(",")[1])})
     }
     static isImageCorrect(file : FilesI) :boolean
     {
