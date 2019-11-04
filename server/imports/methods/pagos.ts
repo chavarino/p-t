@@ -5,7 +5,7 @@ import { isUndefined } from 'util';
 import { MethodsClass } from 'imports/functions/methodsClass';
 import { ErrorClass } from 'imports/functions/errors';
 import { ExceptClass } from '../libAux/erroresCod';
-
+import  {secretshared} from '../libAux/sharedPass'
  enum Planes {
   PLAN_PRUEBA_STRIPE = "P_PruebaCobro"
 
@@ -22,10 +22,20 @@ const modulo = "PagosMethods"
 
 Meteor.methods({
 
-  async chargeQuantity(cantidad) 
-    {   
+  async chargeQuantity(cantidad :number, secret : string) 
+  {   
         this.unblock();
-        if(!Meteor.isClient)/// TODO COMPROBAR CON SECRETO.
+
+        check(cantidad, Number);
+        check(secret, String);
+
+        if(!isLogged())
+        {
+              MethodsClass.noLogueado();
+        }
+
+
+        if(secretshared !== secret)/// TODO COMPROBAR CON SECRETO.
         {
             MethodsClass.except(405 , modulo, "chargeQuantity : no permitido desde cliente" , "");
           
@@ -49,8 +59,8 @@ Meteor.methods({
         this.unblock();
         if(!isLogged())
         {
-            MethodsClass.except(500, modulo, "borrarMetodoPago : No logueado" , "");
-          
+            //MethodsClass.except(500, modulo, "borrarMetodoPago : No logueado" , "");
+            MethodsClass.noLogueado();
         }
 
         try {
@@ -72,10 +82,12 @@ Meteor.methods({
         
         this.unblock();
         
+        check(payment_method, String);
+
         
         if(!isLogged())
         {
-            MethodsClass.except(500, modulo, "saveMetodoPago : No logueado" , "");
+          MethodsClass.noLogueado();
           
         }
 
