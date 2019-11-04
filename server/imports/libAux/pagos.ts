@@ -349,13 +349,8 @@ stripe.setMaxNetworkRetries(3);
       try {
         //Combprobamos que este correcto los perfiles.
 
-        //si la cantidad es cero no se carga nada pero no habria error.
-        if(cantidad===0)
-        {
-          return;
-        }
-
-
+        
+        
         if(isUndefined(cantidad) ||  isUndefined(perfilPago) 
         || isUndefined(perfilPago.idSusRecord) || isUndefined(perfilPago.idSuscription)
         || isUndefined(perfilPago.idPayment_method)
@@ -363,6 +358,11 @@ stripe.setMaxNetworkRetries(3);
         {
 
           throw  new ExceptClass(COD_ERROR.PARAM_IN, JSON.stringify(perfilPago));
+        }
+        //si la cantidad es cero no se carga nada pero no habria error.
+        if(cantidad===0)
+        {
+          return;
         }
         //bloqueamos el perfil.
         setBlockedUpd(perfilPago._id, true);

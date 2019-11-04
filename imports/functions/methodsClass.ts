@@ -118,7 +118,10 @@ export class MethodsClass {
             }
             
     }
-    
+    static isLogged() :boolean
+    {
+        return !!Meteor.userId();
+    }
     static camposInsuficientes() 
     {
         
@@ -141,7 +144,11 @@ export class MethodsClass {
         
         throw new Meteor.Error(500, 'No tienes permisos para hacer dicha acción');
     }
-
+    static parametersError() 
+    {
+        
+        throw new Meteor.Error(500, 'Parámetros incorrectos');
+    }
     static creacionUserGeneral() 
     {
         
@@ -164,6 +171,11 @@ export class MethodsClass {
     static logError(modulo: string, text: string, user ?:string)
     {
         Log.logStatic(modulo, (user|| "") + " - " + text , true)
+
+    }
+    static log(modulo: string, text: string, user ?:string)
+    {
+        Log.logStatic(modulo, (user|| "") + " - " + text , false)
 
     }
     static errorSetDisponible() 
