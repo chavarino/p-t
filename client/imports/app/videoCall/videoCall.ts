@@ -207,7 +207,7 @@ export class VideoCall implements OnInit, OnDestroy{
      set  clase( c : Room) 
      {
 
-        if(c !== null && c._id!==null)
+        if(!isUndefined(c) &&c!== null  && !isUndefined(c._id)   && c._id!==null)
         {
           
           this._clase = c;
