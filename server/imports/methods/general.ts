@@ -57,6 +57,7 @@ var crypto = require('crypto');
           getDiffTimeInSeconds(date1 : Date) {
       
                //TODO GENERAR TIEMPO EN SERVIDOR.
+                
                check(date1, Date);
                let current = new Date();
                return Math.floor(((current.getTime() - date1.getTime()) /1000));
