@@ -14,6 +14,14 @@ import {ConfigTags} from  "../categorias/categorias.component"
 import { FactoryCommon } from 'imports/functions/commonFunctions';
 import { Generic } from 'imports/clases/generic.class';
 import { FilesI } from 'imports/models/fileI';
+import {Stripe} from 'stripe';
+//const stripe = Stripe('sk_test_...');
+let keyApi = Meteor.isProduction ? 'pk_test_wQBeplTTV1GWBaM10Kpk7QDm00np8ez6PE' : 'pk_test_wQBeplTTV1GWBaM10Kpk7QDm00np8ez6PE'; 
+const stripe = Stripe(keyApi);
+const elements = stripe.elements();
+const cardElement = elements.create('card');
+
+
 @Component({
   selector: 'perfilC',
   templateUrl: 'perfil.html',
@@ -64,6 +72,12 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy{
         else{
             alert("Imagen incorrecta. La imagen debe ser un formato compatible (*.png, .jpg ...) y de un tamaño máximo de 5MB ");
         }
+    }
+
+    createCardElement()
+    {
+
+        cardElement.mount('#card-element');
     }
     save()
     {

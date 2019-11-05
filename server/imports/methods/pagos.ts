@@ -121,6 +121,19 @@ Meteor.methods({
           
         }
        
+    },
+    async getPayMethodInfo()
+    {
+        this.unblock();
+
+        if(!isLogged())
+        {
+          MethodsClass.noLogueado();
+          
+        }
+        
+
+       
     }
     
 });
