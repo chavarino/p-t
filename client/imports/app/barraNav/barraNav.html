@@ -10,14 +10,14 @@
   
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
 		<ul class="navbar-nav">
-			<li>
-				<a class="nav-link" href="#section2">Cómo funciona</a>
+			<li class="nav-item" *ngIf="canReadC('none')">
+        <a class="nav-link" routerLink="/inicio" fragment="como-funciona">Cómo funciona</a>
 			</li>
 			<li>
-				<a class="nav-link" href="#">Asignaturas</a>
+				<a class="nav-link">Asignaturas</a>
 			</li>
 			<li>
-				<a class="nav-link" href="#">Precios</a>
+				<a class="nav-link">Precios</a>
 			</li>
 		</ul>
       <ul class="navbar-nav ml-auto">
@@ -29,15 +29,8 @@
             <a class="nav-link"  routerLink="/room/prof">Atender Clases</a>
           </li>
         <li class="nav-item" *ngIf="canReadC('none', true)">
-              <!--button type="button" class="btn btn-success" style="background-color: #37F093; border: #37F093" (click)="mostrarLoginAc(true)">Iniciar sesión</button-->
               <a href="#singIn" role="button" class="btn btn-success btn-inicio-sesion" data-toggle="modal">Iniciar sesión</a>
         </li>
-        <!--
-          <li class="nav-item" *ngIf="canReadC('suscripcion')">
-              <a class="nav-link" href="#">Suscripción</a>
-          </li>
-
-        -->
         <li class="nav-item dropdown" style="float: right" *ngIf="canReadC('login')">
           <a class="nav-link dropdown-toggle"  id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <div>
@@ -58,14 +51,6 @@
             <a class="dropdown-item" routerLink="/room/report">Historial</a>
 
             <div class="dropdown-divider"></div>
-            <!-- 
-              <a class="dropdown-item" href="#" *ngIf="canReadC('suscripcion') && false">Suscripción</a>
-              <a class="dropdown-item" href="#" *ngIf="canReadC('facturacion') && false" >Facturación</a>
-              <div class="dropdown-divider " *ngIf="canReadC('admin')"></div>
-              <a class="dropdown-item" href="#" *ngIf="canReadC('admin')">Administración</a>
-              <div class="dropdown-divider " *ngIf="canReadC('admin')"></div>
-
-            -->
             <a class="dropdown-item" href="#"  (click)="logout()" *ngIf="canReadC('login')">Cerrar sesión</a>
           </div>
         </li>
@@ -76,11 +61,7 @@
     
   </nav>
 
-  <!-- 
 
-    Modales de sing in
-
-  -->
   <div id="singIn" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="singInLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -89,9 +70,6 @@
                 <div class="text-center">
                     <h3 class="modal-title">
                       ¿Cómo quieres iniciar sesión?
-                      <!--button type="button" class="close" style="margin: -0.5rem -1rem -1rem auto;" data-dismiss="modal">
-                          &times;
-                      </button-->
                     </h3>
                 </div>
               </div>
@@ -127,11 +105,7 @@
     </div>
   </div>
 
-  <!-- 
 
-    Modal de sing up
-
-  -->
   <div id="singUp" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="singInLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -140,9 +114,6 @@
                   <div class="text-center">
                       <h3 class="modal-title">
                         ¿Cómo quieres registarte? 
-                        <!--button type="button" class="close" style="margin: -0.5rem -1rem -1rem auto;" data-dismiss="modal">
-                            &times;
-                        </button-->
                       </h3>
                   </div>
               </div>                    
@@ -176,11 +147,8 @@
     </div> 
 
 
-  <!-- 
 
-    Modal de sing up con email
 
-  -->
     <div id="singOutEmail" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="singInLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
