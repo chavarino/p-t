@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Meteor } from 'meteor/meteor';
 import  {RolesService} from "../services/roles.service";
 import { Generic } from 'imports/clases/generic.class';
 import { ConfigTags } from '../categorias/categorias.component';
+import { FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'inicioC',
@@ -16,14 +17,11 @@ export class InicioComponent extends Generic{
       listCat : [],
       listCatBusc : []
   }
-    constructor( rol : RolesService)
-    {
-        super(0, 1, "comun", rol);
+  constructor( rol : RolesService, private formBuilder: FormBuilder)
+  {
+      super(0, 1, "comun", rol);
 
-        
-    }
-    
- 
+  }
 /*    loggedIn() {
         return !!Meteor.user() ;
       }
@@ -34,3 +32,6 @@ export class InicioComponent extends Generic{
     }
   */
 }
+
+
+

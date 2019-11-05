@@ -10,6 +10,7 @@
       "dom",
       "es2015"
     ],
+    "experimentalDecorators": true,
     "module": "commonjs",
     "moduleResolution": "node",
     "sourceMap": true,

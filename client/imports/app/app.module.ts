@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { RouterModule, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { RouterModule, ActivatedRouteSnapshot, RouterStateSnapshot, RoutesRecognized, Routes } from '@angular/router';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 
@@ -42,8 +42,52 @@ import { LoadRoles} from './loadRolesComponent/loadRoles.component'
 import { ReportsComponent } from './reports/reports.component';
 
 import { StarView } from '../app/starView/starView.component';
+import { FragmentPolyfillModule } from "./FragmentPolyfillModule/fragment-polyfill.module";
 
 export const ROUTES_PROVIDERS = [];
+const routes: Routes = [
+    {
+      path: '',
+      component: PadreComponent,
+
+      children: [
+        {
+          path: '',
+          redirectTo: 'inicio',
+          pathMatch : "full"
+        },  
+        {
+          path: 'inicio',
+          component: InicioComponent
+        },
+        {
+            path: 'opciones/perfil',
+            component: PerfilComponent, canActivate: [canActivateLogin]
+        },
+        {
+          path: 'room/alumno',
+          component: RoomAlumnoComponent, canActivate: [canActivateNone]
+        },
+        {
+          path: 'room/alumno/:categorias',
+            component: RoomAlumnoComponent, canActivate: [canActivateNone]
+        },
+        {
+          path: 'room/prof',
+          component: RoomProfComponent, canActivate: [canActivateProf]
+        },
+        {
+          path: 'room/report',
+          component: ReportsComponent, canActivate: [canActivateLogin]
+        }
+      ]
+    },
+    {
+      path: '**',
+      redirectTo: 'app',
+    }
+]
+
 @NgModule({
   imports: [
     BrowserModule,
@@ -51,66 +95,20 @@ export const ROUTES_PROVIDERS = [];
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
-    
+    FragmentPolyfillModule.forRoot({
+      smooth:true
+    }),
     //MatButtonModule,
    // MatCheckboxModule,
-    RouterModule.forRoot([
-      {
-        path: '',
-        component: PadreComponent,
-        //resolve: { perm: HnResolver },
-       // runGuardsAndResolvers : "always", 
-        children: [
-          // Home Page
-          {
-            path: '',
-            redirectTo: 'inicio',
-            pathMatch : "full"
-          },
-          
-          {
-            path: 'inicio',
-            component: InicioComponent
-          },
-          {
-              path: 'opciones/perfil',
-               component: PerfilComponent, canActivate: [canActivateLogin]
-           },
-           {
-            path: 'room/alumno',
-             component: RoomAlumnoComponent, canActivate: [canActivateNone]
-            },
-            {
-              path: 'room/alumno/:categorias',
-               component: RoomAlumnoComponent, canActivate: [canActivateNone]
-            },
-            {
-            path: 'room/prof',
-             component: RoomProfComponent, canActivate: [canActivateProf]
-            },
-            {
-            path: 'room/report',
-             component: ReportsComponent, canActivate: [canActivateLogin]
-            }
-            
-          ]
-        } ,
-       /*{
-          path: '',
-          redirectTo: 'inicio',
-           pathMatch : "full"
-         
-        },*/
-        // 404 Page
-        {
-          path: '**',
-          redirectTo: 'app',
-          //component: PageNotFoundComponent
-        }
-    ]/*, {onSameUrlNavigation: "reload"}*/),
+    RouterModule.forRoot(routes,{
+      useHash:true,
+      enableTracing: true,
+      onSameUrlNavigation:"reload",
+      //scrollPositionRestoration: "enabled",
+      //anchorScrolling:'enabled',
+    }),
     AccountsModule,
     NgbModule
-   // MatButtonModule
   ],
   exports : [
     
