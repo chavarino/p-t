@@ -29,6 +29,7 @@ import { ModalKpm } from '../modalKpm/modaKpm.component';
 import { Score } from 'imports/models/kpm';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RoomClass, ETipo } from 'imports/clases/room.class';
+import { isUndefined } from 'util';
 
 
 
@@ -217,6 +218,11 @@ export class RoomAlumnoComponent extends RoomClass implements OnInit, OnDestroy,
     }
 
 
+    getSecureUrl(url :string)
+    {
+        return this.sanitizer.bypassSecurityTrustUrl(url)
+    }
+
     findProf()
     {
 
@@ -374,7 +380,10 @@ export class RoomAlumnoComponent extends RoomClass implements OnInit, OnDestroy,
  
 
  
-
+    canColgar() :boolean 
+    {
+        return !isUndefined(this.getUserCall() )&& !isUndefined(this.getUserCall()._id);
+    }
     cancelarCall()
     {
         let vm =this;

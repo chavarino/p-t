@@ -10,6 +10,7 @@ import { Perfil } from 'imports/models/perfil';
 import { Kpm, Score } from 'imports/models/kpm';
 
 import { FactoryCommon } from 'imports/functions/commonFunctions';
+import { secretshared } from '../libAux/sharedPass';
 
 function getTexto(room : Room)
 {
@@ -33,9 +34,9 @@ function getTexto(room : Room)
 
 let getRoom = (claseId :string) : Room =>{
 
-      if(!Meteor.user())
+      if(!MethodsClass.isLogged())
         {  
-             throw "No logueado";
+          MethodsClass.noLogueado()
         }
 
         let room : Room = Rooms.findOne({ _id : claseId});
@@ -61,28 +62,40 @@ Meteor.methods({
   {
     
     try {
+      check(idClase, String);
+
+      if(!score || !score.comentario && !score.dateScore
+         && !score.kpms && score.kpms.length===0 && !score.updated)
+      {
+        MethodsClass.parametersError();
+      }
+
+
+      if(!MethodsClass.isLogged())
+      {  
+          MethodsClass.noLogueado()
+        }
       //TODO, METER validacion y tiempo para poder guardar
       console.log("clase :" + JSON.stringify(idClase))
       let clase : Room = Rooms.findOne({ alumnoId : Meteor.userId()/*, activo : !true*/, _id : idClase});
       //evitamos que cree mas de una
       if(!clase)
       {
-       
-        throw "clase nula";
-               //Error.duplic();
-          
+        MethodsClass.parametersError();  
       }
 
       if(clase.alumnoId !== Meteor.userId())
       {
-        throw "no alumno de la clase."
+        MethodsClass.except(500 , modulo, "saveScoreFromAlumno : no alumno de la clase." , "");
+       // throw "no alumno de la clase."
 
          
       }
 
       if(clase.scores && clase.scores.profesor && clase.scores.profesor.dateScore)
       {
-        throw "clase ya valorada.";
+        
+        MethodsClass.except(500 , modulo, "saveScoreFromAlumno : clase ya valorada." , "");
         
       
       }
@@ -92,7 +105,8 @@ Meteor.methods({
       }, true)
       if(!flag)
       {
-        throw "Algun score incorrecto.";
+        
+        MethodsClass.except(500 , modulo, "saveScoreFromAlumno : Algun score incorrecto." , "");
         
       }
       //puntuacion del alumno
@@ -116,7 +130,7 @@ Meteor.methods({
 
       Rooms.update({_id: clase._id}, clase,{ upsert: false });
 
-      Meteor.call("calcularElo", clase.profId,clase.scores.profesor.kpms);
+      Meteor.call("calcularElo", clase.profId, clase.scores.profesor.kpms, secretshared);
     } catch (error) {
       //  console.log(error);
       MethodsClass.except(500,modulo, "saveScoreFromAlumno : " + error, "");
@@ -126,6 +140,8 @@ Meteor.methods({
   },
   //la clase la crea el alumno
   crearClase(profId : string) {
+
+  check(profId, String);
   let room: Room = {
     profId : "",
     alumnoId :"",
@@ -137,8 +153,13 @@ Meteor.methods({
   };
     try
     {
+
+      if(!profId)
+      {
+        MethodsClass.parametersError();
+      }
         //TODO MIRAR QUE SEA PROFESOR
-          if(!Meteor.user())
+        if(!MethodsClass.isLogged())
           {  
               MethodsClass.noLogueado();
             }
@@ -201,7 +222,7 @@ Meteor.methods({
   empezarClase() {
     
     //PUEDE EMPEZAR SOLO EL ALUMNO
-    if(!Meteor.user())
+    if(!MethodsClass.isLogged())
     {  
           MethodsClass.noLogueado();
     }
@@ -236,9 +257,11 @@ Meteor.methods({
   },
   terminarClase(profesor : boolean) {
     
+    check(profesor, Boolean);
+ 
     let userId =Meteor.userId();
     //console.log("Entra");
-    if(!userId)
+    if(!MethodsClass.isLogged())
     {  
           MethodsClass.noLogueado();
     }
@@ -287,6 +310,7 @@ Meteor.methods({
   },
   newMsgChat(claseId: string, msg : MessageRoom )
   {
+    check(claseId, String);
     let room = getRoom(claseId);
 
     if(!msg.msg || msg.msg.trim() === "")
@@ -311,7 +335,7 @@ Meteor.methods({
    // && profile.foto.includes("data:image/") && FactoryCommon.getSizeFileB64(profile.foto) <=  FactoryCommon.MAX_SIZE_FOTO)
     
     try {
-
+      check(claseId, String);
       let room = getRoom(claseId);
 
 
