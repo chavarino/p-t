@@ -13,6 +13,7 @@ export interface PerfilPagos {
         tarjetaView ?:string // ultimos 4 digitos de la tarjeta.
 
     }
+    blocked : boolean,
 //ip guardarla en el metadata.
     lastCharge ?: {
 

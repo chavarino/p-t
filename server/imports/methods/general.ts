@@ -2,12 +2,10 @@
 import { HTTP } from 'meteor/http'
 import { MethodsClass } from 'imports/functions/methodsClass';
 import { Users } from 'imports/collections/users';
+import  {secretshared} from '../libAux/sharedPass'
 var crypto = require('crypto');
-let secretshared = "";
-if(Meteor.isServer)
-{
 
-  secretshared ="50343c0ca9e6fb888930b60feef77c03";
+  
   // Node Get ICE STUN and TURN list
   let o = {
       format: "urls"
@@ -59,6 +57,7 @@ if(Meteor.isServer)
           getDiffTimeInSeconds(date1 : Date) {
       
                //TODO GENERAR TIEMPO EN SERVIDOR.
+               check(date1, Date);
                let current = new Date();
                return Math.floor(((current.getTime() - date1.getTime()) /1000));
       
@@ -95,7 +94,10 @@ if(Meteor.isServer)
               this.unblock();
   
               try {
-  
+                if(!Meteor.user())
+                {  
+                    MethodsClass.noLogueado();
+                }
                   let result = HTTP.put("https://global.xirsys.net/_turn/MyFirstApp", options )
   
   
@@ -127,4 +129,3 @@ if(Meteor.isServer)
       }
       )
 
-}

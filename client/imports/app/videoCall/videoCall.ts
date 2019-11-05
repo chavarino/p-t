@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, HostListener, SecurityContext } from '@angular/core';
 import {RtcService, VideoType} from "../services/rtc.service"
 
 import { isUndefined } from 'util';
@@ -7,6 +7,7 @@ import { Tipo } from 'imports/models/enums';
 import { Room, RoomFile, MessageRoom, MsgChat, TypeMsgChat } from 'imports/models/room';
 import { FilesI } from 'imports/models/fileI';
 import { FactoryCommon } from 'imports/functions/commonFunctions';
+import { DomSanitizer } from '@angular/platform-browser';
 
 
 
@@ -53,7 +54,7 @@ export class VideoCall implements OnInit, OnDestroy{
   msg: string = "";
 
    
-    constructor()
+    constructor( private sanitizer : DomSanitizer)
     {
        this.contador = {
             tipo :Tipo.CONT,
@@ -91,7 +92,7 @@ export class VideoCall implements OnInit, OnDestroy{
     {
       var link = document.createElement("a");
       link.download = f.filename;
-      link.href = f.valueUrl;
+      link.href = f.valueUrl;//this.getSecureUrl();
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -105,7 +106,10 @@ export class VideoCall implements OnInit, OnDestroy{
       return Meteor.userId() === e.owner;
       
     } 
-
+    getSecureUrl(url :string) :string
+    {
+        return this.sanitizer.sanitize(SecurityContext.URL, url)//this.sanitizer.bypassSecurityTrustResourceUrl(url)
+    }
     addFile(files : Array<FilesI>)
     {
         if(files && files.length>0 && FactoryCommon.isDocCorrect(files[0]))
@@ -203,7 +207,7 @@ export class VideoCall implements OnInit, OnDestroy{
      set  clase( c : Room) 
      {
 
-        if(c !== null && c._id!==null)
+        if(!isUndefined(c) &&c!== null  && !isUndefined(c._id)   && c._id!==null)
         {
           
           this._clase = c;

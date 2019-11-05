@@ -7,16 +7,25 @@ import {Accounts} from 'meteor/accounts-base';
 import { iniProfesorModel, Elo, FactoryCommon, PATTERN } from 'imports/functions/commonFunctions';
 import { Kpm } from 'imports/models/kpm';
 import { Roles } from 'imports/collections/rol';
-
+import  {secretshared} from '../libAux/sharedPass'
 
 const modulo = "Methods-Perfil";
 let savePerfil = (id :string, profile: Perfil, all ?: boolean) =>
 {
- 
-  if(!id)
+  check(id, String);
+  //check(profile, Perfil);
+  
+  if(!MethodsClass.isLogged())
   {
-      MethodsClass.noLogueado();
+    MethodsClass.noLogueado()
   }
+
+  if(!id || !profile)
+  {
+      MethodsClass.parametersError();
+  }
+
+ 
   let filter = {
     "_id": id
   };
@@ -75,6 +84,12 @@ let savePerfil = (id :string, profile: Perfil, all ?: boolean) =>
 Meteor.methods({
   findUser(id : String)
   {
+    check(id, String);
+    if(!id)
+    {
+      MethodsClass.parametersError();
+    }
+
     return Meteor.users.findOne({_id: id}, {fields:  {
       'profile.name' : 1,
       "profile.foto" : 1,
@@ -93,6 +108,10 @@ Meteor.methods({
 
     try{
       
+        if(!filters)
+        {
+          MethodsClass.parametersError();
+        }
           let input = {
             $and : [
                 {"profile.disponible" : !false},
@@ -127,7 +146,10 @@ Meteor.methods({
   },
   changePerfilToProfesor()
   {
-
+      if(!MethodsClass.isLogged())
+      {
+        MethodsClass.noLogueado()
+      }
       let profile : Perfil=  Meteor.user().profile;
       console.log("rol actual: " + profile.rol)
       if(profile.rol >= RolesEnum.ALUMNO && profile.rol< RolesEnum.PROFFESOR)
@@ -156,11 +178,25 @@ Meteor.methods({
   },
   savePerfil(profile: Perfil) {
 
+    if(!MethodsClass.isLogged())
+    {
+      MethodsClass.noLogueado()
+    }
+    if(!profile)
+    {
+      MethodsClass.parametersError();
+    }
     console.log("SavePerfil - user" + Meteor.userId())
     Meteor.call("savePerfilById", Meteor.userId(), profile)
   },
   setDisponible(disponible : Boolean)
   {
+    check(disponible, Boolean)
+    if(!MethodsClass.isLogged())
+    {
+      MethodsClass.noLogueado()
+    }
+   
       let profile : Perfil = Meteor.user().profile;
 
       profile.disponible = disponible;
@@ -270,13 +306,13 @@ Meteor.methods({
     }
   },
 
-  calcularElo(idProf : string, newNotas : Array<Kpm>)
+  calcularElo(idProf : string, newNotas : Array<Kpm>, secret : string)
   {
       try {
-
-        if(Meteor.isClient || !newNotas)
+        MethodsClass.log(modulo, `calcularElo : id=${idProf} newNotas=${newNotas} secret=${secret}`, Meteor.userId())
+        if(!Meteor.userId() || secretshared!==secret  || !newNotas)
         {
-          return;
+          throw "No puede calcular Elo.";
         }
         this.unblock();
 

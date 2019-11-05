@@ -49,7 +49,8 @@
     "rxjs-compat": "6.1.0",
     "tslib": "^1.10.0",
     "zone.js": "0.8.26",
-    "stripe": "^7.10.0"
+    "stripe": "^7.10.0",
+    "uuid": "^3.3.3"
   },
   "devDependencies": {
     "@angular/compiler-cli": "^7.2.15",
