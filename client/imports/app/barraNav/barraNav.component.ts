@@ -1,10 +1,12 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import  {RolesService} from "../services/roles.service";
 import { Generic } from 'imports/clases/generic.class';
 import { User } from 'imports/models/User';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MethodsClass } from 'imports/functions/methodsClass';
 import { PATTERN } from 'imports/functions/commonFunctions';
+
+import{ CommonModule } from '@angular/common';
 
 //import {Meteor} from "meteor/meteor";
 
@@ -68,10 +70,6 @@ export class BarraNavComponent extends Generic implements OnInit, OnDestroy{
         this.fortalezaPassSel = this.fortalezaPass.insegura;
     }
     
-
-
-
-
 
     mostrarLoginAc (mostrar : boolean)
     {

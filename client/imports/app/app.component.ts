@@ -49,15 +49,15 @@ export class AppComponent implements OnInit, OnDestroy {
 
     if(!permisos)
     {
-              this.rol.setIniRoles();
-      }
+      this.rol.setIniRoles();
+    }
       else{
         this.rol.setRoles(permisos);
   
       }
     }
     
-    ngOnInit() {
+    public ngOnInit() : void  {
       
      /* setInterval(()=>{
   
@@ -88,10 +88,10 @@ logginIn()
     return Meteor.loggingIn();
 }
 
-  ngOnDestroy() {
-    
+ngOnDestroy() {
+  
 
-    
-  }
+  
+}
   
 }
