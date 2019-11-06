@@ -6,9 +6,10 @@ import './imports/publications/user'
 import './imports/publications/room'
 import './imports/publications/msg'
 import './imports/methods/msg'
+import './imports/methods/pagos';
 import './imports/methods/general';
-import './imports/publications/kpm'
-
+import './imports/publications/kpm';
+import './imports/publications/pagos';
 
 
 /*ServiceConfiguration.configurations.remove({
@@ -27,8 +28,7 @@ import { Mongo } from 'meteor/mongo';
 import { Kpms } from 'imports/collections/kpm';
 import { Kpm } from 'imports/models/kpm';
 import { Rol } from 'imports/models/rol';
-import { Roles, RolesObj } from 'imports/collections/rol';
-import { getServers } from './imports/methods/general';
+
 import { Perfil, RolesEnum } from 'imports/models/perfil';
 import { iniProfesorModel } from 'imports/functions/commonFunctions';
 import { Users } from 'imports/collections/users';

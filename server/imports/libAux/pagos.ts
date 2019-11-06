@@ -86,6 +86,17 @@ stripe.setMaxNetworkRetries(3);
             return customers;  
         }
 
+        const getPMethod = async (idPM) =>
+        {
+    
+            
+               const pm =  
+               await stripe.paymentMethods.retrieve(
+                idPM
+              );
+                return pm;  
+            }
+
      const getAllCardsFromCustomer = async (idCustomer) =>
     {
 
@@ -329,7 +340,8 @@ stripe.setMaxNetworkRetries(3);
         }*/
           
         //actualizamos el objecto
-        PerfilPagosColl.update({_id:perfilPago._id }, {$set : perfilPago});
+        console.log("Metodo de pago borrado, actualizacndo perfil " + JSON.stringify(perfilPago))
+        PerfilPagosColl.update({_id:perfilPago._id }, perfilPago);
       } catch (error) {
           throw error;
       }
@@ -459,7 +471,7 @@ stripe.setMaxNetworkRetries(3);
             lastCharge : {
             },
             view : {
-  
+               hasMthPago : !!payment_method
             }
             
           }
@@ -536,7 +548,7 @@ stripe.setMaxNetworkRetries(3);
             }
   
           }
-          
+       
           PerfilPagosColl.update({_id:perfilPago._id }, {$set : perfilPago});
 
         }
@@ -560,4 +572,4 @@ stripe.setMaxNetworkRetries(3);
              removeCardFromCustomer, removeCustomer, getCustomer, getPlanesCobro,
              attachSuscriptionToCustomer, chargeAmountToCustomer, getSuscriptionItem, removeSus,
              getCustomerInvoices, getInvoice,   attachPayMethodToCustomer, detachPayMethodToCustomer,
-             updateCustomer, generarEntornoDePago, borrarEntornoDePago, getUsage, cargarCantidadToCustomer} : {};
+             updateCustomer, generarEntornoDePago, borrarEntornoDePago, getUsage, cargarCantidadToCustomer, getPMethod} : {};

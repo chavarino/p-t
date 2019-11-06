@@ -27,6 +27,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { ModalComponent } from './modal/modal.component';
 import { BarraNavComponent } from './barraNav/barraNav.component';
 import { PerfilComponent } from './perfil/perfil.component';
+import { PerfilPagoComponent } from './perfilPago/perfilPago.component'
 import { RoomAlumnoComponent } from './roomAlumno/roomAlumno.component';
 import { RoomProfComponent } from './roomProf/roomProf.component';
 import { VideoCall } from './videoCall/videoCall';
@@ -101,7 +102,7 @@ const routes: Routes = [
     //MatButtonModule,
    // MatCheckboxModule,
     RouterModule.forRoot(routes,{
-      useHash:true,
+     // useHash:true,
       enableTracing: true,
       onSameUrlNavigation:"reload",
       //scrollPositionRestoration: "enabled",
@@ -125,6 +126,7 @@ const routes: Routes = [
     BarraNavComponent,
     ModalComponent,
     PerfilComponent,
+    PerfilPagoComponent,
     RoomAlumnoComponent,
     RoomProfComponent,
     ModalKpm,

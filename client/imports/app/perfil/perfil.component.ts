@@ -14,12 +14,8 @@ import {ConfigTags} from  "../categorias/categorias.component"
 import { FactoryCommon } from 'imports/functions/commonFunctions';
 import { Generic } from 'imports/clases/generic.class';
 import { FilesI } from 'imports/models/fileI';
-import {Stripe} from 'stripe';
-//const stripe = Stripe('sk_test_...');
-let keyApi = Meteor.isProduction ? 'pk_test_wQBeplTTV1GWBaM10Kpk7QDm00np8ez6PE' : 'pk_test_wQBeplTTV1GWBaM10Kpk7QDm00np8ez6PE'; 
-const stripe = Stripe(keyApi);
-const elements = stripe.elements();
-const cardElement = elements.create('card');
+
+
 
 
 @Component({
@@ -31,6 +27,7 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy{
   
     perfil : Perfil
     userSuscripcion :Subscription;
+
     addForm: FormGroup;
     flags : BanderasService;
     configTags : ConfigTags = {
@@ -41,6 +38,7 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy{
     {
 
         super(1, 1, "comun", rol);
+       
         this.perfil = {
             foto : "",
             rol : 0,
@@ -74,11 +72,7 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy{
         }
     }
 
-    createCardElement()
-    {
-
-        cardElement.mount('#card-element');
-    }
+   
     save()
     {
         //this.addForm.
@@ -138,7 +132,7 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy{
        
               
 
-        this.userSuscripcion =  MeteorObservable.subscribe('usersProfile').subscribe(() => {
+        this.userSuscripcion =  MeteorObservable.subscribe('usersProfile').subscribe((valueSus) => {
 
             Users.find({_id:Meteor.userId()}).subscribe((data)=>{
 
@@ -157,15 +151,23 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy{
         
                 }
               })
-           // this.rol.setRoles(Roles.findOne().rol);
+           // this.rol.setRoles(Roles.findOne().r7ol);
 
           });
+
+        
+          
     }
+
+    
+
     ngOnDestroy()
     {
         if (this.userSuscripcion) {
             this.userSuscripcion.unsubscribe();
           }
+
+          
     }
 
     isValid()
