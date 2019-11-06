@@ -1,3 +1,10 @@
+
+
+export interface PublicPerfilPagos {
+  tarjetaView ?:string // ultimos 4 digitos de la tarjeta.
+    hasMthPago : boolean;
+    isExpired ?: boolean
+}
 export interface PerfilPagos {
 
     _id ?: string,
@@ -9,10 +16,7 @@ export interface PerfilPagos {
     idPayment_method :string, // metodo de pago customer,
     idSuscription : string,
     idSusRecord : string,
-    view ?: {
-        tarjetaView ?:string // ultimos 4 digitos de la tarjeta.
-
-    }
+    view ?: PublicPerfilPagos
     blocked : boolean,
 //ip guardarla en el metadata.
     lastCharge ?: {

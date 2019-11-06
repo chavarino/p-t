@@ -11,5 +11,7 @@ Meteor.publish('getPerfilPago', function() {
       }
   
      // {sort: {fecha: -1}}
-  return PerfilPagosColl.find({ idCliente : Meteor.userId()});
+  return PerfilPagosColl.find({ idCliente : Meteor.userId()}, {fields:  {
+    '_id' : 1
+  }});
 });

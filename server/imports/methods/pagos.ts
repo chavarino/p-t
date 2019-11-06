@@ -6,6 +6,8 @@ import { MethodsClass } from 'imports/functions/methodsClass';
 import { ErrorClass } from 'imports/functions/errors';
 import { ExceptClass } from '../libAux/erroresCod';
 import  {secretshared} from '../libAux/sharedPass'
+import { PerfilPagos, PublicPerfilPagos } from 'imports/models/perfilPagos.model';
+import { PerfilPagosColl } from 'imports/collections/perfilPagos.collection';
  enum Planes {
   PLAN_PRUEBA_STRIPE = "P_PruebaCobro"
 
@@ -67,6 +69,7 @@ Meteor.methods({
           //actualizar metodo de pago default.
           await PagosFn.borrarEntornoDePago();
           //console.log("saveMetodoPago ok  " )
+          return "OK"
          
       } catch (error) {
             //console.log("saveMetodoPago error")
@@ -101,6 +104,7 @@ Meteor.methods({
             //actualizar metodo de pago default.
             await PagosFn.generarEntornoDePago(payment_method, Planes.PLAN_PRUEBA_STRIPE)
             //console.log("saveMetodoPago ok  " )
+            return "OK"
            
         } catch (error) {
               //console.log("saveMetodoPago error")
@@ -122,6 +126,19 @@ Meteor.methods({
         }
        
     },
+    async setupPayMethod()
+    {
+        this.unblock();
+
+        if(!isLogged())
+        {
+          MethodsClass.noLogueado();
+          
+        }
+
+       return  await PagosFn.setupIntent();
+       
+    },
     async getPayMethodInfo()
     {
         this.unblock();
@@ -131,9 +148,33 @@ Meteor.methods({
           MethodsClass.noLogueado();
           
         }
-        
+        let res : PublicPerfilPagos = {
+          hasMthPago: false,
+          tarjetaView : ""
+        }
+        try {
 
-       
+          let perfilPago : PerfilPagos = PerfilPagosColl.findOne({idCliente: Meteor.userId() })
+          if(!perfilPago || !perfilPago.customer || !perfilPago.customer.id || !perfilPago.idPayment_method )
+          {
+          }
+          else{
+            let resMethod = await PagosFn.getPMethod(perfilPago.idPayment_method)
+            res.tarjetaView = `**** **** **** ${ resMethod.card.last4}`;
+            res.hasMthPago = true;
+            let mes = (resMethod.card.exp_month) % 12 +1;
+            let year = resMethod.card.exp_month===1 ? (resMethod.card.exp_year +1) : resMethod.card.exp_year;
+            
+            res.isExpired = (new Date()).getTime() >=   (new Date(`${year}-${mes}-1`)).getTime(); 
+            /* "exp_month": 8,
+            "exp_year": 2020,*/
+          }
+        
+          return res
+          
+        } catch (error) {
+            return res;
+        }
     }
     
 });
