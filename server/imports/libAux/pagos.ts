@@ -258,7 +258,12 @@ stripe.setMaxNetworkRetries(3);
          }
       }
 
+      let perfilPago : PerfilPagos = PerfilPagosColl.findOne({idCliente: Meteor.userId() })
+      console.log("Bloqueo antes ? :" + perfilPago.blocked);
       PerfilPagosColl.update({_id:id }, {$set : jsonIn});
+      perfilPago  = PerfilPagosColl.findOne({idCliente: Meteor.userId() })
+      console.log("Bloqueo despues ? :" + perfilPago.blocked);
+
     }
     
     const borrarEntornoDePago = async ( ) =>
@@ -308,8 +313,15 @@ stripe.setMaxNetworkRetries(3);
         {
           try {
             await removeCardFromCustomer(perfilPago.idPayment_method) // borramos el método de pago.
-            perfilPago.customer.invoice_settings.default_payment_method = undefined;
-            perfilPago.customer = await updateCustomer(perfilPago.customer);
+           // perfilPago.customer.invoice_settings.default_payment_method = undefined;
+            let  cUpdate : Customer = {
+              invoice_settings : {
+                default_payment_method : undefined
+              }
+            }
+
+            perfilPago.customer = await updateCustomer(cUpdate);
+            
            
             
           } catch (error) {
@@ -502,8 +514,14 @@ stripe.setMaxNetworkRetries(3);
             /// actualizamos el emtodo de pago por defecto.
             try {
               
-              perfilPago.customer.invoice_settings.default_payment_method = payment_method;
-              perfilPago.customer = await updateCustomer(perfilPago.customer);
+             // perfilPago.customer.invoice_settings.default_payment_method = payment_method;
+             let  cUpdate : Customer = {
+                invoice_settings : {
+                  default_payment_method : payment_method
+                }
+              }
+
+              perfilPago.customer = await updateCustomer(cUpdate);
               
             } catch (error) {
               // borramos el metodo de pago nuevo que ha sido añadido
@@ -549,7 +567,7 @@ stripe.setMaxNetworkRetries(3);
   
           }
        
-          PerfilPagosColl.update({_id:perfilPago._id }, {$set : perfilPago});
+          PerfilPagosColl.update({_id:perfilPago._id }, perfilPago);
 
         }
         

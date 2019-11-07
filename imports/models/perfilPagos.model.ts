@@ -41,7 +41,7 @@ export  interface Customer {
     "delinquent" ?: boolean,
     //"description": null,
     //"discount": null,
-    email : string,
+    email ?: string,
    // "invoice_prefix": "39F4124E",
    invoice_settings ?: {
       //"custom_fields": null,
