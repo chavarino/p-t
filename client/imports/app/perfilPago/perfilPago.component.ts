@@ -27,6 +27,7 @@ export class PerfilPagoComponent extends Generic implements OnInit, OnDestroy{
     perfilPAgos : PerfilPagos
     perfilPagosSuscripcion :Subscription;
     pbPP : PublicPerfilPagos;
+    cargando: boolean;
     
 
     constructor(rol : RolesService)
@@ -35,7 +36,7 @@ export class PerfilPagoComponent extends Generic implements OnInit, OnDestroy{
         this.perfilPAgos = {
 
         } as PerfilPagos
-
+        this.cargando =false;
         this.pbPP = {
             hasMthPago : false,
             
@@ -87,7 +88,7 @@ export class PerfilPagoComponent extends Generic implements OnInit, OnDestroy{
 
       //  setupIntent
       try {
-          
+        this.setCargando()
           client_secret = await  new Promise((r, rej) =>{
               MethodsClass.call("setupPayMethod", (res: string) => {
                 r(res)
@@ -128,19 +129,29 @@ export class PerfilPagoComponent extends Generic implements OnInit, OnDestroy{
       
             });
             alert("Tarjeta guardada con exito.")
+            
+            this.getPMethodInfo()
           }
       } catch (error) {
         alert("error " + JSON.stringify(error ))
         console.log("error "+ error);
       }
+      finally{
+        this.setCargando()
+      }
 
+    }
+
+    setCargando()
+    {
+        this.cargando = !this.cargando;
     }
     borrarMtPago()
     {
         try {
-            
+            this.setCargando()
             MethodsClass.call("borrarMetodoPago", (res: string) => {
-    
+                this.setCargando()
                 alert("Tarjeta borrada con exito.")
                 this.getPMethodInfo()
             });
@@ -149,10 +160,15 @@ export class PerfilPagoComponent extends Generic implements OnInit, OnDestroy{
              alert("error " + JSON.stringify(error ))
             console.log("error "+ error);
         }
+        finally{
+            this.setCargando()
+        }
     }
     getPMethodInfo() {
+        let vm=this;
+        this.setCargando()
         MethodsClass.call("getPayMethodInfo", (res: PublicPerfilPagos) => {
-
+            this.setCargando()
             if(res)
             {
                 this.pbPP = res;
@@ -165,6 +181,8 @@ export class PerfilPagoComponent extends Generic implements OnInit, OnDestroy{
                 }
 
             }
+        }, ()=> {
+            vm.setCargando()
         });
     }
 

@@ -2,6 +2,13 @@
 .color-sapens {
   color:#38f094
 }
+
+.slow {
+  -webkit-transition: all 0.3s ease-out;
+    -moz-transition: all 0.3s ease-out;
+    -o-transition: all 0.3s ease-out;
+    transition: all 0.3s ease-out;
+}
 button:hover, .sombra {
     box-shadow: 0px 1px 4px 1px #d8d8d8;
   }
