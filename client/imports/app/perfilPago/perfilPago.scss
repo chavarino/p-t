@@ -4,4 +4,23 @@
       padding: 5px;
       box-shadow: 1px 1px 2px 1px #bbbbbb;
       margin: auto;
+      margin-top: 0.5rem;
+  }
+
+  .guardar-card {
+
+    color: #38f094;
+    padding: 5px;
+    border-radius: 5px;
+    border: 0.5px solid white;
+    cursor: pointer;    
+    font-size: 2.1rem;
+    
+  }
+
+  .guardar-card:hover {
+    color: white;
+    background: #38f094;;
+    border: 0.5px solid #38f094;
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
   }

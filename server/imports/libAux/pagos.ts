@@ -24,9 +24,9 @@ stripe.setMaxNetworkRetries(3);
       return await stripe.paymentMethods.detach(idPM);
     } 
         
-   const updateCustomer = async (c : Customer) => {
+   const updateCustomer = async (id:string, c : Customer) => {
 
-     return await stripe.customers.update(c.id, c);
+     return await stripe.customers.update(id, c);
    }
 
 
@@ -259,10 +259,19 @@ stripe.setMaxNetworkRetries(3);
       }
 
       let perfilPago : PerfilPagos = PerfilPagosColl.findOne({idCliente: Meteor.userId() })
-      console.log("Bloqueo antes ? :" + perfilPago.blocked);
+      if(perfilPago)
+      {
+        console.log("Bloqueo antes ? :" + perfilPago.blocked);
+
+      }
       PerfilPagosColl.update({_id:id }, {$set : jsonIn});
       perfilPago  = PerfilPagosColl.findOne({idCliente: Meteor.userId() })
-      console.log("Bloqueo despues ? :" + perfilPago.blocked);
+
+      if(perfilPago)
+      {
+        console.log("Bloqueo antes ? :" + perfilPago.blocked);
+
+      }
 
     }
     
@@ -320,7 +329,7 @@ stripe.setMaxNetworkRetries(3);
               }
             }
 
-            perfilPago.customer = await updateCustomer(cUpdate);
+            perfilPago.customer = await updateCustomer(perfilPago.customer.id,cUpdate);
             
            
             
@@ -521,7 +530,7 @@ stripe.setMaxNetworkRetries(3);
                 }
               }
 
-              perfilPago.customer = await updateCustomer(cUpdate);
+              perfilPago.customer = await updateCustomer(perfilPago.customer.id, cUpdate);
               
             } catch (error) {
               // borramos el metodo de pago nuevo que ha sido añadido
