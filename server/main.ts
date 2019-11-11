@@ -38,6 +38,7 @@ import { Users } from 'imports/collections/users';
 import { SyncedCron } from 'meteor/percolate:synced-cron';
 
 import { User } from 'imports/models/User';
+import { SecretServices } from './imports/libAux/sharedPass';
 //import {SyncedCron} from 'meteor/percolate:synced-cron';
 //)
 
@@ -78,37 +79,20 @@ ServiceConfiguration.configurations.remove({
 ServiceConfiguration.configurations.remove({
   service: "google"
 });
-let service : string = "facebook";
+
 if(Meteor.isProduction)
 {
   console.log("Production Enviroment")
-  Meteor.settings.public
-  ServiceConfiguration.configurations.insert({
-    service: service,
-    appId: '451520298781502',
-    secret: '64cd9a2568172b601d176eac77f942d6'
-  }); 
+  //Meteor.settings.public
+  ServiceConfiguration.configurations.insert(SecretServices.prod.facebook); 
   
-  ServiceConfiguration.configurations.insert({
-    service: "google",
-    clientId: "439619175679-p6319ak5e7gmneljfumoedm6brnoc0l4.apps.googleusercontent.com",
-    secret: "VH9BmaSayFPqWccJakog_LhA"
-  });
+  ServiceConfiguration.configurations.insert(SecretServices.prod.google);
 
 }
 else{
-  console.log("Development Enviroment")
-  ServiceConfiguration.configurations.insert({
-    service: service,
-    appId: '2159629500964595',
-    secret: 'd7fa5cb79f2fd9ff567fc734fdcf09be'
-  }); 
+  ServiceConfiguration.configurations.insert(SecretServices.dev.facebook); 
   
-  ServiceConfiguration.configurations.insert({
-    service: "google",
-    clientId: "968081809867-fpagrpdujnjauiggoqucmd5cgiseuqfl.apps.googleusercontent.com",
-    secret: "COov_-wK-IkGBkWTCuwtpWBd"
-  });
+  ServiceConfiguration.configurations.insert(SecretServices.dev.google);
 
 }
 

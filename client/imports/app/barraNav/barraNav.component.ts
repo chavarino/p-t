@@ -10,7 +10,7 @@ import{ CommonModule } from '@angular/common';
 
 //import {Meteor} from "meteor/meteor";
 
-
+declare var FB: any;
 @Component({
   selector: 'barraNav',
   templateUrl: 'barraNav.html',
@@ -71,6 +71,7 @@ export class BarraNavComponent extends Generic implements OnInit, OnDestroy{
     }
     
 
+    
     mostrarLoginAc (mostrar : boolean)
     {
       this.mostrarLogin=mostrar
@@ -113,6 +114,8 @@ export class BarraNavComponent extends Generic implements OnInit, OnDestroy{
   loginFacebook()
   {
     let vm = this;
+
+    /*
       Meteor.loginWithFacebook({requestPermissions: ['public_profile', 'email']}, function(err){
         if (err) {
             console.log('Handle errors here: ', err);
@@ -120,6 +123,20 @@ export class BarraNavComponent extends Generic implements OnInit, OnDestroy{
         else{
           vm.recargarPermisos()
         }
+    });*/
+
+    FB.init({
+      appId      : '489516028440012',
+      cookie     : true,
+      xfbml      : true,
+      version    : 'v5.0'
+    });
+      
+    FB.AppEvents.logPageView();   
+
+    
+    FB.getLoginStatus(function(response) {
+      console.log(JSON.stringify(response));
     });
   }
 
