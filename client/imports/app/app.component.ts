@@ -58,6 +58,12 @@ export class AppComponent implements OnInit, OnDestroy {
     }
     
     public ngOnInit() : void  {
+
+
+      if(window.location.hostname.includes("www"))   
+      {
+              window.location.href = "https://sapens.es"
+      }
       
      /* setInterval(()=>{
   
