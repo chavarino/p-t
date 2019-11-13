@@ -55,6 +55,8 @@ export interface Room {
         alumno : Score
 
         profesor : Score
-    }
+    },
+    cargadoCoste ?: boolean
+
 }
 

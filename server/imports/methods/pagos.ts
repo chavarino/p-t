@@ -8,10 +8,14 @@ import { ExceptClass } from '../libAux/erroresCod';
 import  {secretshared} from '../libAux/sharedPass'
 import { PerfilPagos, PublicPerfilPagos } from 'imports/models/perfilPagos.model';
 import { PerfilPagosColl } from 'imports/collections/perfilPagos.collection';
+import { Room } from 'imports/models/room';
+import { Rooms } from 'imports/collections/room';
  enum Planes {
   PLAN_PRUEBA_STRIPE = "P_PruebaCobro"
 
  }
+
+ const precioUnidad = 0.001;
 
 let isLogged = () : boolean=>
 {
@@ -24,13 +28,13 @@ const modulo = "PagosMethods"
 
 Meteor.methods({
 
-  async chargeQuantity(cantidad :number, secret : string) 
+  async chargeQuantity(cantidad :number, secret : string) // cantidad de dinero.
   {   
         this.unblock();
 
         check(cantidad, Number);
         check(secret, String);
-
+     
         if(!isLogged())
         {
               MethodsClass.noLogueado();
@@ -42,19 +46,25 @@ Meteor.methods({
             MethodsClass.except(405 , modulo, "chargeQuantity : no permitido desde cliente" , "");
           
         }
-
-        try {
-          //actualizar metodo de pago default.
-          await PagosFn.cargarCantidadToCustomer(cantidad);
-          //console.log("saveMetodoPago ok  " )
-         
-      } catch (error) {
-            //console.log("saveMetodoPago error")
-            let errorClass : ExceptClass = error as ExceptClass;
-            //TODO SI HUBIESE ALGUNO TRATAMIENTO DE ERROR A PARTIR DEl error del CODIGO.
-            MethodsClass.except(500, modulo, "chargeQuantity :  Error al adjuntar metodo de pago.", errorClass.toString());
         
-        }
+          try {
+              //intentamos 3 veces cargar y sino error
+              // una unidad son 0.001 €
+            await PagosFn.cargarCantidadToCustomer(cantidad/precioUnidad);
+           
+        } catch (error) {
+
+           
+              let errorClass : ExceptClass = error as ExceptClass;
+              //TODO SI HUBIESE ALGUNO TRATAMIENTO DE ERROR A PARTIR DEl error del CODIGO.
+              MethodsClass.except(500, modulo, "chargeQuantity :  Error al adjuntar metodo de pago.", errorClass.toString());
+             
+            
+              //console.log("saveMetodoPago error")
+          
+          }
+     
+          
     },
     async borrarMetodoPago() 
     {   
