@@ -258,20 +258,20 @@ stripe.setMaxNetworkRetries(3);
          }
       }
 
-      let perfilPago : PerfilPagos = PerfilPagosColl.findOne({idCliente: Meteor.userId() })
+      /*let perfilPago : PerfilPagos = PerfilPagosColl.findOne({idCliente: Meteor.userId() })
       if(perfilPago)
       {
         console.log("Bloqueo antes ? :" + perfilPago.blocked);
 
-      }
+      }*/
       PerfilPagosColl.update({_id:id }, {$set : jsonIn});
-      perfilPago  = PerfilPagosColl.findOne({idCliente: Meteor.userId() })
+      /*perfilPago  = PerfilPagosColl.findOne({idCliente: Meteor.userId() })
 
       if(perfilPago)
       {
         console.log("Bloqueo antes ? :" + perfilPago.blocked);
 
-      }
+      }*/
 
     }
     
@@ -379,58 +379,71 @@ stripe.setMaxNetworkRetries(3);
 
       
       let idempotency_key : string;
-      try {
-        //Combprobamos que este correcto los perfiles.
-
+      //Combprobamos que este correcto los perfiles.
+      if(isUndefined(cantidad) ||  isUndefined(perfilPago) 
+      || isUndefined(perfilPago.idSusRecord) || isUndefined(perfilPago.idSuscription)
+      || isUndefined(perfilPago.idPayment_method)
+      || isUndefined(perfilPago.customer.invoice_settings.default_payment_method)  )
+      {
         
-        
-        if(isUndefined(cantidad) ||  isUndefined(perfilPago) 
-        || isUndefined(perfilPago.idSusRecord) || isUndefined(perfilPago.idSuscription)
-        || isUndefined(perfilPago.idPayment_method)
-        || isUndefined(perfilPago.customer.invoice_settings.default_payment_method)  )
-        {
-
-          throw  new ExceptClass(COD_ERROR.PARAM_IN, JSON.stringify(perfilPago));
-        }
-        //si la cantidad es cero no se carga nada pero no habria error.
-        if(cantidad===0)
-        {
-          return;
-        }
-        //bloqueamos el perfil.
-        setBlockedUpd(perfilPago._id, true);
-
-        let charge : Charge = {
-          quantity : cantidad
-        }
-
-
-       idempotency_key  = perfilPago.lastCharge.idempotency_key || uuidv4(); // ⇨ '1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed'
-
-       await chargeAmountToCustomer(perfilPago.idSusRecord, charge, idempotency_key)
-
-       idempotency_key = undefined;  
-      } catch (error) {
-        throw  new ExceptClass(COD_ERROR.CHARGE_NEW, error);
+        throw  new ExceptClass(COD_ERROR.PARAM_IN, JSON.stringify(perfilPago));
       }
-      finally{
-        // El bloque lo libera.
+      //si la cantidad es cero no se carga nada pero no habria error.
+      if(cantidad===0)
+      {
+        return;
+      }
+      
+      for (let index = 0;; index++) {
         
-        let jsonIn;
-        if(perfilPago.lastCharge.idempotency_key !== idempotency_key)
-        {
-          perfilPago.lastCharge.idempotency_key = idempotency_key;
-          jsonIn = {
+        try {
+        
+          
+          //bloqueamos el perfil.
+          setBlockedUpd(perfilPago._id, true);
 
-            lastCharge : perfilPago.lastCharge
+          
+          
+          idempotency_key  = perfilPago.lastCharge.idempotency_key || uuidv4(); // ⇨ '1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed'
+          
+          perfilPago.lastCharge.cantidad = cantidad + (perfilPago.lastCharge.cantidad || 0);
+            let charge : Charge = {
+              quantity : perfilPago.lastCharge.cantidad
+            }
+        await chargeAmountToCustomer(perfilPago.idSusRecord, charge, idempotency_key)
+        perfilPago.lastCharge.cantidad = 0; 
+        idempotency_key = undefined;  
+        } catch (error) {
+          if(index===2)
+            {
+              throw  new ExceptClass(COD_ERROR.CHARGE_NEW, error);
+             
+            }
+        }
+        finally{
+          // El bloque lo libera.
+          
+          let jsonIn;
+          if(perfilPago.lastCharge.idempotency_key !== idempotency_key)
+          {
+            perfilPago.lastCharge.idempotency_key = idempotency_key;
+            jsonIn = {
+
+              lastCharge : perfilPago.lastCharge
+            }
+          }
+          else{
+            jsonIn = undefined;
+          }
+          
+          setBlockedUpd(perfilPago._id, false, jsonIn)
+
+          if(isUndefined(idempotency_key))
+          {
+             break;
           }
         }
-        else{
-          jsonIn = undefined;
-        }
-        
-        setBlockedUpd(perfilPago._id, false, jsonIn)
-      }
+    }
 
     }
 

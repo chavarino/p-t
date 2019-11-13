@@ -258,7 +258,7 @@ Meteor.methods({
   terminarClase(profesor : boolean) {
     
     check(profesor, Boolean);
- 
+    this.unblock();
     let userId =Meteor.userId();
     //console.log("Entra");
     if(!MethodsClass.isLogged())
@@ -301,8 +301,21 @@ Meteor.methods({
     room.fechaFin  = new Date();
     room.estadoText = getTexto(room);
     
+    //cobro.
+    
 
-
+    //PagosFn.getPlanesCobro TODO sacar la unidad de los planes d ecobro
+    //maximo entre el calculo y 5 minutos. 5 mintps los va a pagar siempre.
+    //obtenemos lo miutos de clase.
+    let tiempoClaseMinuts = Math.max( (room.fechaFin.getTime() - room.fechaIni.getTime()) /60000, 5);
+    // dinero por minuto. 
+    
+    try {
+      Meteor.call("chargeQuantity", tiempoClaseMinuts * (room.precio || 0), secretshared);
+      room.cargadoCoste=true;
+    } catch (error) {
+      room.cargadoCoste =false;
+    }
     
     //VALIDACIONES
    // console.log("insertando " + room);
