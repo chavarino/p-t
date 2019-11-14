@@ -5,7 +5,7 @@ import { COD_ERROR, ExceptClass} from "../libAux/erroresCod"
 import { MethodsClass } from 'imports/functions/methodsClass';
 import { isUndefined } from 'util';
 
-
+const precioUnidad = 0.001;
 let api_key =  Meteor.isProduction ? 'sk_test_wFBgb0r4Kv2YgY5EIWEVsaYb00KkSnycJv'
     :'sk_test_wFBgb0r4Kv2YgY5EIWEVsaYb00KkSnycJv';
 
@@ -371,12 +371,18 @@ stripe.setMaxNetworkRetries(3);
         setBlockedUpd(perfilPago._id, false)
       }
     }
-
-    const cargarCantidadToCustomer= async (cantidad : number) =>
+    /**
+     * 
+     * @param cantidad cantidad a cargar en euros.
+     * @param precioUnidadIn precio por unidad €/unidad
+     */
+    const cargarCantidadToCustomer= async (cantidad : number, precioUnidadIn ?: number) =>
     {
+
+      //MIRAR LO DEL USUARIO ID IGUAL ESTÄ MAL QUIEN PAGA.
       let perfilPago : PerfilPagos = PerfilPagosColl.findOne({idCliente: Meteor.userId() })
-
-
+      //cantidad es en euros
+      precioUnidadIn =  isUndefined(precioUnidadIn) ?  precioUnidad : precioUnidadIn;
       
       let idempotency_key : string;
       //Combprobamos que este correcto los perfiles.
@@ -388,30 +394,43 @@ stripe.setMaxNetworkRetries(3);
         
         throw  new ExceptClass(COD_ERROR.PARAM_IN, JSON.stringify(perfilPago));
       }
-      //si la cantidad es cero no se carga nada pero no habria error.
-      if(cantidad===0)
-      {
-        return;
-      }
-      
-      for (let index = 0;; index++) {
-        
-        try {
-        
+     
+      //se intentara 2 veces cobrar (solo en caso que falle)
+      //guardamos euros a deber.
+          perfilPago.lastCharge.cantidad = cantidad+ (perfilPago.lastCharge.cantidad || 0);
+          //si la cantidad es cero no se carga nada pero no habria error.
+          if(perfilPago.lastCharge.cantidad===0)
+          {
+            return;
+          }
+          for (let index = 0;; index++) {
+            
+            try {
+              
+              
+              //bloqueamos el perfil.
+              setBlockedUpd(perfilPago._id, true);
+              
+              
+              
+              idempotency_key  = perfilPago.lastCharge.idempotency_key || uuidv4(); // ⇨ '1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed'
+                let charge : Charge = {
+                  quantity : perfilPago.lastCharge.cantidad/precioUnidadIn // cargamos la cantidad de unidades a cobrar
+                }
           
-          //bloqueamos el perfil.
-          setBlockedUpd(perfilPago._id, true);
-
-          
-          
-          idempotency_key  = perfilPago.lastCharge.idempotency_key || uuidv4(); // ⇨ '1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed'
-          
-          perfilPago.lastCharge.cantidad = cantidad + (perfilPago.lastCharge.cantidad || 0);
-            let charge : Charge = {
-              quantity : perfilPago.lastCharge.cantidad
-            }
         await chargeAmountToCustomer(perfilPago.idSusRecord, charge, idempotency_key)
+        
+        perfilPago.facturaPago.push({
+          cantidad : perfilPago.lastCharge.cantidad,
+          fecha : new Date(),
+          ip: this.connection.clientAddress,
+          userId : Meteor.userId()
+        })
+        
         perfilPago.lastCharge.cantidad = 0; 
+
+
+
         idempotency_key = undefined;  
         } catch (error) {
           if(index===2)
@@ -427,13 +446,12 @@ stripe.setMaxNetworkRetries(3);
           if(perfilPago.lastCharge.idempotency_key !== idempotency_key)
           {
             perfilPago.lastCharge.idempotency_key = idempotency_key;
-            jsonIn = {
-
-              lastCharge : perfilPago.lastCharge
-            }
           }
-          else{
-            jsonIn = undefined;
+          
+          jsonIn = {
+            
+            lastCharge : perfilPago.lastCharge,
+
           }
           
           setBlockedUpd(perfilPago._id, false, jsonIn)
@@ -504,6 +522,8 @@ stripe.setMaxNetworkRetries(3);
             idPayment_method : payment_method,
             lastCharge : {
             },
+            facturaPago : [],
+            facturaCobro : [],
             view : {
                hasMthPago : !!payment_method
             }
@@ -612,4 +632,4 @@ stripe.setMaxNetworkRetries(3);
              removeCardFromCustomer, removeCustomer, getCustomer, getPlanesCobro,
              attachSuscriptionToCustomer, chargeAmountToCustomer, getSuscriptionItem, removeSus,
              getCustomerInvoices, getInvoice,   attachPayMethodToCustomer, detachPayMethodToCustomer,
-             updateCustomer, generarEntornoDePago, borrarEntornoDePago, getUsage, cargarCantidadToCustomer, getPMethod} : {};
+             updateCustomer, generarEntornoDePago, borrarEntornoDePago, getUsage, cargarCantidadToCustomer, getPMethod, precioUnidad} : {};

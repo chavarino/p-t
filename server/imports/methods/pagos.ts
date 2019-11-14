@@ -15,7 +15,7 @@ import { Rooms } from 'imports/collections/room';
 
  }
 
- const precioUnidad = 0.001;
+ 
 
 let isLogged = () : boolean=>
 {
@@ -50,7 +50,7 @@ Meteor.methods({
           try {
               //intentamos 3 veces cargar y sino error
               // una unidad son 0.001 €
-            await PagosFn.cargarCantidadToCustomer(cantidad/precioUnidad);
+            await PagosFn.cargarCantidadToCustomer(cantidad);
            
         } catch (error) {
 
