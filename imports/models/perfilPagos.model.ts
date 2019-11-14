@@ -5,6 +5,19 @@ export interface PublicPerfilPagos {
     hasMthPago : boolean;
     isExpired ?: boolean
 }
+
+export interface Factura {
+
+    fecha : Date,
+    cantidad : number // en euros,
+    ip: string,
+    userId: string
+
+  
+}
+
+
+
 export interface PerfilPagos {
 
     _id ?: string,
@@ -23,6 +36,9 @@ export interface PerfilPagos {
         cantidad ?: number;
         idempotency_key ?: string // clave por si falla el pago no volver a recargarla sino reanudarla. sino hay null.
     },
+    
+    facturaPago ?: Array<Factura>
+    facturaCobro ?: Array<Factura>
 
     customer : Customer
 }

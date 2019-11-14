@@ -38,7 +38,7 @@ import { Users } from 'imports/collections/users';
 import { SyncedCron } from 'meteor/percolate:synced-cron';
 
 import { User } from 'imports/models/User';
-import { SecretServices } from './imports/libAux/sharedPass';
+import { SecretServices, test } from './imports/libAux/sharedPass';
 //import {SyncedCron} from 'meteor/percolate:synced-cron';
 //)
 
@@ -132,6 +132,7 @@ if(Meteor.isServer)
         
    
     console.log("url absoluta :" +Meteor.absoluteUrl());
+    process.env.HTTP_FORWARDED_COUNT="1";
     //process.env.MAIL_URL="smtp://javier.chavarino.martinez@gmail.com:Albaricoke91@smtp.gmail.com:587/";
 
     let  fn = async ()=>{
@@ -249,7 +250,21 @@ Accounts.onCreateUser(function (options, user : User) {
     profile.rol = 6;
     iniProfesorModel(profile);
   }
-  
+
+  /**
+   * 
+   * TODO quitar con tarjetas buenas
+   */
+  if(test.isTest)
+  {
+        
+        Meteor.call("saveMetodoPago", test.pm[ Math.round( Math.random() * (test.pm.length-1))]);
+  }
+  /***
+   * 
+   * FIN_TODO quitar con tarjeta beunas
+   */
+
   user.profile = profile;
   console.log(user);
   return user;
