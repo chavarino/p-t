@@ -376,14 +376,14 @@ stripe.setMaxNetworkRetries(3);
      * @param cantidad cantidad a cargar en euros.
      * @param precioUnidadIn precio por unidad €/unidad
      */
-    const cargarCantidadToCustomer= async (cantidad : number, precioUnidadIn ?: number) =>
+    const cargarCantidadToCustomer= async (cantidad : number, userId:string, precioUnidadIn ?: number) =>
     {
 
       //MIRAR LO DEL USUARIO ID IGUAL ESTÄ MAL QUIEN PAGA.
-      let perfilPago : PerfilPagos = PerfilPagosColl.findOne({idCliente: Meteor.userId() })
+      let perfilPago : PerfilPagos = PerfilPagosColl.findOne({idCliente: userId })
       //cantidad es en euros
       precioUnidadIn =  isUndefined(precioUnidadIn) ?  precioUnidad : precioUnidadIn;
-      
+      let pagado = false;
       let idempotency_key : string;
       //Combprobamos que este correcto los perfiles.
       if(isUndefined(cantidad) ||  isUndefined(perfilPago) 
@@ -407,31 +407,32 @@ stripe.setMaxNetworkRetries(3);
             
             try {
               
+                  
+                  //bloqueamos el perfil.
+                  setBlockedUpd(perfilPago._id, true);
+                  
+                  
+                  
+                  idempotency_key  = perfilPago.lastCharge.idempotency_key || uuidv4(); // ⇨ '1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed'
+                    let charge : Charge = {
+                      quantity : perfilPago.lastCharge.cantidad/precioUnidadIn // cargamos la cantidad de unidades a cobrar
+                    }
               
-              //bloqueamos el perfil.
-              setBlockedUpd(perfilPago._id, true);
-              
-              
-              
-              idempotency_key  = perfilPago.lastCharge.idempotency_key || uuidv4(); // ⇨ '1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed'
-                let charge : Charge = {
-                  quantity : perfilPago.lastCharge.cantidad/precioUnidadIn // cargamos la cantidad de unidades a cobrar
-                }
-          
-        await chargeAmountToCustomer(perfilPago.idSusRecord, charge, idempotency_key)
-        
-        perfilPago.facturaPago.push({
-          cantidad : perfilPago.lastCharge.cantidad,
-          fecha : new Date(),
-          ip: this.connection.clientAddress,
-          userId : Meteor.userId()
-        })
-        
-        perfilPago.lastCharge.cantidad = 0; 
+            await chargeAmountToCustomer(perfilPago.idSusRecord, charge, idempotency_key)
+            
+            perfilPago.facturaPago.push({
+              cantidad : perfilPago.lastCharge.cantidad,
+              fecha : new Date(),
+              ip: this.connection.clientAddress,
+              userId : userId
+            })
+            
+            perfilPago.lastCharge.cantidad = 0; 
 
 
 
-        idempotency_key = undefined;  
+            idempotency_key = undefined;  
+            pagado = true;
         } catch (error) {
           if(index===2)
             {
@@ -451,9 +452,13 @@ stripe.setMaxNetworkRetries(3);
           jsonIn = {
             
             lastCharge : perfilPago.lastCharge,
-
+            
           }
-          
+          if(pagado)
+          {
+            jsonIn.facturaPago  =  perfilPago.facturaPago// si no hay pago anterior es que se ha conseguido pagar entonces añadimosel nuevo elemneto
+            pagado=false;
+          }
           setBlockedUpd(perfilPago._id, false, jsonIn)
 
           if(isUndefined(idempotency_key))

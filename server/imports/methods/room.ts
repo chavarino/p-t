@@ -311,7 +311,7 @@ Meteor.methods({
     // dinero por minuto. 
     
     try {
-      Meteor.call("chargeQuantity", tiempoClaseMinuts * (room.precio || 0), secretshared);
+      Meteor.call("chargeQuantity", tiempoClaseMinuts * (room.precio || 0), room.alumnoId, secretshared);
       room.cargadoCoste=true;
     } catch (error) {
       room.cargadoCoste =false;
