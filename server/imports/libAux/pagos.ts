@@ -385,6 +385,7 @@ stripe.setMaxNetworkRetries(3);
       precioUnidadIn =  isUndefined(precioUnidadIn) ?  precioUnidad : precioUnidadIn;
       let pagado = false;
       let idempotency_key : string;
+      let error: ExceptClass;
       //Combprobamos que este correcto los perfiles.
       if(isUndefined(cantidad) ||  isUndefined(perfilPago) 
       || isUndefined(perfilPago.idSusRecord) || isUndefined(perfilPago.idSuscription)
@@ -433,17 +434,28 @@ stripe.setMaxNetworkRetries(3);
 
             idempotency_key = undefined;  
             pagado = true;
+            
         } catch (error) {
-          if(index===2)
-            {
-              throw  new ExceptClass(COD_ERROR.CHARGE_NEW, error);
-             
-            }
+          error = new ExceptClass(COD_ERROR.CHARGE_NEW, error);
         }
         finally{
           // El bloque lo libera.
-          
           let jsonIn;
+          if(pagado)
+          {
+            // nada
+          }
+          else if(index<2){
+              perfilPago.lastCharge.idempotency_key = idempotency_key;
+              continue;
+          }
+          else if(index===2)
+          {
+            idempotency_key = undefined;
+            //perfilPago.lastCharge.idempotency_key = undefined;
+          
+          }
+          
           if(perfilPago.lastCharge.idempotency_key !== idempotency_key)
           {
             perfilPago.lastCharge.idempotency_key = idempotency_key;
@@ -451,7 +463,7 @@ stripe.setMaxNetworkRetries(3);
           
           jsonIn = {
             
-            lastCharge : perfilPago.lastCharge,
+            lastCharge : perfilPago.lastCharge
             
           }
           if(pagado)
@@ -459,6 +471,7 @@ stripe.setMaxNetworkRetries(3);
             jsonIn.facturaPago  =  perfilPago.facturaPago// si no hay pago anterior es que se ha conseguido pagar entonces añadimosel nuevo elemneto
             pagado=false;
           }
+
           setBlockedUpd(perfilPago._id, false, jsonIn)
 
           if(isUndefined(idempotency_key))
