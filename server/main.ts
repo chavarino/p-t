@@ -10,7 +10,7 @@ import './imports/methods/pagos';
 import './imports/methods/general';
 import './imports/publications/kpm';
 import './imports/publications/pagos';
-
+import {PagosFn} from "./imports/libAux/pagos";
 
 /*ServiceConfiguration.configurations.remove({
   service: "facebook"
@@ -195,7 +195,28 @@ if(Meteor.isServer)
 //https://docs.mongodb.com/manual/reference/operator/query/regex/
 //https://docs.mongodb.com/manual/tutorial/query-arrays/
 
+Accounts.onLogin(()=>{
 
+  
+  /**
+   * 
+   * TODO quitar con tarjetas buenas
+   */
+  console.log("LOGUEANDOSE.")
+  if(test.isTest)
+  {
+       if(!PagosFn.hasMPago(Meteor.userId())) 
+       {
+         Meteor.call("saveMetodoPago", test.pm[ Math.round( Math.random() * (test.pm.length-1))]);
+
+       }
+  }
+  /***
+   * 
+   * FIN_TODO quitar con tarjeta beunas
+   */
+
+})
 
 
 Accounts.onCreateUser(function (options, user : User) {
@@ -251,19 +272,6 @@ Accounts.onCreateUser(function (options, user : User) {
     iniProfesorModel(profile);
   }
 
-  /**
-   * 
-   * TODO quitar con tarjetas buenas
-   */
-  if(test.isTest)
-  {
-        
-        Meteor.call("saveMetodoPago", test.pm[ Math.round( Math.random() * (test.pm.length-1))]);
-  }
-  /***
-   * 
-   * FIN_TODO quitar con tarjeta beunas
-   */
 
   user.profile = profile;
   console.log(user);
