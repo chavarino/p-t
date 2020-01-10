@@ -4,6 +4,7 @@ import { PerfilPagosColl } from 'imports/collections/perfilPagos.collection';
 import { COD_ERROR, ExceptClass} from "../libAux/erroresCod"
 import { MethodsClass } from 'imports/functions/methodsClass';
 import { isUndefined } from 'util';
+import { isDefined } from '@angular/compiler/src/util';
 
 const precioUnidad = 0.001;
 let api_key =  Meteor.isProduction ? 'sk_test_wFBgb0r4Kv2YgY5EIWEVsaYb00KkSnycJv'
@@ -483,6 +484,12 @@ stripe.setMaxNetworkRetries(3);
 
     }
 
+    const hasMPago = (idUser : string) : boolean =>
+    {
+      let perfilPago : PerfilPagos = PerfilPagosColl.findOne({idCliente: idUser })
+
+      return perfilPago &&  isDefined(perfilPago.idPayment_method) && perfilPago.idPayment_method!=="";
+    }
 
     const generarEntornoDePago = async (payment_method, idPlan) =>
     {
@@ -650,4 +657,4 @@ stripe.setMaxNetworkRetries(3);
              removeCardFromCustomer, removeCustomer, getCustomer, getPlanesCobro,
              attachSuscriptionToCustomer, chargeAmountToCustomer, getSuscriptionItem, removeSus,
              getCustomerInvoices, getInvoice,   attachPayMethodToCustomer, detachPayMethodToCustomer,
-             updateCustomer, generarEntornoDePago, borrarEntornoDePago, getUsage, cargarCantidadToCustomer, getPMethod, precioUnidad} : {};
+             updateCustomer, generarEntornoDePago, borrarEntornoDePago, getUsage, cargarCantidadToCustomer, getPMethod, precioUnidad, hasMPago} : {};
