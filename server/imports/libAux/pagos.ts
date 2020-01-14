@@ -5,10 +5,12 @@ import { COD_ERROR, ExceptClass} from "../libAux/erroresCod"
 import { MethodsClass } from 'imports/functions/methodsClass';
 import { isUndefined } from 'util';
 import { isDefined } from '@angular/compiler/src/util';
+import { SecretServices } from './sharedPass';
+import { FactoryCommon } from 'imports/functions/commonFunctions';
 
 const precioUnidad = 0.001;
-let api_key =  Meteor.isProduction ? 'sk_test_wFBgb0r4Kv2YgY5EIWEVsaYb00KkSnycJv'
-    :'sk_test_wFBgb0r4Kv2YgY5EIWEVsaYb00KkSnycJv';
+let api_key =  Meteor.isProduction ? SecretServices.prod.stripe.secret
+    : SecretServices.dev.stripe.secret;
 
 const stripe = require('stripe')(api_key);
 const uuidv4 = require('uuid/v4');
@@ -377,10 +379,11 @@ stripe.setMaxNetworkRetries(3);
      * @param cantidad cantidad a cargar en euros.
      * @param precioUnidadIn precio por unidad €/unidad
      */
-    const cargarCantidadToCustomer= async (cantidad : number, userId:string, precioUnidadIn ?: number) =>
+    const cargarCantidadToCustomer= async (cantidad : number, userId:string, ipComprador:string, precioUnidadIn ?: number) =>
     {
 
       //MIRAR LO DEL USUARIO ID IGUAL ESTÄ MAL QUIEN PAGA.
+      let vm=this;
       let perfilPago : PerfilPagos = PerfilPagosColl.findOne({idCliente: userId })
       //cantidad es en euros
       precioUnidadIn =  isUndefined(precioUnidadIn) ?  precioUnidad : precioUnidadIn;
@@ -398,7 +401,7 @@ stripe.setMaxNetworkRetries(3);
       }
      
       //se intentara 2 veces cobrar (solo en caso que falle)
-      //guardamos euros a deber.
+      //guardamos cantida de euros a deber + lo que debia de anteriormente 
           perfilPago.lastCharge.cantidad = cantidad+ (perfilPago.lastCharge.cantidad || 0);
           //si la cantidad es cero no se carga nada pero no habria error.
           if(perfilPago.lastCharge.cantidad===0)
@@ -414,18 +417,20 @@ stripe.setMaxNetworkRetries(3);
                   setBlockedUpd(perfilPago._id, true);
                   
                   
-                  
+                  // se genera la key de transaccion
+                  // cargamos la cantidad (precio a cobrar / numerio de unidades)
                   idempotency_key  = perfilPago.lastCharge.idempotency_key || uuidv4(); // ⇨ '1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed'
                     let charge : Charge = {
-                      quantity : perfilPago.lastCharge.cantidad/precioUnidadIn // cargamos la cantidad de unidades a cobrar
+                      quantity : FactoryCommon.roundXDecs(perfilPago.lastCharge.cantidad,2) /precioUnidadIn // cargamos la cantidad de unidades a cobrar
                     }
-              
+           
+            console.log(`idSusRecord=${perfilPago.idSusRecord}, Charge=${JSON.stringify(charge)}, idempotency_key=${idempotency_key}` )
             await chargeAmountToCustomer(perfilPago.idSusRecord, charge, idempotency_key)
-            
+            console.log("PAGADO CON EXITo")
             perfilPago.facturaPago.push({
               cantidad : perfilPago.lastCharge.cantidad,
               fecha : new Date(),
-              ip: this.connection.clientAddress,
+              ip:  ipComprador ?  ipComprador : "",
               userId : userId
             })
             
@@ -435,9 +440,12 @@ stripe.setMaxNetworkRetries(3);
 
             idempotency_key = undefined;  
             pagado = true;
+
+            console.log(`Perfil pago: ${JSON.stringify(perfilPago.facturaPago)}, cantidad : ${perfilPago.lastCharge.cantidad}`)
             
         } catch (error) {
           error = new ExceptClass(COD_ERROR.CHARGE_NEW, error);
+          console.log("ERROR " + error)
         }
         finally{
           // El bloque lo libera.
@@ -445,14 +453,17 @@ stripe.setMaxNetworkRetries(3);
           if(pagado)
           {
             // nada
+            console.log("Finally: PAgado")
           }
           else if(index<2){
+              console.log("Finally: No pagado, reintento")
               perfilPago.lastCharge.idempotency_key = idempotency_key;
               continue;
           }
           else if(index===2)
           {
             idempotency_key = undefined;
+            console.log("Finally: No pagado, fin reintentos")
             //perfilPago.lastCharge.idempotency_key = undefined;
           
           }
@@ -461,7 +472,7 @@ stripe.setMaxNetworkRetries(3);
           {
             perfilPago.lastCharge.idempotency_key = idempotency_key;
           }
-          
+          console.log("finally: indempontecy_key =" + perfilPago.lastCharge.idempotency_key);
           jsonIn = {
             
             lastCharge : perfilPago.lastCharge
@@ -473,6 +484,8 @@ stripe.setMaxNetworkRetries(3);
             pagado=false;
           }
 
+
+          console.log("finally: pagado =" +pagado + "jsonIn.facturaPago"+ JSON.stringify(jsonIn.facturaPago));
           setBlockedUpd(perfilPago._id, false, jsonIn)
 
           if(isUndefined(idempotency_key))

@@ -1,0 +1,34 @@
+    [
+        {
+            "codigo" : 1,
+            "perm" :  0
+
+        },
+         {
+            "codigo" : 2,
+            "perm" :  1
+
+        },
+         {
+            "codigo" : 3,
+            "perm" :  10
+
+        },
+         {
+            "codigo" : 4,
+            "perm" :  20
+
+        },
+         {
+            "codigo" : 5,
+            "perm" :  30
+
+        },
+         {
+            "codigo" : 6,
+            "perm" :  40
+
+        }
+
+
+    ]

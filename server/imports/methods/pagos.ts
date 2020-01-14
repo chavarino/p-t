@@ -28,13 +28,15 @@ const modulo = "PagosMethods"
 
 Meteor.methods({
 
-  async chargeQuantity(cantidad :number, idUser : string, secret : string) // cantidad de dinero.
+  async chargeQuantity(cantidad :number, idUser : string, secret : string, ipComprador ?:string) // cantidad de dinero.
   {   
         this.unblock();
 
         check(cantidad, Number);
         check(secret, String);
         check(idUser, String);
+
+        console.log(`idUser: ${idUser}, cantidad : ${cantidad}, secret: ${secret}`)
         if(!isLogged())
         {
               MethodsClass.noLogueado();
@@ -50,7 +52,7 @@ Meteor.methods({
           try {
               //intentamos 3 veces cargar y sino error
               // una unidad son 0.001 €
-            await PagosFn.cargarCantidadToCustomer(cantidad, idUser);
+            await PagosFn.cargarCantidadToCustomer(cantidad, idUser, ipComprador);
            
         } catch (error) {
 

@@ -1,0 +1,38 @@
+[
+       {
+        "type" : 1,
+        "question" : "¿El profesor explica correctamente la materia?",
+        "activo" : true,
+        "answer" : 0
+    },
+    {
+        "type" : 1,
+        "question" : "¿El profesor tiene conocimientos sobre la materia?",
+        "activo" : true,
+        "answer" : 0
+    },
+    {
+        "type" : 1,
+        "question" : "¿Volveria a dar clase con el profesor?",
+        "activo" : true,
+        "answer" : 0
+    },
+     {
+        "type" : 2,
+        "question" : "¿Fue correcto el funcionamiento del sistema?",
+        "activo" : true,
+        "answer" : 0
+    },
+     {
+        "type" : 2,
+        "question" : "¿Funcionamiento de video?",
+        "activo" : true,
+        "answer" : 0
+    },
+     {
+        "type" : 2,
+        "question" : "¿Funcionamiento de audio?",
+        "activo" : true,
+        "answer" : 0
+    }
+]

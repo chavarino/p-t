@@ -17,6 +17,14 @@ export const SecretServices = {
             service: "google",
             clientId: "671960522265-hii7qilu9242c9k26cu33nu0t1f9221s.apps.googleusercontent.com",
             secret: "PbL0BR0eCXNGZX-AOdHBAw_z"
+          },
+          stripe : {
+
+            secret : "sk_test_wFBgb0r4Kv2YgY5EIWEVsaYb00KkSnycJv"
+          },
+          tokbox : {
+            key : "46491982",
+            secret: "fa5ce60fdb349e1603b02da545e1055b4b1ff62b"
           }
     },
     dev : {
@@ -29,6 +37,14 @@ export const SecretServices = {
             service: "google",
             clientId: "671960522265-hii7qilu9242c9k26cu33nu0t1f9221s.apps.googleusercontent.com",
             secret: "PbL0BR0eCXNGZX-AOdHBAw_z"
+          },
+          stripe : {
+
+            secret : "sk_test_wFBgb0r4Kv2YgY5EIWEVsaYb00KkSnycJv"
+          },
+          tokbox : {
+            key : "46491982",
+            secret: "fa5ce60fdb349e1603b02da545e1055b4b1ff62b"
           }
     }
 

@@ -71,7 +71,7 @@
                                     </div>
                                     
                                     <div class="col-4 text-left">
-                                        <label for="precio"><strong>Precio</strong></label><br>
+                                        <label for="precio"><strong>Precio(min)</strong></label><br>
 
                                         <input *ngIf="isEstadoPreClass()" id="precio"  formControlName="ultPrecio" type="number" class="form-control" id="ultPrecio" name="ultPrecio" required placeholder="Precio" [(ngModel)]="perfClase.ultPrecio">
                                         <span *ngIf="isEstadoWaitCall()">{{perfClase.ultPrecio}}</span>

@@ -113,7 +113,10 @@ import { RolesService } from '../services/roles.service';
 
     calcularPuntuacion(clase : Room) : number
     {
-          
+          if(!clase.scores)
+          {
+            return 0;
+          }
           return clase.scores.profesor.kpms.reduce((bef, act)=>{
 
               

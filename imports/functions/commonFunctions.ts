@@ -237,6 +237,14 @@ export class FactoryCommon
         }
         
     }
+
+
+    static roundXDecs(num : number , nDec :number) : number
+    {
+        
+        let factor = Math.floor(Math.pow(10, nDec));
+        return Math.round(  num * factor) / factor;
+    }
     static getSizeFileB64(encoded_string: string) : number
     {
         return 3 * encoded_string.length / 4
