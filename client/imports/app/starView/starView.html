@@ -1,4 +1,4 @@
-<div class="starView">
+<div class="starView" *ngIf="_score>0">
 	<div [title]="_score | number:'1.0-2'" >
 				<span *ngFor="let ampScore of enteras; let first = first; let last = last" style="color: #ffaf38;" [ngStyle]="last ? estrella : {}" 
 											class="fa fa-star">
@@ -9,3 +9,6 @@
 				        					</span>		
 	</div>
 </div>
+<span *ngIf="_score===0">
+	-
+</span>

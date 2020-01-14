@@ -33,7 +33,7 @@ export interface PerfilPagos {
     blocked : boolean,
 //ip guardarla en el metadata.
     lastCharge ?: {
-        cantidad ?: number;
+        cantidad ?: number; // Cantidad de dinero en euros
         idempotency_key ?: string // clave por si falla el pago no volver a recargarla sino reanudarla. sino hay null.
     },
     

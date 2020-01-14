@@ -307,11 +307,26 @@ Meteor.methods({
     //PagosFn.getPlanesCobro TODO sacar la unidad de los planes d ecobro
     //maximo entre el calculo y 5 minutos. 5 mintps los va a pagar siempre.
     //obtenemos lo miutos de clase.
-    let tiempoClaseMinuts = Math.max( (room.fechaFin.getTime() - room.fechaIni.getTime()) /60000, 5);
     // dinero por minuto. 
-    
+    let ip =""
     try {
-      Meteor.call("chargeQuantity", tiempoClaseMinuts * (room.precio || 0), room.alumnoId, secretshared);
+      ip = this.connection.clientAddress;
+    } catch (error) {
+      ip = "NOT_IP"
+      console.log("Ip error : " + error);
+    }
+
+
+    try {
+      let tiempoClaseMinuts = Math.max( (room.fechaFin.getTime() - room.fechaIni.getTime()) /60000, 5);
+      let precioTotal =tiempoClaseMinuts * (room.precio || 0);
+      room.ip = ip;
+      console.log("Tiempo   consumido (min 5mins):" + tiempoClaseMinuts);
+      console.log("Precio total de clase: " + precioTotal);
+
+      
+
+      Meteor.call("chargeQuantity", precioTotal, room.alumnoId, secretshared, room.ip);
       room.cargadoCoste=true;
     } catch (error) {
       room.cargadoCoste =false;
