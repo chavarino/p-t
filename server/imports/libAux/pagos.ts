@@ -169,11 +169,11 @@ stripe.setMaxNetworkRetries(3);
               {
                 
                 quantity: obj.quantity,
-                timestamp: /*1522893428*/Math.floor((new  Date).getTime()/1000),
+                timestamp: Math.floor((new  Date).getTime()/1000),
                 action: obj.action || "increment"
                 
               },{
-                idempotency_key: idempotency_key || undefined // TODOOOOOOO generar por V4 UUIDs,
+                idempotency_key: idempotency_key || undefined ,
                 
               }
             );
@@ -184,7 +184,7 @@ stripe.setMaxNetworkRetries(3);
 
 
 
-     const attachSuscriptionToCustomer = async (idCustomer, idPlan) =>
+     const attachSuscriptionToCustomer = async (idCustomer, idPlan, idPM) =>
     {
       //TODO IMPORTANTE GUARDAR EL ID DE LA SUSCRIPCION CREADA
             const res = await stripe.subscriptions.create({
@@ -194,8 +194,8 @@ stripe.setMaxNetworkRetries(3);
                   plan: idPlan,
                   // quantity: 1 (PARA SUSCRIPCIONES FIJAS.)
                 },
-              ]/*,
-              default_payment_method : idPM*/
+              ],
+              default_payment_method : idPM
             }
             );
 
@@ -287,7 +287,7 @@ stripe.setMaxNetworkRetries(3);
       let uso = 0;
 
       //obtenemos perfil de pagos
-      let perfilPago : PerfilPagos = PerfilPagosColl.findOne({idCliente: Meteor.userId() })
+      const perfilPago : PerfilPagos = PerfilPagosColl.findOne({idCliente: Meteor.userId() })
       
       try {
         //Combprobamos que este correcto los perfiles.
@@ -384,7 +384,7 @@ stripe.setMaxNetworkRetries(3);
 
       //MIRAR LO DEL USUARIO ID IGUAL ESTÄ MAL QUIEN PAGA.
       let vm=this;
-      let perfilPago : PerfilPagos = PerfilPagosColl.findOne({idCliente: userId })
+      const perfilPago : PerfilPagos = PerfilPagosColl.findOne({idCliente: userId })
       //cantidad es en euros
       precioUnidadIn =  isUndefined(precioUnidadIn) ?  precioUnidad : precioUnidadIn;
       let pagado = false;
@@ -499,7 +499,7 @@ stripe.setMaxNetworkRetries(3);
 
     const hasMPago = (idUser : string) : boolean =>
     {
-      let perfilPago : PerfilPagos = PerfilPagosColl.findOne({idCliente: idUser })
+      const perfilPago : PerfilPagos = PerfilPagosColl.findOne({idCliente: idUser })
 
       return perfilPago &&  isDefined(perfilPago.idPayment_method) && perfilPago.idPayment_method!=="";
     }
@@ -508,7 +508,7 @@ stripe.setMaxNetworkRetries(3);
     {
         
             
-      let perfilPago : PerfilPagos = PerfilPagosColl.findOne({idCliente: Meteor.userId() })
+      let  perfilPago : PerfilPagos = PerfilPagosColl.findOne({idCliente: Meteor.userId() })
 
       try {
 
@@ -540,7 +540,7 @@ stripe.setMaxNetworkRetries(3);
           
           let sus;
           try {
-            sus = await attachSuscriptionToCustomer(c.id, idPlan);
+            sus = await attachSuscriptionToCustomer(c.id, idPlan, payment_method);
             
           } catch (error) {
             
@@ -569,6 +569,7 @@ stripe.setMaxNetworkRetries(3);
           }
           //insertamos el perfil.
           PerfilPagosColl.insert(perfilPago);
+          perfilPago = PerfilPagosColl.findOne({idCliente: Meteor.userId() })
         }
         else{
           //ACTUALIZACION DE CUSTOMER Y METODO DE PAGO
@@ -632,7 +633,7 @@ stripe.setMaxNetworkRetries(3);
 
             let sus;
             try {
-              sus = await attachSuscriptionToCustomer(perfilPago.customer.id,idPlan);
+              sus = await attachSuscriptionToCustomer(perfilPago.customer.id,idPlan, payment_method);
               perfilPago.idSuscription = sus.id;
               perfilPago.idSusRecord = sus.items.data[0].id;
               
