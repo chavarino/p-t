@@ -1,10 +1,10 @@
-<div class="tags-c">
+<div class="tags-c" style="width: 100%;">
 <!--
     [disable]="_readOnly"
     [autocompleteItems]="autoComplete"
 -->
-    <div>
-        <tag-input (onSelect)="onSelectItem($event)" [hideForm]="_readOnly" [removable]="!_readOnly" [onAdding]="onAdding" [ngModel]="_config.listCat"  [secondaryPlaceholder]="_placeHolder"  [placeholder]="'+Categoria'"  (onTextChange)="onTextChange($event)"
+    <div style="width: 100%;">
+        <tag-input style="width: 100%;" (onSelect)="onSelectItem($event)" [hideForm]="_readOnly" [removable]="!_readOnly" [onAdding]="onAdding" [ngModel]="_config.listCat"  [secondaryPlaceholder]="_placeHolder"  [placeholder]="'+Categoria'"  (onTextChange)="onTextChange($event)"
          (onRemove)="onRemoveTag($event)" (onAdd)="onAddTag($event)">
             <tag-input-dropdown
             
