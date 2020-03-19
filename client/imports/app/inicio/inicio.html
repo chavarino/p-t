@@ -1,4 +1,22 @@
-<section class="imagen-inicio img-fluid p-3">
+<script>
+    $(function () {
+        var currentHash = "#one"
+        $(document).scroll(function () {
+            $('.hash').each(function () {
+                var top = window.pageYOffset;
+                var distance = top - $(this).offset().top;
+                var hash = $(this).attr('href');
+    
+                if (distance < 30 && distance > -30 && currentHash != hash) {
+                    alert(hash);
+                    currentHash = hash;
+                }
+            });
+        });
+    });
+</script>
+<a name="inicio"></a>
+<section name="inicio" class="imagen-inicio img-fluid p-3">
     <div class="container">
         <div class="container pt-2">
             <div class="row">
@@ -14,10 +32,10 @@
             <div class="row justify-content-center">
                 <div class="col-10">
                     <div class="center-block" style="text-align: center">
-                        <span style="color: white!important" class="card-text text-muted">
+                        <!--span style="color: white!important" class="card-text text-muted">
                              ¿Con qué materia necesitas ayuda? (Ej. Álgebra, Cálculo, Química...)
                         </span>
-                        <br>
+                        <br class="mt-1"-->
                         <div class="input-group">
                                 <categorias style="background: white;
                                 width: 90%;"   [config]="configTags"></categorias>  
@@ -39,72 +57,197 @@
 </section>
 <a name="como-funciona"></a>
 <br class="mt-5">
+<br class="mt-5">
 <br class="mt-2">
-<!--section>
-        <div class="section2 container"-->
-            <div class="pt-2">
-                <div class="text-center pt-5 ">
-                    <h3 class="section2-title">Mejora tus notas en sólo 4 pasos</h3>    
+<div class="container">
+    <div class="pt-5">
+        <div class="text-center">
+            <h3 class="section2-title">¿Cómo funciona Sapens?</h3> 
+            <div class="section2-text">
+                Si tienes alguna duda sobre las materias que estás estudiando,
+                o simplemente sientes curiosidad por saber algo más,
+                regístrate, busca tu profesor ideal y él te ayudará.
+            </div>   
+        </div>
+        <div class="row pt-4">
+            <div class="col-md-4">
+                <div class="text-center">
+                    <img class="d-block" src="/images/2.png" style="margin: auto; width: 99%; margin-bottom: 10%" alt="First slide">
+                    <h5 class="section2-subtitle">Consulta</h5>
+                    <div class="section2-text" style="margin-bottom: 10%;">Simplemente escríbenos sobre qué trata tu consulta (Matemáticas, Física, Química...)</div>
                 </div>
             </div>
-            <!--div>
-                <div class="row justify-content-md-center">
-                    <div class="col-5" style="margin-left: -10%">
-                        <img src="/images/2.png" style="width: 120%;">
-                        <div class="text-center" style="margin-left: 15%; margin-top: -25%">
-                            <h4 class="section2-subtitle">Consulta</h4>
-                            <div class="section2-text">
-                                Indica la categoría a la que pertenece tu duda
-                            </div>
-                        </div>  
-                    </div>
-                    <div class="col-5">
-                        <img src="/images/1.png" style="width: 120%;">
-                        <div class="text-center" style="margin-left: 15%; margin-top: -25%">
-                            <h4 class="section2-subtitle">Elección</h4>
-                            <div class="section2-text">
-                                Selecciona uno de los profesores disponibles para atenderte
-                            </div>
-                        </div> 
-                    </div>
+            <div class="col-md-4">
+                <div class="text-center">
+                    <img class="d-block" src="/images/1.png" style="margin: auto; width: 103%; margin-bottom: 10%" alt="First slide">
+                    <h5 class="section2-subtitle">Elección</h5>
+                    <div class="section2-text" style="margin-bottom: 10%;">Selecciona al profesor que quieres que resuelva tu consulta</div>
                 </div>
-                <div class="row justify-content-md-center">
-                        <div class="col-5" style="margin-left: -10%">
-                            <img src="/images/4.png" style="width: 120%;">
-                            <div class="text-center" style="margin-left: 15%; margin-top: -23%">
-                                <h4 class="section2-subtitle">Clase</h4>
-                                <div class="section2-text">
-                                    Resuelve tu duda online y con los recursos que necesites
-                                </div>
-                            </div>   
-                        </div>
-                        <div class="col-5"> 
-                            <img src="/images/3.png" style="width: 120%; padding-top: 2%"> 
-                            <div class="text-center" style="margin-left: 15%; margin-top: -25%">
-                                <h4 class="section2-subtitle">Valoración</h4>
-                                <div class="section2-text">
-                                    Puntúa a tu profesor y la calidad de la clase, ¡te lo agradecerá!
-                                </div>
-                            </div>
-                        </div>
-                    </div>
             </div>
-        </div-->
-    <!--/section-->
-        <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+            <div class="col-md-4">
+                <div class="text-center">
+                    <img class="d-block" src="/images/4.png" style="margin: auto; width: 103%; margin-bottom: 10%" alt="First slide">
+                    <h5 class="section2-subtitle">Clase</h5>
+                    <div class="section2-text" style="margin-bottom: 10%;">Resuelve tu duda online, con los recursos que necesites</div>
+                </div>
+            </div>
+            <!--div class="col-md-3">
+                <div class="text-center">
+                    <img class="d-block" src="/images/3.png" style="margin: auto; width: 102%; margin-bottom: 10%" alt="First slide">
+                    <h5 class="section2-subtitle">Valoración</h5>
+                    <div class="section2-text" style="margin-bottom: 10%;">¡El profesor y Sapens te agradeceremos que nos des tu opinión!</div>
+                </div>
+            </div-->
+        </div>     
+    </div>
+
+    <a name="asignaturas"></a>
+    <br class="mt-5">
+    <br class="mt-5">
+    <br class="mt-2">
+    <div class="pt-5">
+        <div class="text-center">
+            <h3 class="section2-title">¿Qué <b>asignaturas</b> podrás consultar?</h3>   
+        </div>
+        <div class="row pt-5">
+            <div class="col-md-6">
+                <div class="text-center">
+                    <img class="d-block" src="/images/asignaturas.png" style="margin: auto; width: 100%; margin-bottom: 10%">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="section2-text" style="margin-bottom: 5%; text-align:justify">
+                    Encontrarás ayuda personalizada en asignaturas como <b>matemáticas, física, química, programación</b>...
+                    Nuestro objetivo es que un profesor pueda ayudarte en cualquier ámbito del conocimiento a un precio 
+                    completamente accesible.
+                </div>
+                <div class="section2-text" style="margin-bottom: 5%; text-align:justify">
+                    <!--u style="color: red;">
+                        Actualmente nos encontramos en una fase alfa como plataforma, por lo que es posible que tanto la plataforma
+                        como la oferta de asignaturas ofrecida sea inestable. 
+                    </u--> 
+                </div>                  
+            </div>
+        </div>
+    </div>
+    <a name="precios"></a>
+    <br class="mt-5">
+    <br class="mt-5">
+    <br class="mt-2">
+    <div class="pt-5">
+        <div class="text-center">
+            <h3 class="section2-title">Precios</h3>
+            <div class="section2-text" style="margin-bottom: 5%;">
+                Elige la oferta que más se adapte a tus necesidades y... ¡ahorra en tiempo!
+            </div>    
+        </div>
+        <table>
+            <colgroup></colgroup>
+            <colgroup></colgroup>
+            <colgroup></colgroup>
+    
+            <thead>
+                <tr>
+                    <!--th>&nbsp;</th-->
+                    <th>
+                        <h2>1 hora</h2>
+                        <p>Mensual</p>
+                        <p>Desde 0,5€/minuto facturado mensualmente</p>
+                    </th>
+                    <th>
+                        <h2>5 horas</h2>
+                        <p>Mensual</p>
+                        <p>Desde 0,2€/minuto facturado mensualmente</p>
+                        <p class="promo">¡Recomendado!</p>
+                    </th>
+                    <th>
+                        <h2 style="font-size: 7rem;">&infin;</h2>
+                        <p>¡Paga el tiempo que necesites!</p>
+                        <p>Desde 1€/minuto</p>
+                    </th>
+                </tr>
+            </thead>
+    
+            <tfoot>
+                <tr>
+                    <!--th>&nbsp;</th-->
+                    <td><a href="#">Quiero esta oferta</a></td>
+                    <td><a href="#">Quiero esta oferta</a></td>
+                    <td><a href="#">¡Pruébalo gratis!</a></td>
+                </tr>
+            </tfoot>
+    
+            <tbody>
+                <tr>
+                    <td>&#9989; Recibe ayuda en tu consulta 24/7</td>
+                    <td>&#9989; Recibe ayuda en tu consulta 24/7</td>
+                    <td>&#9989; Recibe ayuda en tu consulta 24/7</td>
+                </tr>
+                <tr>
+                    <td>&#9989; ¡Ahorra hasta 30€!</td>
+                    <td>&#9989; ¡Ahorra hasta 30€!</td>
+                    <td>&#9989; ¡Sin suscripción!</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container text-center">
+        <div class="row">
+            <div class="col-lg-6 col-md-12 text-footer" style="margin-top: 5%;">
+                <h4 style="color: white;">Conócenos</h4>
+                <ul class="list-unstyled">
+                    <li><a href="#">¿Quiénes somos?</a></li>
+                    <li><a href="#">¿Tienes sugerencias?</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-6 col-md-12 text-footer" style="margin-top: 5%;">
+                <h4 style="color: white;">Aprende con nosotros</h4>
+                <ul class="list-unstyled">
+                    <li class="nav-item" *ngIf="canReadC('none')">
+                        <a routerLink="/inicio" fragment="asignaturas">Asignaturas</a>
+                    </li>                    
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+        </div>
+        <hr class="text-center" style="background-color: white; width:80%"/>
+        <div class="row text-center text-footer">
+            <div class="col-md-12">
+                <i class="fa fa-facebook-official" style="font-size: 35px; color:white">&nbsp;</i>
+                <i class="fa fa-instagram" style="font-size:35px;color:white">&nbsp;</i>
+                <i class="fa fa-twitter" style="font-size:35px;color:white">&nbsp;</i>
+            </div>
+            <!--div class="col-md-4 title-footer">
+                <ul class="list-unstyled">
+                    <li>
+                        <i class="fa fa-facebook-official" style="font-size: 35px; color:white"></i>
+                    </li>
+                    <li>
+                        <i class="fa fa-instagram" style="font-size:35px;color:white"></i>
+                    </li>
+                    <li>
+                        <i class="fa fa-twitter" style="font-size:35px;color:white"></i>
+                    </li>
+                </ul>
+            </div-->
+        </div>
+        <div class="row text-center text-footer">
+            <div class="col-md-12">sapensemail@gmail.com</div>
+        </div>
+    </div>
+</footer>
+
+        <!--div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
             <ol class="carousel-indicators">
                 <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
                 <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
                 <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
             </ol>
             <div class="carousel-inner">
-                <!--div class="carousel-item active" style="margin-bottom: 5%">
-                    <img class="d-block" src="/images/2.png" style="margin: auto; width: 40%; margin-bottom: 10%" alt="First slide">
-                    <h4 class="section2-subtitle" style="margin-left: 38.5%; margin-top: -12%">Consulta</h4>
-                    <div class="section2-text" style="margin-left: 38.5%; margin-top: -8%">
-                        Indica la categoría a la que pertenece tu duda
-                    </div>
-                </div-->
 
                 <div class="carousel-item active">
                     <img class="d-block" src="/images/2.png" style="margin: auto; width: 40%; margin-bottom: 10%" alt="First slide">
@@ -137,27 +280,6 @@
                         </div>
                     </div>
 
-                <!--div class="carousel-item" style="margin-bottom: 5%">
-                    <img class="d-block" src="/images/1.png" style="margin: auto; width: 40%; margin-bottom: 10%" alt="Second slide">
-                    <h4 class="section2-subtitle" style="margin-left: 38.5%; margin-top: -12%">Elección</h4>
-                    <div class="section2-text" style="margin-left: 34.5%; margin-top: -8%">
-                            Selecciona uno de los profesores disponibles para atenderte
-                        </div>
-                </div>
-                <div class="carousel-item" style="margin-bottom: 5%">
-                    <img class="d-block" src="/images/4.png" style="margin: auto; width: 40%; margin-bottom: 10%" alt="Third slide">
-                    <h4 class="section2-subtitle" style="margin-left: 38.5%; margin-top: -12%">Clase</h4>
-                    <div class="section2-text" style="margin-left: 34.5%; margin-top: -8%">
-                            Resuelve tu duda online y con los recursos que necesites
-                        </div>
-                </div>
-                <div class="carousel-item" style="margin-bottom: 5%">
-                    <img class="d-block" src="/images/3.png" style="margin: auto; width: 40%; margin-bottom: 10%" alt="Forth slide">
-                    <h4 class="section2-subtitle" style="margin-left: 38.5%; margin-top: -12%">Valoración</h4>
-                    <div class="section2-text" style="margin-left: 34.5%; margin-top: -8%">
-                            Puntúa a tu profesor y la calidad de la clase, ¡te lo agradecerá!
-                        </div>
-                </div-->
             </div>
             <a class="carousel-control-prev"  href="#carouselExampleControls" role="button" data-slide="prev">
                 <span class="carousel-control-prev-icon" style="color:black; background-color: black; " aria-hidden="false"></span>
@@ -167,4 +289,4 @@
                 <span class="carousel-control-next-icon" style="color:black; background-color: black;" aria-hidden="false"></span>
                 <span class="sr-only">Next</span>
             </a>
-        </div>
+        </div-->

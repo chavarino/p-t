@@ -27,7 +27,7 @@ export class Categorias{
   private _readOnly : boolean  = false;
   private _select : string  = "";
 
-  private _placeHolder = 'Categorias*';
+  private _placeHolder = ' ¿Qué tipo de duda quieres resolver? (Ej. Álgebra, Cálculo, Química...) ';
 
   private _generarInput = false
 
