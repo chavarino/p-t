@@ -21,12 +21,39 @@
                 </div>
             </div>
             <div class="row box-full-screen"   >
-                    <div class="col" (click)="switchFullScreen()">
-                            <i class="material-icons fullscreen-on" [ngClass]="{'md-48': isFullScreen()}">
-                                    {{ isFullScreen() ? "fullscreen_exit" : "fullscreen"}}
+                    <div class="col"  *ngIf="!isFullScreen()">
+                            <i class="material-icons fullscreen-on" title="Pantalla completa" (click)="switchFullScreen()">
+                                    {{  "fullscreen"}}
                             </i>
+                          <!--  <i class="material-icons" title="Recargar video" (click)="reconectarVideo()">
+                                refresh
+                            </i>-->
                             
-                    </div>
+                        </div>
+                    <div class="col" *ngIf="isFullScreen()">
+                                    <div class="barra-accion-fscreen">
+                                        <i  class="material-icons mr-2" title="Compartir/Cancelar escritorio" (click)="switchVideoSource()">
+                                              {{isModeCam()? "screen_share" : "switch_video"}}  
+                                        </i>      
+                                        <i class="material-icons micro-on  mr-2" title="habilitar/deshabilitar micrófono" (click)="switchMicro()">
+                                                {{isSonidoOn() ? "mic" : "mic_off" }}
+                                        </i>
+                                        <i  (click)="switchVideo()" class="material-icons videocam-on mr-2"  title="habilitar/deshabilitar cámara">
+                                                {{isVideoOn() ? "videocam" : "videocam_off" }}             
+                                        </i>
+
+                                        <i class="material-icons fullscreen-on md-48" title="deshabilitar pantalla completa" (click)="switchFullScreen()" >
+                                                {{ "fullscreen_exit" }}
+                                        </i>
+                                       <!--
+                                           <i class="material-icons">
+                                                refresh
+                                            </i>
+
+                                       --> 
+            
+                                    </div>
+                                </div>
             </div>   
             
         </div>
@@ -37,7 +64,9 @@
                     <!-- CAJA chat-->
                 </div>
             </div>
-            <div class="row" style="height: 325px;
+            <div class="row"
+            #textchat
+            style="height: 325px;
             max-height: 325px;
             min-width: 325px;
             overflow-y: auto;
@@ -72,23 +101,23 @@
             </div>
         </div>
         
-
-    </div>
-
-   
-    <div class="row">
-            <div class="col-4" style="height: 80%"> 
-
-            </div>
-            <div class="col-4" style="text-align: right">
-                <!-- caja de acciones -->
-                <fileInput [multiple]="false" (onSelectFile)="addFile($event)"></fileInput>
-            </div>
-            <div class="col-4"> 
-
-                </div>
-        </div>    
         
+        
+        
+        
+    </div>
+            <div class="row">
+                <div class="col-4" > 
+                    
+                    <fileInput [multiple]="false" (onSelectFile)="addFile($event)"></fileInput>
+                    </div>
+                    <div class="col-4" style="text-align: right">
+                        
+                    </div>
+                    <div class="col-4"> 
+        
+                        </div> 
+                </div>  
     <div class="row">
             
             <div class="col-7">
@@ -97,7 +126,8 @@
                 <div class="row">
                     
                      <div class="col-10">
-                         <textarea keyDectect [fn]="fnKeyDetectChat" [(ngModel)]="msg" name="" id="" cols="30" rows="10" style="margin-top: 0px; margin-bottom: 0px; height: 106px; width: 100%;" ></textarea>
+                         <textarea  
+                         keyDectect [fn]="fnKeyDetectChat" [(ngModel)]="msg" name="" id="" cols="30" rows="10" style="margin-top: 0px; margin-bottom: 0px; height: 106px; width: 100%;" ></textarea>
                         
                      </div>
                      <div class="col-1">
@@ -129,7 +159,7 @@
                     <div class="row">
     
                             
-                        <div class="col">
+                        <div class="col" *ngIf="!isFullScreen()">
                             <div>
                                 <i  class="material-icons mr-2" (click)="switchVideoSource()">
                                       {{isModeCam()? "screen_share" : "switch_video"}}  

@@ -1,13 +1,18 @@
 @import '../../../../imports/scss/shared.scss';
 .room-alumno i.material-icons.iconos:hover {
-    background: #f1f1f1;
+    margin-bottom: 0px !important;
+    color: white;
+    background: #49ffa4 !important;
 }
 
 .room-alumno i.material-icons.iconos{
     
-    font-size: 60px;
-    color: green;
+    font-size: 6rem;
+    color: #49ffa4;
+    background: white;
     border-radius: 10%;
+    border: 1px solid #49ffa4;
+  
 }
 
 .room-alumno{

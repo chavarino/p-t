@@ -78,7 +78,7 @@ export class RtcService {
     }
     private videoType : VideoType = VideoType.CAM;
     negotiating :boolean;
-    rct :  Rtc
+    rtc :  Rtc
     
     remoteVideo;
     localVideo;
@@ -94,7 +94,7 @@ export class RtcService {
     { 
  
         
-        this.rct = {
+        this.rtc = {
           localVideoId : "",
           remoteVideoId: "",
           singalSender : null
@@ -116,7 +116,7 @@ export class RtcService {
     {
      // this.l.log("isConnected Ini");
       let vm= this;
-      if(!vm.rct || !vm.rct.pc)
+      if(!vm.rtc || !vm.rtc.pc)
       {
 
        // this.l.log("isConnected False");
@@ -127,7 +127,7 @@ export class RtcService {
 
         //this.l.log("isConnected True");
 	      //this.l.log("Estado de conexion: " + vm.rct.pc.connectionState);
-        return  (vm.navegador=== Navegador.MOZILLA || vm.navegador=== Navegador.SAFARI) && vm.trasmitiendo || vm.rct.pc.connectionState === "connected";
+        return  (vm.navegador=== Navegador.MOZILLA || vm.navegador=== Navegador.SAFARI) && vm.trasmitiendo || vm.rtc.pc.connectionState === "connected";
 
       }
     }
@@ -158,7 +158,7 @@ export class RtcService {
 
       Log.logStatic(this.module, "newRtc: definiendo");
         let rtc : RtcService = new RtcService();
-        rtc.rct = {
+        rtc.rtc = {
           localVideoId : localVideoId,
           remoteVideoId: remoteVideoId,
           singalSender : singalSender,
@@ -188,7 +188,7 @@ export class RtcService {
     sendMessage(msg : MessageRtc)
     {
         this.l.log("sendMessage "+ JSON.stringify(msg));
-        this.rct.singalSender(msg)
+        this.rtc.singalSender(msg)
     }
     async localDescCreated(desc : RTCSessionDescriptionInit) {
 
@@ -200,14 +200,14 @@ export class RtcService {
         let vm =this;
         this.l.log("localDescCreated setLocalDescription - type: " + desc.type);
         
-        await vm.rct.pc.setLocalDescription(desc);
+        await vm.rtc.pc.setLocalDescription(desc);
  
-        vm.sendMessage(vm.newMsg(MsgTipo.SDP, vm.rct.pc.localDescription.toJSON()));
+        vm.sendMessage(vm.newMsg(MsgTipo.SDP, vm.rtc.pc.localDescription.toJSON()));
           
       }
 
 
-      startWebRTC() {
+      startWebRTC(recconect ?: boolean) {
 
         let vm =this;
         if(navigator.userAgent.includes("Mozilla"))
@@ -225,8 +225,8 @@ export class RtcService {
         this.trasmitiendo = false;
         this.l.log("startWebRTC  INI");
         //this.setVideoTypeScreen();
-        this.rct.pc = new RTCPeerConnection(RtcService.configuration);
-        let pc = this.rct.pc;
+        this.rtc.pc = new RTCPeerConnection(RtcService.configuration);
+        let pc = this.rtc.pc;
         this.l.log("startWebRTC  RTCPeerConnection conf: "+ JSON.stringify(RtcService.configuration));
         
         //document.getElementById("demo")
@@ -245,13 +245,22 @@ export class RtcService {
           // message to the other peer through the signaling server
           this.l.log("startWebRTC  iniRtc().");
 
+          pc.oniceconnectionstatechange = function(event) {
+            console.log("ESTADO ICE CONECTION" +  pc.iceConnectionState+  " - " +JSON.stringify(event))
+            if (pc.iceConnectionState === "failed") {
+              /* possibly reconfigure the connection in some way here */
+              /* then request ICE restart */
+              console.log("REINICIAR")
+              vm.reiniciar()
+            }
+          };
           pc.onconnectionstatechange  = function(event) {
 
-            vm.l.log("rtc  onconnectionstatechange(). " + JSON.stringify(event));
-            if (vm.isConnected() && vm.rct.handlerConnected) {
+            vm.l.log("ESTADO: rtc  onconnectionstatechange(). " + JSON.stringify(event));
+            if (vm.isConnected() && vm.rtc.handlerConnected) {
               // Handle the failure
               vm.l.log("rtc  onconnectionstatechange(). isConnected ");
-              vm.rct.handlerConnected();
+              vm.rtc.handlerConnected();
             }
           };
           pc.onicecandidate = event => {
@@ -266,16 +275,16 @@ export class RtcService {
           };
         
           // If user is offerer let the 'negotiationneeded' event create the offer
-          vm.negotiating = this.caller ?  false : true;
+          vm.negotiating = this.caller /*|| recconect */?  false : true;
             pc.onnegotiationneeded = async () => {
-              vm.l.log(`rtc onnegotiationneeded() signalingState : ${vm.rct.pc.signalingState}, conectionState: ${vm.rct.pc.connectionState}, iceConnectionState: ${vm.rct.pc.iceConnectionState},`);
+              vm.l.log(`rtc onnegotiationneeded() signalingState : ${vm.rtc.pc.signalingState}, conectionState: ${vm.rtc.pc.connectionState}, iceConnectionState: ${vm.rtc.pc.iceConnectionState},`);
               
               if ( vm.negotiating) return;
 
               vm.l.log("rtc onnegotiationneeded() negotiating" );
               vm.l.log("rtc onnegotiationneeded() pc.signalingState=" +pc.signalingState );
               if (pc.signalingState != "stable") return;
-
+              recconect =false;
               vm.negotiating = true;
               
               vm.l.log("rtc onnegotiationneeded() stable-TRUE" );
@@ -283,7 +292,7 @@ export class RtcService {
               try {
                 vm.l.log("rtc onnegotiationneeded() createOffer..." );
                 //EL CALLER GENERA OFERTA => have-local-offer espera un respuesta.
-                vm.localDescCreated(await vm.rct.pc.createOffer(vm.offerOptions))
+                 this.sendOffer();
                 vm.l.log("rtc onnegotiationneeded() createOffer...OK" );
               } catch (err) {
 
@@ -346,15 +355,21 @@ export class RtcService {
 
 
 
+   async sendOffer() {
+    let vm=this;
+
+    await vm.localDescCreated(await vm.rtc.pc.createOffer(vm.offerOptions));
+  }
+
    async getMsg(msg : MessageRtc)
     {
 
         let vm=this;
-        let pc = vm.rct.pc;
+        let pc = vm.rtc.pc;
 
         this.l.log("getMsg  INI.");
 
-        this.l.log(`signalingState : ${vm.rct.pc.signalingState}, conectionState: ${vm.rct.pc.connectionState}, iceConnectionState: ${vm.rct.pc.iceConnectionState},`);
+        this.l.log(`signalingState : ${vm.rtc.pc.signalingState}, conectionState: ${vm.rtc.pc.connectionState}, iceConnectionState: ${vm.rtc.pc.iceConnectionState},`);
        
           try {
 
@@ -430,7 +445,15 @@ export class RtcService {
       this.videoType =VideoType.CAM;
     }
 
-  
+  reiniciar()
+  {
+    let vm =this;
+    vm.negotiating= false;
+     // this.close()
+      this.startWebRTC();
+     // vm.rct.restartIce()
+
+  }
   
     
    async  mediaUser(fn ?: ()=>void) {
@@ -482,7 +505,7 @@ export class RtcService {
           vm.stream = stream;
           vm.stream.getTracks().forEach((track) => {
             this.l.log(`mediaUser adding ${track.kind} track`);
-          let sender =vm.rct.pc.addTrack(track, vm.stream)
+          let sender =vm.rtc.pc.addTrack(track, vm.stream)
           if(track.kind=="video")
           {
             this.l.log("mediaUser  track VIDEO");
@@ -595,7 +618,7 @@ export class RtcService {
     // await vm.rct.pc.setLocalDescription(null);
       this.closeTracks();
 
-      vm.rct.pc.close();
+      vm.rtc.pc.close();
       this.l.log("close FIN");
     }
 
@@ -646,7 +669,7 @@ export class RtcService {
   
       })
     
-      vm.switchVideo = null;
+      vm.switchVideo = new Map();;
       this.l.log("closeTracks OK");
     } catch (error) {
       this.l.log("closeTracks Error:" + error, true)    

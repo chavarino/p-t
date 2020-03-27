@@ -39,6 +39,9 @@ import { SyncedCron } from 'meteor/percolate:synced-cron';
 
 import { User } from 'imports/models/User';
 import { SecretServices, test } from './imports/libAux/sharedPass';
+import { ModulesEnum } from 'imports/models/enums';
+import { terminarClaseById } from './imports/methods/room';
+import { Rooms } from 'imports/collections/room';
 //import {SyncedCron} from 'meteor/percolate:synced-cron';
 //)
 
@@ -135,16 +138,26 @@ if(Meteor.isServer)
     process.env.HTTP_FORWARDED_COUNT="1";
     //process.env.MAIL_URL="smtp://javier.chavarino.martinez@gmail.com:Albaricoke91@smtp.gmail.com:587/";
 
-    let  fn = async ()=>{
+    
+    SyncedCron.config({
+      // Log job run details to console
+      log: true,
+      // collectionName: "users"
+      
+      
+    });
+    
+    let  fnCronUsers = async ()=>{
+      console.log("Desconectando usuarios no conectados y si disponibles")
       try {
-        // 
+        // /** poner disponibles  */
           let arrayIds  : Array<string> = []
           
           //console.log("usuarios disponibles: " +  Meteor.users.find( {"profile.disponible" : !!true }).count())
           //Users.aggregate()
           let ids : Array<any> = await (Meteor.users.rawCollection().aggregate([{ $match : {  "profile.disponible" : !!true } },
-              { $project: { _id: 1, dateDifference: { $subtract: [  new Date(), "$lastUpdate" ] } } },
-          { $match : { $or: [ {dateDifference : { $gt : 30000}}, {dateDifference : { $type: 10 }} ]} } ], { allowDiskUse: true }).toArray());
+              { $project: { _id: 1, lastModulo:1, dateDifference: { $subtract: [  new Date(), "$lastUpdate" ] } } },
+          { $match : { $or: [ { lastModulo: { $ne : ModulesEnum.CLASE_PRFSOR}}, {dateDifference : { $gt : 30000}}, {dateDifference : { $type: 10 }} ]} } ], { allowDiskUse: true }).toArray());
           
           
           console.log("desconectando ususuarios: " + JSON.stringify(ids))
@@ -166,28 +179,84 @@ if(Meteor.isServer)
         
         }
     }
-
-    SyncedCron.config({
-      // Log job run details to console
-      //log: true,
-     // collectionName: "users"
-  
+    let fnCronClases  = async ()=>{
       
-    });
+      console.log("Cron terminacion de clases que los usuario están inactivos.")
+      
+      try {
+        // /** poner disponibles  */
+          let arrayIds  : Array<string> = []
+          
+          //console.log("usuarios disponibles: " +  Meteor.users.find( {"profile.disponible" : !!true }).count())
+          //Users.aggregate()
+          let ids : Array<any> = await (Rooms.rawCollection().aggregate([{ $match : {  activo : !!true } },
+              { $project: { _id: 1, profId:1, alumnoId:1, dateDifference: { $subtract: [  new Date(), "$lastPing" ] } } },
+          { $match : { $or: [  {dateDifference : { $gt : 300000}}, {dateDifference : { $type: 10 }} ]} } ], { allowDiskUse: true }).toArray());
+          
+          
+          console.log(" clases a desconectar por inactivadad: " + JSON.stringify(ids))
+          for(let i = 0 ; i<ids.length ; i++)
+          {
+           //console.log("pASA")
+              terminarClaseById(ids[i]._id, true);
+              arrayIds.push(ids[i].profId, ids[i].alumnoId);
+          }
+          if(arrayIds.length===0)
+          {
+            return;
+          }
+         
+
+          
+
+           console.log("eliminando clase de ususuarios: " + JSON.stringify(arrayIds));
+          Users.update({"_id": { "$in": arrayIds }}, {$set : { "profile.claseId" : ""}})
+          
+        } catch (error) {
+          console.log(error);
+          //throw e;
+        
+        }
 
 
+    }
+    var contador = 0;
     SyncedCron.add({
-      name: 'Desconectando usuarios no conectados y si disponibles',
+      name: 'Cron aplicación',
       schedule: function(parser) {
         // parser is a later.parse object
-        return parser.recur().on(60).second();
+        return parser.recur().on(30).second();
       },
       job: function() {
-        fn();
+        
+        fnCronUsers();
+        
+        console.log("Contador cron: " + contador);
+        if(contador % 2 ===0)
+        {
+          fnCronClases();
+        }
+        contador = contador % 10000;
+        contador ++;
         return "";
       }
     }); 
 
+    
+    /*
+    
+   
+    SyncedCron.add({
+      name: 'Terminando clases',
+      schedule: function(parser) {
+        // parser is a later.parse object
+        return parser.recur().on(10).second();
+      },
+      job: function() {
+        fnCronClases();
+        return "";
+      }
+    })*/
     SyncedCron.start();
   });
   
@@ -203,14 +272,7 @@ Accounts.onLogin(()=>{
    * TODO quitar con tarjetas buenas
    */
   console.log("LOGUEANDOSE.")
-  if(test.isTest)
-  {
-       if(!PagosFn.hasMPago(Meteor.userId())) 
-       {
-         Meteor.call("saveMetodoPago", test.pm[ Math.round( Math.random() * (test.pm.length-1))]);
-
-       }
-  }
+ // Meteor.call("rellenaTarjetasPrueba");
   /***
    * 
    * FIN_TODO quitar con tarjeta beunas

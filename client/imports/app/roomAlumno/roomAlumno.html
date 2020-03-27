@@ -67,7 +67,7 @@
                             <div class="col">
                                     <span  *ngIf="mostrarBotonLlamarNoLogueado()">
                                         <a data-toggle="modal" href="#singIn" role="button"  style="cursor: pointer">
-                                            <i class="material-icons iconos"  > 
+                                            <i class="material-icons iconos sombra"  > 
                                                     call
                                             </i>
 
@@ -75,13 +75,13 @@
                                             
                                     </span>
                                     <span  *ngIf="mostrarBotonLlamarLogueadoNoSuscrito()">
-                                        <i class="material-icons iconos" data-toggle="modal" (click)="clickBotonLlamarLogueadoNoSuscrito()" data-target="#m-confirm" style="cursor: pointer" > 
+                                        <i class="material-icons iconos sombra" data-toggle="modal" (click)="clickBotonLlamarLogueadoNoSuscrito()" data-target="#m-confirm" style="cursor: pointer" > 
                                                 call
                                         </i>
                                         
                                     </span>
                                     <span  *ngIf="mostrarBotonLlamarLogueadoSuscrito()">
-                                        <i class="material-icons iconos" data-toggle="modal" (click)="setModalConfig(prof)" data-target="#m-confirm" style="cursor: pointer" > 
+                                        <i class="material-icons iconos sombra" data-toggle="modal" (click)="setModalConfig(prof)" data-target="#m-confirm" style="cursor: pointer" > 
                                                 call
                                         </i>
                                         
@@ -149,26 +149,36 @@
         </div>
         
         <div  *ngIf="isEstadoClass()">
-            <div class="row">
-               <h3 class="col-12">
-                   Clase:   
-                   
-                   <span class="alert alert-danger float-right" *ngIf="estado.campos.ping>1">
-                                Conexión perdida, reintento ({{estado.campos.ping-1}})
-                            </span>
-               </h3>
-            </div>
-            <videoCall  [clase]="clase"  [secondsIni]="secondsIniClass" [rtc]="rtc" >Video</videoCall>
-           <!-- 
-               <div class="row">
-                <div class="col-sm">
+            <div [hidden]="!isConnected()">
+
+                <div class="row">
+                   <h3 class="col-12">
+                       Clase:   
+                       
+                       <span class="alert alert-danger float-right" *ngIf="estado.campos.ping>1">
+                                    Conexión perdida, reintento ({{estado.campos.ping-1}})
+                                </span>
+                   </h3>
                 </div>
-                
-            </div>-->
-            <div class="row">  
+                <videoCall  [clase]="clase"  [secondsIni]="secondsIniClass" [rtc]="rtc" >Video</videoCall>
+               <!-- 
+                   <div class="row">
                     <div class="col-sm">
-                        <button class="btn btn-primary" *ngIf="canColgar()" (click)="colgarCall()"> Colgar</button>
                     </div>
+                    
+                </div>-->
+                <div class="row">  
+                        <div class="col-sm">
+                            <button class="btn btn-primary" *ngIf="canColgar()" (click)="colgarCall()"> Colgar</button>
+                        </div>
+                </div>
+
+            </div>
+
+            <div *ngIf="!isConnected()" style="    text-align: center">
+                <div  class="spinner-grow text-success" role="status">
+                    <span class="sr-only">Loading...</span>
+                  </div>
             </div>
        </div>
         <div  *ngIf="false">

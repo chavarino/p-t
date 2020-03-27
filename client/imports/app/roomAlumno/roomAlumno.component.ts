@@ -29,7 +29,8 @@ import { ModalKpm } from '../modalKpm/modaKpm.component';
 import { Score } from 'imports/models/kpm';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RoomClass, ETipo } from 'imports/clases/room.class';
-import { isUndefined } from 'util';
+
+import { ModulesEnum } from 'imports/models/enums';
 
 
 
@@ -45,7 +46,7 @@ export class RoomAlumnoComponent extends RoomClass implements OnInit, OnDestroy,
     clase : Room
     roomAlumno :Subscription;
     addForm: FormGroup;
-  
+    reconectar : boolean = false;
     sanitizer : DomSanitizer;
     ///todos: Observable<Room>;
     flags : BanderasService;
@@ -62,6 +63,7 @@ export class RoomAlumnoComponent extends RoomClass implements OnInit, OnDestroy,
         listCat : [],
         listCatBusc : []
     }
+    idIntervalPingAlive: NodeJS.Timer;
   
     
  
@@ -69,7 +71,7 @@ export class RoomAlumnoComponent extends RoomClass implements OnInit, OnDestroy,
     {
 
         super("alumno", rol, cd, rutas);
-
+        rol.setModulo(ModulesEnum.CLASE_ALUMNO);
         
         
        // 
@@ -103,8 +105,8 @@ export class RoomAlumnoComponent extends RoomClass implements OnInit, OnDestroy,
             },
             //waitCallAccept :
             {
-                action : ETipo.CLASS,
-                fromEstado : [ ETipo.CALLING]
+                action : ETipo.CLASS, 
+                fromEstado : [ ETipo.CALLING, ETipo.INIT /* reanudar clase*/], 
             }
         ]
         
@@ -274,6 +276,10 @@ export class RoomAlumnoComponent extends RoomClass implements OnInit, OnDestroy,
 
         let vm =this;
         
+        
+
+
+
         let categorias  = this.route.snapshot.paramMap.get('categorias');
         
         if(categorias)
@@ -379,11 +385,13 @@ export class RoomAlumnoComponent extends RoomClass implements OnInit, OnDestroy,
     
  
 
- 
-    canColgar() :boolean 
+    isConnected():boolean
     {
-        return !isUndefined(this.getUserCall() )&& !isUndefined(this.getUserCall()._id);
+        let vm =this;
+        return vm.rtc && vm.rtc.rtc && vm.rtc.rtc.pc && vm.rtc.rtc.pc.iceConnectionState==="connected";
     }
+ 
+   
     cancelarCall()
     {
         let vm =this;
@@ -494,7 +502,7 @@ export class RoomAlumnoComponent extends RoomClass implements OnInit, OnDestroy,
         }
         let fnMsgCancelCall = function(m :Message)
         {
-            this.l.log("cancelarCall fnMsgCancelCall");
+            //this.l.log("cancelarCall fnMsgCancelCall");
             if(vm.getUserCall()._id === m.from)
             {
                 
@@ -566,14 +574,26 @@ export class RoomAlumnoComponent extends RoomClass implements OnInit, OnDestroy,
             
 
         }*/
-
+        
         //recibe MSG PING 
         let fnMsgPing = function(m :Message)
         {
             
             if(vm.getUserCall()._id === m.from)
             {
+                console.log("respuesta pong : estado del rtc: " + vm.rtc.rtc.pc.iceConnectionState);
                 
+                if(vm.reconectar && vm.rtc.rtc.pc.iceConnectionState==="new" /*&& vm.estado.campos.contadorPing===0*/)
+                {
+                    vm.rtc.sendOffer().then(()=>{
+                            console.log("OK OFFER")
+                    }).catch((error)=>{
+                        console.log(error)
+                    });
+                    //vm.estado.campos.contadorPing = 0;
+                    vm.reconectar =false;
+                }
+                //vm.estado.campos.contadorPing++;
                 mServ.sendMsg(m.from,MsgTipo.PONG)
             }
             
@@ -622,10 +642,11 @@ export class RoomAlumnoComponent extends RoomClass implements OnInit, OnDestroy,
         
         tipo = vm.redux.canGo(vm.estadoLogic, state, tipo);
 
-       /* if(!state.id && tipo ===-1)
+
+        if(tipo ===-1)
         {
             tipo =ETipo.INIT
-        }*/
+        }
 
         switch (tipo) {
             case ETipo.INIT:
@@ -668,9 +689,29 @@ export class RoomAlumnoComponent extends RoomClass implements OnInit, OnDestroy,
                                 if(clase)
                                 {
                                     profId = clase.profId;
-                                    vm.sendMsg(profId, MsgTipo.RECONNECT);
+
+                                    MethodsClass.call("findUser", profId, (user)=>{
+                                        
+                                        if(user)
+                                        {
+                                            vm.reconectar =true;
+                                            vm.setUserCall(user);
+                                            vm.sendMsg(profId, MsgTipo.RECONNECT);
+                                            vm.redux.nextStatus({ type: ETipo.CLASS})
+                                            
+                                        }
+                                        else {
+                                            vm.terminarClase(false,()=>{
+    
+                                                vm.redux.nextStatus({ type: ETipo.SEL_PROFESOR})
+                                            });
+                                        }
+                
+                
+                                    });
+                                    
                     
-                                    vm.redux.nextStatus({ type: ETipo.CLASS})
+                                    
                                 
                                     resolve(1);
                                 }
@@ -778,13 +819,14 @@ export class RoomAlumnoComponent extends RoomClass implements OnInit, OnDestroy,
             funciones[MsgTipo.CALL_RECONNECT] = fnMsgReconnect;
             funciones[MsgTipo.PING] = fnMsgPing;
             funciones[MsgTipo.PONG] = fnMsgPong;
-
+            //funciones[MsgTipo.CALL_COLGAR] = fnMsgCancelCall;
 
             nextState.userFrom = state.userFrom;
         
             nextState.campos = {
                 ping : 0,
-                idIntervalPing : -1
+                idIntervalPing : -1,
+                contadorPing:0
             }
             
             let fnInterval = () =>{
@@ -806,12 +848,17 @@ export class RoomAlumnoComponent extends RoomClass implements OnInit, OnDestroy,
             nextState.ini =  ()  =>{
 
                 vm.rtc =  RtcService.newRtc(vm.localVideoId,vm.remoteVideoId,sendMsgRtc, false, ()=>{
-                    vm.empezarClase();
+                    if(!vm.reconectar)
+                    {
+                        vm.empezarClase();
+
+                    }
+                    
                 }  );
 
                 setTimeout(() => {
                     try {
-                        vm.rtc.startWebRTC();
+                        vm.rtc.startWebRTC(vm.reconectar);
                         
                     } catch (error) {
                         alert("La aplicación necesita permisos de video y audio para poder ser usada. Por favor acepte los permisos para usarla.")

@@ -6,11 +6,17 @@ export interface PublicPerfilPagos {
     isExpired ?: boolean
 }
 
+export interface IpsInterface {
+  comprador, vendedor: String,
+  
+}
+
 export interface Factura {
 
     fecha : Date,
     cantidad : number // en euros,
-    ip: string,
+    idProducto: String,
+    ips: IpsInterface
     userId: string
 
   

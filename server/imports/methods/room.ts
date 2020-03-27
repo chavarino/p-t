@@ -11,6 +11,7 @@ import { Kpm, Score } from 'imports/models/kpm';
 
 import { FactoryCommon } from 'imports/functions/commonFunctions';
 import { secretshared } from '../libAux/sharedPass';
+import { fn } from '@angular/compiler/src/output/output_ast';
 
 function getTexto(room : Room)
 {
@@ -31,6 +32,78 @@ function getTexto(room : Room)
 
   }
 }
+
+
+export async function updateDatePing(claseId :String, userId : String) {
+
+  let room : Room = Rooms.findOne({ _id : claseId});
+
+      //Nos aseguramos que tenga permisos para cerrar  la clase (Que sea el creador.)
+    if(room ==null || !room.activo || room.alumnoId != userId && room.profId != userId  )
+    {
+        //Error.noPermisos();
+        return;
+    }
+  
+    
+    room.lastPing  = new Date();
+
+   Rooms.update({_id: room._id}, room,{ upsert: false });
+}
+
+export async function terminarClaseById(claseId :String, isAsincrona : boolean,  userId ?: String) {
+
+
+
+  let room : Room = Rooms.findOne({ _id : claseId});
+
+      //Nos aseguramos que tenga permisos para cerrar  la clase (Que sea el creador.)
+    if(room ==null || !room.activo || !isAsincrona && room.alumnoId != userId && room.profId != userId  )
+    {
+        //Error.noPermisos();
+        return;
+    }
+    room.activo =false;
+    
+    room.fechaFin  = new Date();
+    room.estadoText = getTexto(room);
+    
+    //cobro.
+    
+
+    //PagosFn.getPlanesCobro TODO sacar la unidad de los planes d ecobro
+    //maximo entre el calculo y 5 minutos. 5 mintps los va a pagar siempre.
+    //obtenemos lo miutos de clase.
+    // dinero por minuto. 
+    /*let ip =""
+    try {
+      ip = this.connection.clientAddress;
+    } catch (error) {
+      ip = "NOT_IP"
+      console.log("Ip error : " + error);
+    }
+*/
+
+    try {
+      let tiempoClaseMinuts = Math.max( (room.fechaFin.getTime() - room.fechaIni.getTime()) /60000, 5);
+      let precioTotal =tiempoClaseMinuts * (room.precio || 0);
+      //room.ip = ip;
+      console.log("Tiempo   consumido (min 5mins):" + tiempoClaseMinuts);
+      console.log("Precio total de clase: " + precioTotal);
+
+      
+
+      Meteor.call("chargeQuantity", precioTotal, room.alumnoId, secretshared,  room._id, room.ips);
+      room.cargadoCoste=true;
+    } catch (error) {
+      room.cargadoCoste =false;
+    }
+    
+    //VALIDACIONES
+   // console.log("insertando " + room);
+   Rooms.update({_id: room._id}, room,{ upsert: false });
+}
+
 
 let getRoom = (claseId :string) : Room =>{
 
@@ -150,6 +223,11 @@ Meteor.methods({
     files : [],
     nomAlumn :"",
     nomProfe :"",
+    lastPing: new Date(),
+    ips: {
+      comprador: "",
+      vendedor : ""
+    }
   };
     try
     {
@@ -170,9 +248,14 @@ Meteor.methods({
               return;
             }
           //evitamos que cree mas de una
-          let p: Perfil = Users.findOne(profId).profile; //profesor se carga
+          let userProf : User = Users.findOne(profId);
+          let userAlumn : User = Meteor.user();
+          let p: Perfil = userProf.profile; //profesor se carga
           //console.log("Entra");
           room.profId = profId;
+          //se guardan la ultima ip de conexion
+          room.ips.vendedor = userProf.lastIp;
+          
           room.alumnoId = Meteor.userId();
           room.activo =true;
           room.comenzado = false;
@@ -180,7 +263,10 @@ Meteor.methods({
           room.fechaCom = null;
           room.fechaFin = null;
           room.estadoText = getTexto(room);
-          let perfilAlumn = Meteor.user().profile 
+
+          let perfilAlumn = userAlumn.profile 
+          room.ips.comprador = userAlumn.lastIp;
+
           room.nomAlumn =   `${perfilAlumn.nombre} ${perfilAlumn.apellidos}`;
           room.nomProfe =  `${p.nombre} ${p.apellidos}`;
           if(p.perfClase)
@@ -199,11 +285,11 @@ Meteor.methods({
          Meteor.call('savePerfilById',profId, p);
 
         //guardamos el de el alumno
-         p = Meteor.user().profile
+         p = perfilAlumn;
 
          p.claseId = _idRoom;
          //esta bien , es guardar el mio.
-         Meteor.call('savePerfil', p);
+         Meteor.call('savePerfil',  p);
 
 
           
@@ -247,7 +333,7 @@ Meteor.methods({
     
     room.fechaCom  = new Date();
     room.estadoText = getTexto(room);
-    
+    room.lastPing = new Date();
    // perfil.claseId="";
 
     
@@ -288,53 +374,8 @@ Meteor.methods({
     Meteor.call("savePerfil", perfil);
 
 
-    let room : Room = Rooms.findOne({ _id : claseId});
-
-      //Nos aseguramos que tenga permisos para cerrar  la clase (Que sea el creador.)
-    if(room ==null || room.alumnoId != userId && room.profId != userId  || !room.activo)
-    {
-        //Error.noPermisos();
-        return;
-    }
-    room.activo =false;
+    terminarClaseById(claseId, false, userId);
     
-    room.fechaFin  = new Date();
-    room.estadoText = getTexto(room);
-    
-    //cobro.
-    
-
-    //PagosFn.getPlanesCobro TODO sacar la unidad de los planes d ecobro
-    //maximo entre el calculo y 5 minutos. 5 mintps los va a pagar siempre.
-    //obtenemos lo miutos de clase.
-    // dinero por minuto. 
-    let ip =""
-    try {
-      ip = this.connection.clientAddress;
-    } catch (error) {
-      ip = "NOT_IP"
-      console.log("Ip error : " + error);
-    }
-
-
-    try {
-      let tiempoClaseMinuts = Math.max( (room.fechaFin.getTime() - room.fechaIni.getTime()) /60000, 5);
-      let precioTotal =tiempoClaseMinuts * (room.precio || 0);
-      room.ip = ip;
-      console.log("Tiempo   consumido (min 5mins):" + tiempoClaseMinuts);
-      console.log("Precio total de clase: " + precioTotal);
-
-      
-
-      Meteor.call("chargeQuantity", precioTotal, room.alumnoId, secretshared, room.ip);
-      room.cargadoCoste=true;
-    } catch (error) {
-      room.cargadoCoste =false;
-    }
-    
-    //VALIDACIONES
-   // console.log("insertando " + room);
-   Rooms.update({_id: room._id}, room,{ upsert: false });
   },
   newMsgChat(claseId: string, msg : MessageRoom )
   {

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, HostListener, SecurityContext } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, HostListener, SecurityContext, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
 import {RtcService, VideoType} from "../services/rtc.service"
 
 import { isUndefined } from 'util';
@@ -16,9 +16,9 @@ import { DomSanitizer } from '@angular/platform-browser';
   templateUrl: 'videoCall.html',
   styleUrls: ['videoCall.scss']
 })
-export class VideoCall implements OnInit, OnDestroy{
+export class VideoCall implements OnInit, OnDestroy, AfterViewChecked{
   
-  
+    @ViewChild('textchat') textChat: ElementRef;
     private _rtc: RtcService;
     private contador;
     private _clase : Room = {
@@ -26,7 +26,12 @@ export class VideoCall implements OnInit, OnDestroy{
       files : [],
       profId : "",
       chat : [],
-      titulo : "",      
+      titulo : "",
+      nomAlumn: "",
+      nomProfe: "" ,
+  
+
+
     }; 
 
 
@@ -52,6 +57,7 @@ export class VideoCall implements OnInit, OnDestroy{
       }
     }
   msg: string = "";
+  isChatChanged: boolean;
 
    
     constructor( private sanitizer : DomSanitizer)
@@ -61,7 +67,7 @@ export class VideoCall implements OnInit, OnDestroy{
             secondsIni : 0,
             mostrar : true
          }
-
+         this.isChatChanged =false;
         
     }
     @HostListener('document:keydown', ['$event']) 
@@ -100,6 +106,11 @@ export class VideoCall implements OnInit, OnDestroy{
 
     }
 
+    reconectarVideo()
+    {
+      
+      this._rtc.reiniciar()
+    }
     imOwner(e:MsgChat) : boolean
     { 
 
@@ -181,6 +192,25 @@ export class VideoCall implements OnInit, OnDestroy{
           return a.fecha.getTime()-b.fecha.getTime();
       }
       vm.chat.sort(fnSort)
+      vm.isChatChanged = true;
+    }
+
+
+    ngAfterViewChecked() {        
+
+      if(this.isChatChanged)
+      {
+        this.scrollToBottom();        
+        this.isChatChanged =false;
+      }
+    } 
+    scrollToBottom(): void {
+      try {
+          this.textChat.nativeElement.scrollTop = this.textChat.nativeElement.scrollHeight;
+        } catch(err) { 
+
+          console.log(err);
+        }                 
     }
     
     @Input()

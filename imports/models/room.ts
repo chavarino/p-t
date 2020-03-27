@@ -1,6 +1,7 @@
 import {  Score } from './kpm';
 
 import { FilesI } from './fileI';
+import { IpsInterface } from './perfilPagos.model';
 
 
 export enum TypeMsgChat {
@@ -41,6 +42,7 @@ export interface Room {
     fechaIni ?: Date,
     fechaCom ?: Date,
     fechaFin ?: Date,
+    lastPing ?: Date,
     activo ?: boolean,
     rechazado ?: boolean,
     comenzado ?: boolean,
@@ -57,8 +59,8 @@ export interface Room {
         profesor : Score
     },
     cargadoCoste ?: boolean,
-
-    ip ?: string
+    ips ?: IpsInterface
+    
 
 }
 

@@ -65,6 +65,7 @@ export class AppComponent implements OnInit, OnDestroy {
               window.location.href = "https://sapens.es"
       }
       
+      
      /* setInterval(()=>{
   
         this.cd.reattach();

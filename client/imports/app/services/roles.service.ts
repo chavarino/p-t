@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Rol, Permisos} from "../../../../imports/models/rol";
 import { isUndefined } from 'util';
 import { ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
+import { ModulesEnum } from 'imports/models/enums';
 
 interface Map<T> {
     [key: string]: T;
@@ -15,15 +16,23 @@ interface Map<T> {
 })
 export class RolesService {
 
-     permisos : Permisos;
-        redirectUrl: string;
-    
-
+    permisos : Permisos;
+    redirectUrl: string;
+    modulo: ModulesEnum; 
+    fnSetAlive : ()=> boolean;
         constructor(private router: Router) {
 
     
         }
     
+    setModulo(modulo : ModulesEnum)
+    {
+        this.modulo =modulo;
+    }
+    getModulo() : ModulesEnum 
+    {
+        return this.modulo;
+    }
    
     getPermisos()
     {

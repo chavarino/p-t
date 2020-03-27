@@ -52,7 +52,26 @@ video {
     .box-full-screen
     {
         bottom: 1%;
-        right: 1%;
+        right: 50%;
+
+
+        .barra-accion-fscreen{
+            padding: 10px;
+            background: #252525;
+            border-radius: 5px;
+            /* border: 1px solid white; */
+            box-shadow: 0px 0px 8px 1px #1d1c1c;
+
+
+            .material-icons {
+                /* color: black!important; */
+                font-size: 2rem;
+            }
+
+        }
+
+
+        
     }
     .box-local-video, .box-full-screen {
         z-index: 55;

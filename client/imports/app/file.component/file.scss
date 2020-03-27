@@ -1,9 +1,14 @@
-@import '../../../../imports/scss/shared.scss';
+ @import '../../../../imports/scss/shared.scss';
 .file-input{
     
     .attach{
         padding: 4px 5px 0px 5px;
         border: 0px;
+    }
+
+    .btn.attach:hover
+    {
+        opacity: 0.7;
     }
  
 }
