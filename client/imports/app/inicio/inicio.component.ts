@@ -4,6 +4,7 @@ import  {RolesService} from "../services/roles.service";
 import { Generic } from 'imports/clases/generic.class';
 import { ConfigTags } from '../categorias/categorias.component';
 import { FormBuilder } from '@angular/forms';
+import { ModulesEnum } from 'imports/models/enums';
 
 @Component({
   selector: 'inicioC',
@@ -20,7 +21,7 @@ export class InicioComponent extends Generic{
   constructor( rol : RolesService, private formBuilder: FormBuilder)
   {
       super(0, 1, "comun", rol);
-
+      rol.setModulo(ModulesEnum.INICIO);
   }
 /*    loggedIn() {
         return !!Meteor.user() ;

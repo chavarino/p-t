@@ -6,6 +6,7 @@ import { Observable, Subscription } from 'rxjs';
 import { Room, TipoBusqueda } from 'imports/models/room';
 import { Generic } from 'imports/clases/generic.class';
 import { RolesService } from '../services/roles.service';
+import { ModulesEnum } from 'imports/models/enums';
 
 
 
@@ -44,6 +45,8 @@ import { RolesService } from '../services/roles.service';
     constructor( rol : RolesService)
     {
       super(0,  0, "report", rol );
+
+      rol.setModulo(ModulesEnum.HISTORIAL);
     }
     ngOnInit() {
       

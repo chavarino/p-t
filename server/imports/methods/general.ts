@@ -3,6 +3,9 @@ import { HTTP } from 'meteor/http'
 import { MethodsClass } from 'imports/functions/methodsClass';
 import { Users } from 'imports/collections/users';
 import  {secretshared} from '../libAux/sharedPass'
+import { ModulesEnum } from 'imports/models/enums';
+import { Perfil } from 'imports/models/perfil';
+import { updateDatePing } from './room';
 var crypto = require('crypto');
 
   
@@ -115,7 +118,7 @@ var crypto = require('crypto');
   
                   
           },
-          setAlive()
+          setAlive(module : ModulesEnum)
           {
   
             if(!Meteor.user())
@@ -123,9 +126,25 @@ var crypto = require('crypto');
                 MethodsClass.noLogueado();
             }
   
-            
+            let ip =""
+            try {
+              ip = this.connection.clientAddress;
+            } catch (error) {
+              ip = "NOT_IP"
+              console.log("Ip error : " + error);
+            }
+            if(ModulesEnum.CLASE_PRFSOR === module || module=== ModulesEnum.CLASE_ALUMNO ) 
+            {
+              let perfil : Perfil = Meteor.user().profile;
+              if(perfil.claseId)
+              {
+                  updateDatePing(perfil.claseId, Meteor.userId())
   
-                Users.update({_id : Meteor.userId()}, {$set : { lastUpdate : new Date()}});
+              }
+
+            }
+  
+                Users.update({_id : Meteor.userId()}, {$set : { lastUpdate : new Date(), lastIp: ip, lastModulo: module}});
           }
       }
       )

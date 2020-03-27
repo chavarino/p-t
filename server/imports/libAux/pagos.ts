@@ -1,11 +1,11 @@
-import { Customer, PerfilPagos } from 'imports/models/perfilPagos.model';
+import { Customer, PerfilPagos, IpsInterface } from 'imports/models/perfilPagos.model';
 import { async } from '@angular/core/testing';
 import { PerfilPagosColl } from 'imports/collections/perfilPagos.collection';
 import { COD_ERROR, ExceptClass} from "../libAux/erroresCod"
 import { MethodsClass } from 'imports/functions/methodsClass';
 import { isUndefined } from 'util';
 import { isDefined } from '@angular/compiler/src/util';
-import { SecretServices } from './sharedPass';
+import { SecretServices, test } from './sharedPass';
 import { FactoryCommon } from 'imports/functions/commonFunctions';
 
 const precioUnidad = 0.001;
@@ -278,6 +278,15 @@ stripe.setMaxNetworkRetries(3);
 
     }
     
+
+    const getCustomerByEmail = async (email ) =>
+    {
+      const res = await stripe.customers.list(
+        {limit: 1}
+      );
+
+      return res.data[0];
+    }
     const borrarEntornoDePago = async ( ) =>
     {
      
@@ -374,12 +383,15 @@ stripe.setMaxNetworkRetries(3);
         setBlockedUpd(perfilPago._id, false)
       }
     }
+
+
+
     /**
      * 
      * @param cantidad cantidad a cargar en euros.
      * @param precioUnidadIn precio por unidad €/unidad
      */
-    const cargarCantidadToCustomer= async (cantidad : number, userId:string, ipComprador:string, precioUnidadIn ?: number) =>
+    const cargarCantidadToCustomer= async (cantidad : number, userId:string, idProducto: String, ips:IpsInterface, precioUnidadIn ?: number) =>
     {
 
       //MIRAR LO DEL USUARIO ID IGUAL ESTÄ MAL QUIEN PAGA.
@@ -430,7 +442,8 @@ stripe.setMaxNetworkRetries(3);
             perfilPago.facturaPago.push({
               cantidad : perfilPago.lastCharge.cantidad,
               fecha : new Date(),
-              ip:  ipComprador ?  ipComprador : "",
+              idProducto : idProducto,
+              ips:  ips,
               userId : userId
             })
             
@@ -518,12 +531,53 @@ stripe.setMaxNetworkRetries(3);
             throw  new ExceptClass(COD_ERROR.PARAM_IN);
         }
 
+        console.log("metodo de pago:" + payment_method);
+        let c :Customer;
+
+        //si el perfil pago es undefined vamos a ver si existe en stripe con dicho correo.
+        if(isUndefined(perfilPago) || isUndefined(perfilPago._id))
+        {
+          console.log("recuperando poor emaail")
+          c= await PagosFn.getCustomerByEmail(Meteor.user().emails[0].address);
+          
+          console.log( "res: " + JSON.stringify(c))
+          if(c && c.id)
+          {
+              // creamos el objeto.
+              //dejamos el perfil pago como si fuera una actualizacion yq ue actualice los metodos de pago
+              perfilPago  = {
+                blocked : false,
+                idSuscription : undefined,
+                idSusRecord : undefined,
+                idPLan : idPlan,
+                customer : c,
+                idCliente: Meteor.userId(),
+                idPayment_method : undefined,
+                lastCharge : {
+                },
+                facturaPago : [],
+                facturaCobro : [],
+                view : {
+                  hasMthPago : false
+                }
+            
+          }
+
+          console.log("insert pergil de pagos :" + JSON.stringify(perfilPago));
+          //insertamos el perfil.
+          PerfilPagosColl.insert(perfilPago);
+          perfilPago = PerfilPagosColl.findOne({idCliente: Meteor.userId() })
+          }
+
+        }
+
 
         //existe ya el customer?  si no existe se crea 
         if(!perfilPago)
         {
           // CREACION DE CUSTOMER Y METODO DE PAGO
-          let c :Customer = {
+          console.log("creacion de perfil de pago");
+          c = {
             invoice_settings : {
               default_payment_method : payment_method
             },
@@ -531,24 +585,31 @@ stripe.setMaxNetworkRetries(3);
           }
   
           try {
+            console.log("creacion de customer");
             c = await  PagosFn.crearCustomer(c, payment_method);
             
           } catch (error) {
+            console.log("ERROR al crear customer "+ error)
             throw  new ExceptClass(COD_ERROR.CUSTOMER_CREATE, error);
+
           }
           
-          
+          console.log("---Ok");
           let sus;
           try {
-            sus = await attachSuscriptionToCustomer(c.id, idPlan, payment_method);
             
+            console.log("atach suscription to:" + JSON.stringify(c) +  ", " + idPlan + ", " + payment_method);
+            sus = await attachSuscriptionToCustomer(c.id, idPlan, payment_method);
           } catch (error) {
             
             // si falla el suscription  borramos el customer
+            console.log("Error atach"+ error)
             await removeCustomer(c.id);
-
+            
             throw  new ExceptClass(COD_ERROR.SUS_CREATE, error);
           }
+
+          console.log("---OK");
           // creamos el objeto.
            perfilPago  = {
             blocked : false,
@@ -567,6 +628,7 @@ stripe.setMaxNetworkRetries(3);
             }
             
           }
+          console.log("insert pergil de pagos");
           //insertamos el perfil.
           PerfilPagosColl.insert(perfilPago);
           perfilPago = PerfilPagosColl.findOne({idCliente: Meteor.userId() })
@@ -575,53 +637,63 @@ stripe.setMaxNetworkRetries(3);
           //ACTUALIZACION DE CUSTOMER Y METODO DE PAGO
           //bloqueamos el perfil.
           setBlockedUpd(perfilPago._id, true);
-
+          console.log("update: perfilPago");
           if(perfilPago.idPayment_method!==payment_method)
           {
-            
+            console.log("payment_method difference");
             /// si tiene metodo de pago lo actualizamos.
             try {
               // añadimos el metodo de pago al customer Poir si falla
-              await attachPayMethodToCustomer(payment_method, perfilPago.customer.id);
+              console.log("add payment_method: " + payment_method)
+              let res =await attachPayMethodToCustomer(payment_method, perfilPago.customer.id);
+              console.log("res:" +JSON.stringify(res));
               
             } catch (error) {
+              console.log("---ERROR add payment:" + error);
               throw  new ExceptClass(COD_ERROR.MP_ATTACH, error);
             }
-  
+            console.log("---OK");
             const idMPAnterior = perfilPago.idPayment_method;
             perfilPago.idPayment_method = payment_method;
   
             
             /// actualizamos el emtodo de pago por defecto.
             try {
-              
+              c = await getCustomer(c ? c.id : perfilPago.customer.id);
              // perfilPago.customer.invoice_settings.default_payment_method = payment_method;
+             console.log("update source payment_method");
              let  cUpdate : Customer = {
                 invoice_settings : {
                   default_payment_method : payment_method
                 }
               }
 
-              perfilPago.customer = await updateCustomer(perfilPago.customer.id, cUpdate);
+              perfilPago.customer = await updateCustomer(c.id, cUpdate);
               
             } catch (error) {
               // borramos el metodo de pago nuevo que ha sido añadido
+              console.log("---Error UpdateCustomer"+ error);
               await removeCardFromCustomer(perfilPago.idPayment_method)
               throw  new ExceptClass(COD_ERROR.CUSTOMER_UPDATE, error);        
             }
-            
+            console.log("---OK");
             //por ultimo si hay metodo de pago anterior, lo borramos.
+            
             if(idMPAnterior)
             {
               // si existe metodo de pago, lo borramos y le añadimos el nuevo. 
               try {
                 // borramos el meteodo de pago anterior.
+                console.log("remove old payment method");
                 await removeCardFromCustomer(idMPAnterior) // borramos el emtodo de pago.
               
-              } catch (error) {              
+              } catch (error) { 
+                console.log("---error" + error);             
                 MethodsClass.logError(modulo, (new ExceptClass(COD_ERROR.MP_CARD_REMOVE, error)).toString(),
                 Meteor.userId());
               }
+
+              console.log("---OK");
               
             }
 
@@ -657,7 +729,13 @@ stripe.setMaxNetworkRetries(3);
       }
       finally{
         // El bloque lo libera.
-        setBlockedUpd(perfilPago._id, false, {})
+        
+        if(perfilPago && perfilPago._id)
+        {
+          setBlockedUpd(perfilPago._id, false, {})
+
+        }
+        
       }
 
     }
@@ -666,9 +744,26 @@ stripe.setMaxNetworkRetries(3);
     {
 
     }
-    
-    export  const PagosFn = Meteor.isServer ? {crearCustomer,setupIntent, getAllCardsFromCustomer,
+
+
+      const crearPMFromCardRandom = async () =>
+      {
+          
+           
+            const res = await stripe.paymentMethods.create(
+              {
+                type: 'card',
+                card: {
+                  number: test.cards[Math.floor(Math.random() * test.cards.length) % test.cards.length],
+                  exp_month: 3,
+                  exp_year: 2030,
+                  cvc: '314',
+                }
+              })
+          return res;  
+      }
+    export  const PagosFn = Meteor.isServer ? {crearPMFromCardRandom, crearCustomer,setupIntent, getAllCardsFromCustomer,
              removeCardFromCustomer, removeCustomer, getCustomer, getPlanesCobro,
              attachSuscriptionToCustomer, chargeAmountToCustomer, getSuscriptionItem, removeSus,
              getCustomerInvoices, getInvoice,   attachPayMethodToCustomer, detachPayMethodToCustomer,
-             updateCustomer, generarEntornoDePago, borrarEntornoDePago, getUsage, cargarCantidadToCustomer, getPMethod, precioUnidad, hasMPago} : {};
+             updateCustomer, generarEntornoDePago, borrarEntornoDePago, getUsage, cargarCantidadToCustomer, getPMethod, precioUnidad, hasMPago, getCustomerByEmail} : {};

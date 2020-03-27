@@ -13,7 +13,14 @@ export interface ConfigTags {
 @Component({
   selector: 'categorias',
   templateUrl: 'categorias.html',
-  styleUrls: ['categorias.scss']
+  styleUrls: ['categorias.scss'],
+  styles: [`
+  /*para que el input interior llegue hasta el final*/
+        :host ::ng-deep tag-input-form, :host ::ng-deep input.ng2-tag-input__text-input {
+          width: 100%!important;
+      }
+  
+  `]
 })
 export class Categorias{
   

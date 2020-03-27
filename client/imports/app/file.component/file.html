@@ -2,9 +2,11 @@
         
         <div class="">
             
-            <button [disabled]="loading" type="button" (click)="openFileSelector()" class="btn btn-outline-dark attach">
+            <button [disabled]="loading" type="button" (click)="openFileSelector()" class="btn attach" style="    color: #fff;
+            background-color: #343a40;
+            border-color: #343a40;">
                 
-                <i *ngIf="!loading" class="material-icons ">
+                <i *ngIf="!loading" class="material-icons " style="font-size: 2rem;">
                 attach_file
             </i>
             

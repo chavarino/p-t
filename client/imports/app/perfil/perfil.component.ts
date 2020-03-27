@@ -14,6 +14,7 @@ import {ConfigTags} from  "../categorias/categorias.component"
 import { FactoryCommon } from 'imports/functions/commonFunctions';
 import { Generic } from 'imports/clases/generic.class';
 import { FilesI } from 'imports/models/fileI';
+import { ModulesEnum } from 'imports/models/enums';
 
 
 
@@ -38,7 +39,7 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy{
     {
 
         super(1, 1, "comun", rol);
-       
+        rol.setModulo(ModulesEnum.PERFIL);
         this.perfil = {
             foto : "",
             rol : 0,

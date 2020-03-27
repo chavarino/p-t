@@ -5,8 +5,8 @@ import { isUndefined } from 'util';
 import { MethodsClass } from 'imports/functions/methodsClass';
 import { ErrorClass } from 'imports/functions/errors';
 import { ExceptClass } from '../libAux/erroresCod';
-import  {secretshared} from '../libAux/sharedPass'
-import { PerfilPagos, PublicPerfilPagos } from 'imports/models/perfilPagos.model';
+import  {secretshared, test} from '../libAux/sharedPass'
+import { PerfilPagos, PublicPerfilPagos, IpsInterface } from 'imports/models/perfilPagos.model';
 import { PerfilPagosColl } from 'imports/collections/perfilPagos.collection';
 import { Room } from 'imports/models/room';
 import { Rooms } from 'imports/collections/room';
@@ -28,7 +28,48 @@ const modulo = "PagosMethods"
 
 Meteor.methods({
 
-  async chargeQuantity(cantidad :number, idUser : string, secret : string, ipComprador ?:string) // cantidad de dinero.
+
+  async rellenaTarjetasPrueba ()
+  {
+
+    if(test.isTest &&!PagosFn.hasMPago(Meteor.userId()))
+    {
+     
+        this.unblock();
+        console.log("tarjetas")
+        let client_secret;
+
+        try {
+          
+        //let mp = await PagosFn.crearPMFromCardRandom();
+  
+       
+           // alert("Se ha insertado la tarjeta de forma correcta")
+  
+           
+            
+            // The setup has succeeded. Display a success message.
+
+            // guardamos el metodo de pago y customer.
+          ///
+          //actualizar metodo de pago default.
+          //await PagosFn.generarEntornoDePago(mp.id, Planes.PLAN_PRUEBA_STRIPE)
+          //console.log("saveMetodoPago ok  " )
+           await PagosFn.generarEntornoDePago(test.pm[Math.floor(Math.random() * test.pm.length) % test.pm.length], Planes.PLAN_PRUEBA_STRIPE)
+          return "OK"
+         
+      } catch (error) {
+            //console.log("saveMetodoPago error")
+            let errorClass : ExceptClass = error as ExceptClass;
+            //TODO SI HUBIESE ALGUNO TRATAMIENTO DE ERROR A PARTIR DEl error del CODIGO.
+            MethodsClass.except(500, modulo, "rellenaTarjetasPrueba :  Error al adjuntar metodo de pago.", errorClass.toString());
+        
+        }
+
+        
+    }
+  },
+  async chargeQuantity(cantidad :number, idUser : string, secret : string, idProducto: String, ips ?: IpsInterface) // cantidad de dinero.
   {   
         this.unblock();
 
@@ -52,7 +93,7 @@ Meteor.methods({
           try {
               //intentamos 3 veces cargar y sino error
               // una unidad son 0.001 €
-            await PagosFn.cargarCantidadToCustomer(cantidad, idUser, ipComprador);
+            await PagosFn.cargarCantidadToCustomer(cantidad, idUser,idProducto, ips);
            
         } catch (error) {
 
@@ -91,6 +132,9 @@ Meteor.methods({
         
         }
     },
+
+
+
     async saveMetodoPago(payment_method :string)
     {
 

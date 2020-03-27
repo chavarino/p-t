@@ -92,8 +92,9 @@ export class ReduxC {
                 return action;
             }
         }
-
-        return -1;
+        action = -1;
+        console.log("CanGo :" + action)
+        return action;
     }
     nextStatus(action : any)
     {

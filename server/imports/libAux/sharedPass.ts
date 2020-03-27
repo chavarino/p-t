@@ -2,7 +2,8 @@ export let secretshared ="50343c0ca9e6fb888930b60feef77c03";
 
 export const test  ={
     isTest : true,
-    pm : ["pm_card_visa","pm_card_visa_debit","pm_card_mastercard"]
+    pm : ["pm_card_visa","pm_card_visa_debit","pm_card_mastercard"],
+    cards: ["4242424242424242"]
 }
 export const SecretServices = {
     prod : {

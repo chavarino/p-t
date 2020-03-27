@@ -23,6 +23,7 @@ import { Users } from 'imports/collections/users';
 import { ConfigTags } from '../categorias/categorias.component';
 import { RoomClass, ETipo } from 'imports/clases/room.class';
 import { Router } from '@angular/router';
+import { ModulesEnum } from 'imports/models/enums';
 
 
 
@@ -54,12 +55,12 @@ export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy ,
         listCatBusc : []
     }
     userSuscripcion: Subscription;
-    idIntervalPingAlive: NodeJS.Timer;
+    
    
     constructor( rol : RolesService,  rutas : Router , private formBuilder: FormBuilder, cd :ChangeDetectorRef )
     {
         super( "Prof", rol, cd, rutas);
-
+        rol.setModulo(ModulesEnum.CLASE_PRFSOR);
      
         let vm =this;
         vm.perfClase = {
@@ -81,7 +82,7 @@ export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy ,
         });
        
        
-
+        
         
 
         
@@ -116,7 +117,7 @@ export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy ,
             //waitCallAccept :
             {
                 action : ETipo.CLASS,
-                fromEstado : [ ETipo.WAIT_CLASS]
+                fromEstado : [ ETipo.WAIT_CLASS, ETipo.INIT]
             }
         ]
         
@@ -150,6 +151,7 @@ export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy ,
         });
         
         
+
         
       
     }
@@ -409,11 +411,28 @@ export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy ,
                                 if(clase)
                                 {
                                     idAlumno = clase.alumnoId;
-                                    vm.sendMsg(idAlumno, MsgTipo.RECONNECT);
-                    
-                                   
-                                
-                                    resolve(ETipo.CLASS);
+
+                                    
+                                    
+                                    MethodsClass.call("findUser", idAlumno, (user)=>{
+                                        
+                                        if(user)
+                                        {
+                                            vm.setUserCall(user);
+                                            vm.sendMsg(idAlumno, MsgTipo.RECONNECT);
+                                            resolve(ETipo.CLASS);
+                                            
+                                        }
+                                        else {
+                                            vm.terminarClase(true,()=>{
+    
+                                                resolve(ETipo.PRE_CLASS);
+                                            });
+                                        }
+                
+                
+                                    });
+                                    
                                 }
                                 else{
                                     vm.terminarClase(true,()=>{
@@ -593,6 +612,8 @@ export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy ,
 
                     vm.rtc =  RtcService.newRtc(vm.localVideoId,vm.remoteVideoId,sendMsgRtc, true, ()=>{
                         vm.empezarClase();
+
+                        
                     } );
 
                     setTimeout(() => {
@@ -683,20 +704,17 @@ export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy ,
     
 
         let vm =this;
+        this.rol.fnSetAlive = ()=>{
+                
 
-        this.idIntervalPingAlive = setInterval(()=>{
-            if(this.loggedIn())
+            let  p  : Perfil = Meteor.user().profile
+            if(!p.disponible &&  vm.isEstadoWaitCall())
             {
-              console.log("Setting alive")
-              let  p  : Perfil = Meteor.user().profile
-              if(!p.disponible &&  vm.isEstadoWaitCall())
-              {
                 vm.setDisponible(true);  
               }
-              MethodsClass.call("setAlive", (res) =>{
-              });
-            }
-        },30000)
+            return true;
+        }
+        
         this.userSuscripcion =  MeteorObservable.subscribe('usersProfile').subscribe(() => {
 
             Users.find({_id:Meteor.userId()}).subscribe((data)=>{
@@ -748,11 +766,8 @@ export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy ,
     ngOnDestroy()
     {
         let vm =this;
-
-        if(this.idIntervalPingAlive)
-        {
-            clearInterval(this.idIntervalPingAlive)
-        }
+        this.rol.fnSetAlive = undefined;
+        
         vm.setDisponible(false)
 
          if (this.alumnoSus) {
@@ -821,6 +836,48 @@ export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy ,
         }
     }
  
+
+    colgarCall()
+    {
+        let vm =this;
+
+        let claseId = Meteor.user().profile.claseId
+        this.l.log("colgarCall clase=" +claseId );
+        let fnGoInit = ()=> {
+
+            this.l.log("colgarCall fnGoInit COLGAR");
+            vm.estado.userFrom = null;
+            vm.sendMsg(vm.getUserCall()._id, MsgTipo.CALL_COLGAR);
+
+
+            if(claseId)
+            {
+
+                this.l.log("colgarCall fnGoInit openModalPuntuacion");
+                vm.redux.nextStatus({ type: ETipo.INIT });
+              
+            
+
+                }
+            
+            
+        }
+        
+        if(vm.clase && vm.clase._id)
+        {
+
+            this.l.log("colgarCall terminarClase");
+                this.terminarClase(false,()=>{
+                    vm.clase = null;
+                    fnGoInit();
+                   
+                });
+        }
+        else{
+            fnGoInit();
+        }
+        
+    }
  
 /*    loggedIn() {
         return !!Meteor.user() ;

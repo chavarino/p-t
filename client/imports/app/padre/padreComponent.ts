@@ -28,12 +28,13 @@ export class PadreComponent implements OnInit, OnDestroy {
   
   rolSubs : Subscription;
   interval: NodeJS.Timer;
-  
+  idIntervalPingAlive: NodeJS.Timer;
   constructor(rol:RolesService, flags : BanderasService, private cd :ChangeDetectorRef, 
     private router: Router, private route: ActivatedRoute)
   {
     this.rol = rol;
     this.flags = flags;
+    
     this.flags.setModalConfig({
 
         config : {
@@ -101,6 +102,20 @@ export class PadreComponent implements OnInit, OnDestroy {
     ngOnInit() {
       
      /* */
+     this.idIntervalPingAlive = setInterval(()=>{
+          if(this.loggedIn())
+          {
+            console.log("Setting alive")
+            if(this.rol.fnSetAlive)
+            {
+                this.rol.fnSetAlive();
+            }
+            MethodsClass.call("setAlive", this.rol.getModulo(), (res) =>{
+            });
+          }
+      },30000)
+
+
        this.interval = setInterval(()=>{
         this.cd.reattach()
       }, 200)
@@ -122,6 +137,9 @@ export class PadreComponent implements OnInit, OnDestroy {
         //RtcService.pushServers(res.data.v.iceServers) ;
        // console.log(JSON.stringify(res))
       });
+
+
+      
       //this.setRoles(this.route.snapshot.data.perm);
       /*MethodsClass.call("getServers", (res) =>{
 
@@ -147,6 +165,11 @@ logginIn()
 }
 
   ngOnDestroy() {
+
+    if(this.idIntervalPingAlive)
+        {
+            clearInterval(this.idIntervalPingAlive)
+        }
     if (this.rolSubs) {
       this.rolSubs.unsubscribe();
     }

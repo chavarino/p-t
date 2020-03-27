@@ -5,6 +5,27 @@ import { Rooms } from '../../../imports/collections/room';
 import {MethodsClass} from "../../../imports/functions/methodsClass"
 
 
+const config = {
+fields: {
+  'nomProfe': 1,
+  "nomAlumn": 1,
+  '_id': 1,
+  'profId': 1,
+  'alumnoId': 1,
+  'fechaIni': 1,
+  'fechaCom': 1,
+  'fechaFin': 1,
+  'activo': 1,
+  'comenzado': 1,
+  'elo': 1,
+  'precio': 1,
+  'files': 1,
+  'chat': 1,
+  'scores': 1,
+  'cargadoCoste': 1,
+ // 'ips': 0
+}
+};
 Meteor.publish('getRoomReport', function() {
 
   /*if(!Meteor.user())
@@ -21,7 +42,7 @@ Meteor.publish('getRoomReport', function() {
   // { profId : Meteor.userId(), activo : true}
   // { alumnoId : Meteor.userId(), activo : true}
   //{ $and : [{ activo: !true} , or ]}
-  return Rooms.find({ $and : [{ activo: !true} , or ]});
+  return Rooms.find({ $and : [{ activo: !true} , or ]}, config);
 });
 
 
@@ -31,12 +52,12 @@ Meteor.publish('getRoomForAlumno', function() {
   {  
      MethodsClass.noLogueado();
   }
-  return Rooms.find({ alumnoId : Meteor.userId(), activo : true});
+  return Rooms.find({ alumnoId : Meteor.userId(), activo : true}, config);
 });
 
 Meteor.publish('getRoomForProf', function() {
     
-      return Rooms.find({ profId : Meteor.userId(), activo : true});
+      return Rooms.find({ profId : Meteor.userId(), activo : true},config);
   
 });
 

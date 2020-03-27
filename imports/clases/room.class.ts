@@ -6,7 +6,7 @@ import { MethodsClass } from 'imports/functions/methodsClass';
 import { User } from 'imports/models/User';
 import { Estado, ReduxC, LogicEstado } from 'client/imports/app/services/reduxC';
 import { RtcService } from 'client/imports/app/services/rtc.service';
-
+import { isUndefined } from 'util';
 
 import { Component, OnInit, OnDestroy, ChangeDetectorRef, DoCheck } from '@angular/core';
 import { resolve } from 'url';
@@ -90,6 +90,12 @@ export class RoomClass extends Generic {
         return this.userCall;
     }
 
+
+    isConnected():boolean
+    {
+        let vm =this;
+        return vm.rtc && vm.rtc.rtc && vm.rtc.rtc.pc && vm.rtc.rtc.pc.iceConnectionState==="connected";
+    }
     setUserCall (userCall :User)
     {
         this.userCall = userCall;
@@ -112,7 +118,10 @@ export class RoomClass extends Generic {
     }
 
 
-
+    canColgar() :boolean 
+    {
+        return !isUndefined(this.getUserCall() )&& !isUndefined(this.getUserCall()._id);
+    }
 
     intervalUpdAction()
     {
@@ -182,6 +191,9 @@ export class RoomClass extends Generic {
         return vm.estado.id === ETipo.CALLING;
     }
 
+
+
+    
     async iniRoom() {
         
         let vm=this;
