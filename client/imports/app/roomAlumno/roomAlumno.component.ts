@@ -385,11 +385,7 @@ export class RoomAlumnoComponent extends RoomClass implements OnInit, OnDestroy,
     
  
 
-    isConnected():boolean
-    {
-        let vm =this;
-        return vm.rtc && vm.rtc.rtc && vm.rtc.rtc.pc && vm.rtc.rtc.pc.iceConnectionState==="connected";
-    }
+    
  
    
     cancelarCall()
