@@ -45,6 +45,9 @@ import { ReportsComponent } from './reports/reports.component';
 import { StarView } from '../app/starView/starView.component';
 import { FragmentPolyfillModule } from "./FragmentPolyfillModule/fragment-polyfill.module";
 
+import { CookiesConsentComponent } from './cookiesConsent/cookiesConsent.component';
+import {PoliticaCookiesComponent} from './politicaCookies/politicaCookies.component'
+
 export const ROUTES_PROVIDERS = [];
 const routes: Routes = [
     {
@@ -73,6 +76,11 @@ const routes: Routes = [
           path: 'room/alumno/:categorias',
             component: RoomAlumnoComponent, canActivate: [canActivateNone]
         },
+        {
+                  path: 'politica-de-cookies',
+                    component: PoliticaCookiesComponent, canActivate: [canActivateNone]
+                },
+        
         {
           path: 'room/prof',
           component: RoomProfComponent, canActivate: [canActivateProf]
@@ -134,7 +142,9 @@ const routes: Routes = [
     KeyDectect,
     ReportsComponent,
     LoadRoles,
-    StarView
+    StarView,
+    CookiesConsentComponent,
+    PoliticaCookiesComponent
   ],
   bootstrap: [
     AppComponent
