@@ -76,7 +76,7 @@ let SSL = function(key, cert, port){                                     // 1
 Meteor.users.deny ({
   update () {return true; }
 });
-ServiceConfiguration.configurations.remove({
+/*ServiceConfiguration.configurations.remove({
   service: "facebook"
 });
 ServiceConfiguration.configurations.remove({
@@ -97,7 +97,7 @@ else{
   
   ServiceConfiguration.configurations.insert(SecretServices.dev.google);
 
-}
+}*/
 
 
 
