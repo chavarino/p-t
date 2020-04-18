@@ -136,8 +136,14 @@ if(Meteor.isServer)
    
     console.log("url absoluta :" +Meteor.absoluteUrl());
     process.env.HTTP_FORWARDED_COUNT="1";
-    //process.env.MAIL_URL="smtp://javier.chavarino.martinez@gmail.com:Albaricoke91@smtp.gmail.com:587/";
+    if(Meteor.isProduction)
+    {
+      //process.env.MAIL_URL="smtps://infosapens@gmail.com:S4p3nsInfo##@smtp.gmail.com:465/";
 
+    }
+    else {
+      //process.env.MAIL_URL="smtps://infosapens@gmail.com:S4p3nsInfo##@smtp.gmail.com:465/";
+    }
     
     SyncedCron.config({
       // Log job run details to console

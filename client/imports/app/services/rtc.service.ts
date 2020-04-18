@@ -6,6 +6,7 @@ import { v } from '@angular/core/src/render3';
 import { isUndefined } from 'util';
 import { forEach } from '@angular/router/src/utils/collection';
 import { Log } from 'imports/functions/commonFunctions';
+import { isDefined } from '@angular/compiler/src/util';
 //import { Message } from '@angular/compiler/src/i18n/i18n_ast';
 /*interface Map<T> {
     [key: string]: T;
@@ -37,6 +38,15 @@ enum Navegador {
 export enum VideoType {
   CAM = 1,
   SCREEN = 2
+}
+export interface DeviceInterface {
+  id : string,
+  label :string,
+  kind : string
+}
+export interface DevicesMapInterface {
+   audioInputs: Array<DeviceInterface>, audioOutputs: Array<DeviceInterface>, videoInputs : Array<DeviceInterface>
+
 }
 enum SoundType {
   MICRO = 1
@@ -90,6 +100,12 @@ export class RtcService {
     remoteVideoTrack : MediaStreamTrack;
     l: Log = new Log(RtcService.module, Meteor.userId());
     static module :string = "RtcService";
+
+   static  devices : {
+      audioInput: DeviceInterface, audioOutput: DeviceInterface, videoInput : DeviceInterface
+    }
+
+    cancelarScreen: ()=>void;
     contructor()
     { 
  
@@ -131,15 +147,103 @@ export class RtcService {
 
       }
     }
+/*
+function start() {
+  if (window.stream) {
+    window.stream.getTracks().forEach(track => {
+      track.stop();
+    });
+  }
+  const audioSource = audioInputSelect.value;
+  const videoSource = videoSelect.value;
+  const constraints = {
+    audio: {deviceId: audioSource ? {exact: audioSource} : undefined},
+    video: {deviceId: videoSource ? {exact: videoSource} : undefined}
+  };
+  navigator.mediaDevices.getUserMedia(constraints).then(gotStream).then(gotDevices).catch(handleError);
+}*/
+
+
+/*
+
+*/
+
+  //output audio 
+
+attachSinkId(element, sinkId) {
+  if (typeof element.sinkId !== 'undefined') {
+    element.setSinkId(sinkId)
+        .then(() => {
+          console.log(`Success, audio output device attached: ${sinkId}`);
+        })
+        .catch(error => {
+          let errorMessage = error;
+          if (error.name === 'SecurityError') {
+            errorMessage = `You need to use HTTPS for selecting audio output device: ${error}`;
+          }
+          console.error(errorMessage);
+          // Jump back to first output device in the list as it's the default.
+          //RtcService.devices.audioInput.id = 0;
+        });
+  } else {
+    console.warn('Browser does not support output device selection.');
+  }
+}
+
+changeAudioDestination(videoId) {
+  if(RtcService.devices.audioInput)
+  {
+    const audioDestination = RtcService.devices.audioInput.id;
+    this.attachSinkId(document.querySelector(videoId), audioDestination);
+
+  }
+}
+
+
+    static async getDevices() : Promise<DevicesMapInterface>
+    {
+
+      let devices : DevicesMapInterface = {
+        audioInputs: [],
+        audioOutputs: [],
+        videoInputs: []
+      };
+      let deviceInfos = await navigator.mediaDevices.enumerateDevices();
+     let device : DeviceInterface;
+      for (let i = 0; i !== deviceInfos.length; ++i) {
+        const deviceInfo = deviceInfos[i];
+        device ={ 
+          id: deviceInfo.deviceId,
+          kind: deviceInfo.kind,
+          label: ""
+          
+        }
+       
+        if (deviceInfo.kind === 'audioinput') {
+          devices.audioInputs.push(device)
+          device.label = deviceInfo.label || `microphone ${devices.audioInputs.length}`;
+        } else if (deviceInfo.kind === 'audiooutput') {
+         
+          devices.audioOutputs.push(device)
+          device.label = deviceInfo.label || `speaker ${devices.audioOutputs.length}`;
+        } else if (deviceInfo.kind === 'videoinput') {
+         
+          devices.videoInputs.push(device)
+          device.label = deviceInfo.label || `camera ${devices.videoInputs.length}`;
+        } else {
+          console.log('Some other kind of source/device: ', deviceInfo);
+        }
+      }
+
+      return devices;
+
+    }
 
     static async getPermisos(fn : (boolean)=>void)
     {
         try{
           Log.logStatic(this.module, "getPermisos: getUserMedia INI");
-           let stream =await navigator.mediaDevices.getUserMedia({
-            audio: true,
-            video: true,
-          });
+           let stream =await navigator.mediaDevices.getUserMedia(RtcService.getConstraint());
           
         Log.logStatic(this.module, "getPermisos: getUserMedia OK");
         stream.getTracks().forEach(function (track) { track.stop(); });
@@ -475,12 +579,16 @@ export class RtcService {
     {
       this.l.log("mediaUser  fnGuardarTrack");
         videoTrackAux = stream.getVideoTracks()[0];
-        videoTrackAux.onended = ()=>
+        videoTrackAux.onended = (info)=>
         {
 
           videoTrackAux.stop();
           videoTrackAux = null;
-          this.l.log("mediaUser  fnGuardarTrack onended stop");
+          this.l.log("mediaUser  fnGuardarTrack onended stop: " + JSON.stringify(info));
+          if(this.videoType=== VideoType.SCREEN && vm.cancelarScreen)
+          {
+              vm.cancelarScreen();
+          }
         }
 
         //se rellena el switch de videos.
@@ -494,10 +602,7 @@ export class RtcService {
 
       this.l.log("mediaUser getUserMedia CAM...");
       //se genera el stream user media.
-      stream  = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-        video: true,
-      });
+      stream  = await navigator.mediaDevices.getUserMedia(RtcService.getConstraint());
       this.l.log("mediaUser getUserMedia CAM...OK");
       //si es la primera vez se inserta el stream base.
       if(!vm.stream)
@@ -568,6 +673,17 @@ export class RtcService {
     this.l.log("mediaUser  fin");
     }
 
+
+  private static getConstraint(): MediaStreamConstraints {
+    return {
+       audio: isDefined(this.devices.audioInput) ? { deviceId: {exact: this.devices.audioInput.id}} :true,
+      video: isDefined(this.devices.videoInput) ? { deviceId: {exact: this.devices.videoInput.id}} :true
+     };
+    /*{
+      audio: {deviceId: audioSource ? {exact: audioSource} : undefined},
+      video: {deviceId: videoSource ? {exact: videoSource} : undefined}
+    }*/
+  }
 
     switchVideoMute(flag ?: boolean) :boolean
     {

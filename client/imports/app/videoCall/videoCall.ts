@@ -8,6 +8,7 @@ import { Room, RoomFile, MessageRoom, MsgChat, TypeMsgChat } from 'imports/model
 import { FilesI } from 'imports/models/fileI';
 import { FactoryCommon } from 'imports/functions/commonFunctions';
 import { DomSanitizer } from '@angular/platform-browser';
+import { isDefined } from '@angular/compiler/src/util';
 
 
 
@@ -258,6 +259,13 @@ export class VideoCall implements OnInit, OnDestroy, AfterViewChecked{
     @Input()
     set rtc(rtc: RtcService) {
       this._rtc =rtc;
+
+      if(isDefined(this._rtc) && isDefined(this._rtc.rtc))
+      {
+         this._rtc.cancelarScreen = () =>{
+              this.switchVideoSource()
+         }
+      }
     }
    
     
