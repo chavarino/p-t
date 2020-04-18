@@ -1,0 +1,37 @@
+<div  class="device-selection" >
+
+    <div class="row">
+        <div class="col-12">
+            <span>
+                Audio Input source
+            </span>
+            <select name="audioinput" [(ngModel)]="audioInput">
+                <option [value]="dev" *ngFor="let dev of devicesList.audioInputs">{{dev.label}}</option>
+                </select>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <span>
+                Video Input Source
+            </span>
+        <select name="videoinput" [(ngModel)]="videoInput">
+            <option [value]="dev" *ngFor="let dev of devicesList.videoInputs">{{dev.label}}</option>
+            </select>
+
+        </div>
+    </div>     
+    <div class="row">
+        <div class="col-12">
+            <span>
+                Video Input Destination
+            </span>
+        <select name="videoinput" [(ngModel)]="audioOutput">
+            <option [value]="dev" *ngFor="let dev of devicesList.videoOutputs">{{dev.label}}</option>
+            </select>
+
+        </div>
+    </div>   
+        
+</div>
