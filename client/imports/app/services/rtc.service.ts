@@ -102,7 +102,9 @@ export class RtcService {
     static module :string = "RtcService";
 
    static  devices : {
-      audioInput: DeviceInterface, audioOutput: DeviceInterface, videoInput : DeviceInterface
+      audioInput ?: DeviceInterface, audioOutput ?: DeviceInterface, videoInput ?: DeviceInterface
+    } = {
+
     }
 
     cancelarScreen: ()=>void;
