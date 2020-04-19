@@ -24,6 +24,8 @@ import { ConfigTags } from '../categorias/categorias.component';
 import { RoomClass, ETipo } from 'imports/clases/room.class';
 import { Router } from '@angular/router';
 import { ModulesEnum } from 'imports/models/enums';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { isDefined } from '@angular/compiler/src/util';
 
 
 
@@ -57,9 +59,9 @@ export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy ,
     userSuscripcion: Subscription;
     
    
-    constructor( rol : RolesService,  rutas : Router , private formBuilder: FormBuilder, cd :ChangeDetectorRef )
+    constructor( rol : RolesService,  rutas : Router , private formBuilder: FormBuilder, cd :ChangeDetectorRef, modalService: NgbModal )
     {
-        super( "Prof", rol, cd, rutas);
+        super( "Prof", rol, cd, rutas, modalService);
         rol.setModulo(ModulesEnum.CLASE_PRFSOR);
      
         let vm =this;
@@ -167,7 +169,10 @@ export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy ,
 
 
     
-
+    isDisabledPrecio()
+    {
+        return true;
+    }
     
     private reducer (state : Estado = {}, action : Action<number>) : Estado
     {
@@ -648,8 +653,9 @@ export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy ,
                 nextState.destroy = ()=>{
 
                     clearInterval(vm.redux.estado.campos.idIntervalPing);
-                    vm.rtc.close();
                     
+                    vm.rtc.close();
+                    vm.rtc = undefined;
                 }
                 
             break;
@@ -724,7 +730,7 @@ export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy ,
                     let p : Perfil = data[0].profile;
                     let precio = this.perfClase ? this.perfClase.ultPrecio : p.perfClase.ultPrecio;
                     this.perfClase = p.perfClase;
-                    this.perfClase.ultPrecio =precio;
+                    this.perfClase.ultPrecio = isDefined(precio) && precio >0 ? precio : 0  ;
                 }
                 else{
                   //this.rol.setRoles(data[0].rol);

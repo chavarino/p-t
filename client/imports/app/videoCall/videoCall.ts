@@ -59,6 +59,7 @@ export class VideoCall implements OnInit, OnDestroy, AfterViewChecked{
     }
   msg: string = "";
   isChatChanged: boolean;
+  minutosLive: number;
 
    
     constructor( private sanitizer : DomSanitizer)
@@ -242,7 +243,7 @@ export class VideoCall implements OnInit, OnDestroy, AfterViewChecked{
         {
           
           this._clase = c;
-
+          
           this.createChat()
 
         }
@@ -374,7 +375,11 @@ export class VideoCall implements OnInit, OnDestroy, AfterViewChecked{
         }
     }
 
+    setContandorMinutosLive(min :number)
+    {
 
+        this.minutosLive = min;
+    }
     ngOnInit()
     {
         

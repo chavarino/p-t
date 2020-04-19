@@ -1,0 +1,14 @@
+@import '../../../../imports/scss/shared.scss';
+
+.device-selection {
+
+    margin: 15px;
+
+    .row {
+
+       // padding: 10px;
+    }
+    select {
+        width: 100%;
+    }
+}

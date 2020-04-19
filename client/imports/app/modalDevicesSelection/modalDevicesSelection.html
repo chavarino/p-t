@@ -1,0 +1,74 @@
+<div  class="device-selection" >
+
+    <div class="row">
+        <div class="col-12">
+            <label for="audioinput">
+                <strong>
+                    Audio Input source
+                </strong>
+
+            </label>
+            <br>
+            <select name="audioinput" [(ngModel)]="devicesSelected.audioInputId">
+                <option [value]="dev.id" *ngFor="let dev of devicesList.audioInputs">{{dev.label}}</option>
+                </select>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <label for="videoinput">
+                <strong>
+                    Video Input Source
+                </strong>
+
+            </label>
+          <br>
+        <select name="videoinput" [(ngModel)]="devicesSelected.videoInputId">
+            <option [value]="dev.id" *ngFor="let dev of devicesList.videoInputs">{{dev.label}}</option>
+            </select>
+
+        </div>
+    </div>     
+    <div class="row" >
+        <div class="col-12">
+
+            <label for="audioOutputs">
+                <strong>
+                    Audio Output Destination
+                </strong>
+
+            </label>
+            <br>
+        <select name="audioOutputs" [(ngModel)]="devicesSelected.audioOutputId">
+            <option [value]="dev.id" *ngFor="let dev of devicesList.audioOutputs">{{dev.label}}</option>
+            </select>
+
+        </div>
+    </div>   
+    <div class="row" >
+        <div class="col-8">
+
+        </div>
+        <div class="col-4">
+            <div class="row">
+                <div class="col" style="text-align: right;">
+                    <button class="btn btn-primary mr-1" (click)="aceptar()">
+                        Aceptar
+                    </button>
+                    <button class="btn btn-primary"  (click)="cancelar()">
+                                        Cancelar
+                                    </button>
+        
+                </div>
+                
+
+            </div>
+
+        </div>
+
+
+
+    </div>
+        
+</div>

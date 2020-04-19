@@ -1,10 +1,25 @@
 <div class="video-call" [hidden]="!mostrar()" [ngClass]="{'full-screen': isFullScreen()}"  >
     <div class="row">
-        <div class="col-12" style="    padding-left: 30px;">
-            <timeCounter   [tipo]="contador.tipo" [secondsIni]="contador.secondsIni"  [mostrar]="mostrar()">
+        <div class="col-2" style="    padding-left: 30px;">
+            <timeCounter   [tipo]="contador.tipo" [secondsIni]="contador.secondsIni"  [mostrar]="mostrar()" (onNewMinutes)="setContandorMinutosLive($event)">
 
             </timeCounter>
+
+            
         </div>
+        <div class="col-8">
+
+        </div>
+        <div class="col-2">
+            <strong>
+                <label>
+                    Precio(€/min): {{_clase.precio}}, Precio Total aproximado (€):  {{ minutosLive * _clase.precio | number:'1.0-2'}}
+                </label>
+
+            </strong>
+
+        </div>
+        
     </div>
 
 

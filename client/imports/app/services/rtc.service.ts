@@ -56,6 +56,12 @@ function onError(error) {
     console.error(error);
   }
 
+export interface DevicesSelected {
+  audioInputId?: string;
+  audioOutputId?: string;
+  videoInputId?: string;
+}
+
 export class RtcService {
 
     //roles : Map<Rol>
@@ -101,13 +107,13 @@ export class RtcService {
     l: Log = new Log(RtcService.module, Meteor.userId());
     static module :string = "RtcService";
 
-   static  devices : {
-      audioInput ?: DeviceInterface, audioOutput ?: DeviceInterface, videoInput ?: DeviceInterface
-    } = {
+    private static   devicesSelected : DevicesSelected = {
 
     }
 
     cancelarScreen: ()=>void;
+  static devicesList: DevicesMapInterface;
+  audioSender: RTCRtpSender;
     contructor()
     { 
  
@@ -173,7 +179,12 @@ function start() {
   //output audio 
 
 attachSinkId(element, sinkId) {
+  if(isUndefined(element))
+  {
+     return;
+  }
   if (typeof element.sinkId !== 'undefined') {
+    console.log("device : "  +sinkId);
     element.setSinkId(sinkId)
         .then(() => {
           console.log(`Success, audio output device attached: ${sinkId}`);
@@ -192,20 +203,98 @@ attachSinkId(element, sinkId) {
   }
 }
 
-changeAudioDestination(videoId) {
-  if(RtcService.devices.audioInput)
+changeAudioDestination() {
+  if(RtcService.devicesSelected.audioOutputId)
   {
-    const audioDestination = RtcService.devices.audioInput.id;
-    this.attachSinkId(document.querySelector(videoId), audioDestination);
+    const audioDestination = RtcService.devicesSelected.audioOutputId;
+ 
+    let remoteVideo = document.getElementById("remoteId");
+    let localVideo = document.getElementById("localId");
+    if(remoteVideo)
+    {
+      this.attachSinkId(remoteVideo, audioDestination);
 
+    }
+    if(localVideo)
+    {
+
+      this.attachSinkId(localVideo, audioDestination);
+
+    }
   }
 }
 
+/**
+ * Devuelve los dispositivos seleccionados en un nuevo objeto, los atributos pueden ser undefined si no se ha seleccionado ninguno.
+ * 
+ * 
+ */
+  static getSelectedDevices() :DevicesSelected
+  {
+    //seleccionamos los valores por defecto con la nueva lista de seleccion
+    this.devicesSelected.audioInputId = this.setValueDeviceSelected(this.devicesSelected.audioInputId , this.devicesList.audioInputs);
+      
+    this.devicesSelected.videoInputId = this.setValueDeviceSelected(this.devicesSelected.videoInputId , this.devicesList.videoInputs);
+    this.devicesSelected.audioOutputId = this.setValueDeviceSelected(this.devicesSelected.audioOutputId , this.devicesList.audioOutputs);
+     return {
+      audioInputId: this.devicesSelected.audioInputId, audioOutputId : this.devicesSelected.audioOutputId, videoInputId : this.devicesSelected.videoInputId
+    }
+  }
 
+  static setSelectedDevices(devicesSelected : DevicesSelected, rtc : RtcService)
+  {
+
+    let isVideoInputChanged :boolean = false, isAudioInputChanged:boolean = false, isAudioOutputChanged:boolean = false;
+      if(this.devicesSelected.audioInputId !== devicesSelected.audioInputId)
+      {
+        this.devicesSelected.audioInputId =devicesSelected.audioInputId
+        isAudioInputChanged =true;
+      }
+
+      if(this.devicesSelected.audioOutputId !== devicesSelected.audioOutputId)
+      {
+        this.devicesSelected.audioOutputId =devicesSelected.audioOutputId
+        isAudioOutputChanged = true;
+      }
+
+      if(this.devicesSelected.videoInputId !== devicesSelected.videoInputId)
+      {
+        isVideoInputChanged =true;
+        this.devicesSelected.videoInputId =devicesSelected.videoInputId
+
+
+        
+      }
+
+      if(rtc)
+      {   
+          rtc.changeMediaUserLive(isVideoInputChanged , isAudioInputChanged, isAudioOutputChanged).then(()=>{
+
+          });
+      }
+  }
+
+ private static setValueDeviceSelected = (id :string, lista : Array<DeviceInterface>) :string =>{
+
+    // el elemento seleccionado no está definido y en la lista hay elementos, seleccionamos el primero de la lista
+    // o elemento seleccionado definido pero no existente en la lista de elemntos, => seleccionamos el primero de la lista
+    if(!isDefined(id) && lista.length>0 || isDefined(id) && lista.length>0 && lista.filter( (e : DeviceInterface)=> e.id===id).length===0)
+      {
+
+          return lista[0].id;
+      }
+      //lista está vacia 
+      else if(lista.length==0)
+      {
+          return undefined;
+      }
+
+      return id;
+  }
     static async getDevices() : Promise<DevicesMapInterface>
     {
 
-      let devices : DevicesMapInterface = {
+      let devicesList : DevicesMapInterface = {
         audioInputs: [],
         audioOutputs: [],
         videoInputs: []
@@ -222,22 +311,25 @@ changeAudioDestination(videoId) {
         }
        
         if (deviceInfo.kind === 'audioinput') {
-          devices.audioInputs.push(device)
-          device.label = deviceInfo.label || `microphone ${devices.audioInputs.length}`;
+          devicesList.audioInputs.push(device)
+          device.label = deviceInfo.label || `microphone ${devicesList.audioInputs.length}`;
         } else if (deviceInfo.kind === 'audiooutput') {
          
-          devices.audioOutputs.push(device)
-          device.label = deviceInfo.label || `speaker ${devices.audioOutputs.length}`;
+          devicesList.audioOutputs.push(device)
+          device.label = deviceInfo.label || `speaker ${devicesList.audioOutputs.length}`;
         } else if (deviceInfo.kind === 'videoinput') {
          
-          devices.videoInputs.push(device)
-          device.label = deviceInfo.label || `camera ${devices.videoInputs.length}`;
+          devicesList.videoInputs.push(device)
+          device.label = deviceInfo.label || `camera ${devicesList.videoInputs.length}`;
         } else {
           console.log('Some other kind of source/device: ', deviceInfo);
         }
       }
+      this.devicesList = devicesList;
 
-      return devices;
+      
+
+      return devicesList;
 
     }
 
@@ -312,6 +404,7 @@ changeAudioDestination(videoId) {
           
       }
 
+      
 
       startWebRTC(recconect ?: boolean) {
 
@@ -560,7 +653,98 @@ changeAudioDestination(videoId) {
      // vm.rct.restartIce()
 
   }
+  async changeMediaUserLive (isVideoInputChanged :boolean, isAudioInputChanged : boolean, isAudioOutputChanged : boolean )
+  {
+
+    let vm=this;
+    //si ha cambiado la fuentte
+    if(isVideoInputChanged || isAudioInputChanged)
+    {
+
+      /*if(this.videoType === VideoType.SCREEN )
+      {
+
+        vm.setVideoTypeCam();
+        
+       await vm.mediaUser();
+
+       vm.restablecerConfigAfterSwitchSource()
+      }*/
   
+      let stream : MediaStream = await navigator.mediaDevices.getUserMedia(RtcService.getConstraint());
+      let audioTrackOld : MediaStreamTrack = vm.stream.getAudioTracks()[0];
+      let videoTrackOld : MediaStreamTrack = vm.switchVideo[VideoType.CAM];
+
+      let audioTrackNew : MediaStreamTrack = stream.getAudioTracks()[0];
+      let videoTrackNew : MediaStreamTrack = stream.getVideoTracks()[0];
+     
+      // cambiar a los nuevos tracks
+      //desactivamos tracks
+      vm.setActiveTracks(false);
+      //si es diferente
+      if(audioTrackNew.id!== audioTrackOld.id)
+      {
+        
+        //configuramos nuevo track
+        vm.changeTrackConfig(audioTrackNew, vm.audioConfig);
+
+        audioTrackNew.onended = (info)=>
+        {
+
+          audioTrackNew.stop();
+          audioTrackNew = null;
+          
+        }
+        //reemplazamos el canal de envio anterior
+        await vm.audioSender.replaceTrack(audioTrackNew);
+        //borramos anterior track
+        vm.stream.removeTrack(audioTrackOld);
+        //añadimos el nuevo
+        vm.stream.addTrack(audioTrackNew);
+       
+        audioTrackOld.stop()
+      }
+
+
+      if(videoTrackNew.id!==videoTrackOld.id)
+      {
+        //igual que en el audio
+        //cambiamos configuracion
+        vm.changeTrackConfig(videoTrackNew, vm.videoConfig);
+        //si está en modo camara lo sustituimos, sino no. En modo screen está enviando el cnaal de screen
+        if(this.videoType === VideoType.CAM )
+        {
+          //remplazamos envio
+          await vm.videoSender.replaceTrack(videoTrackNew);
+          //borramos el track
+          vm.stream.removeTrack(videoTrackOld);
+          //añadimos track
+          vm.stream.addTrack(videoTrackNew);
+
+        }
+        videoTrackNew.onended = (info)=>
+        {
+
+          videoTrackNew.stop();
+          videoTrackNew = null;
+          
+        }
+        videoTrackOld.stop();
+        //sustituimos el track.
+        vm.switchVideo[VideoType.CAM] = videoTrackNew;
+      }
+
+      //activamos de nuevo los tracks
+      vm.setActiveTracks(true);    
+      
+    }
+    
+    if(isAudioOutputChanged)
+    {
+      //cambiamos el output cambiado.
+      vm.changeAudioDestination();
+    }
+  }
     
    async  mediaUser(fn ?: ()=>void) {
      
@@ -622,10 +806,17 @@ changeAudioDestination(videoId) {
           else{
             this.l.log("mediaUser  track SOUND");
             vm.changeTrackConfig(track, vm.audioConfig);
-            
+            vm.audioSender = sender;
           }
           vm.localVideo.srcObject = vm.stream;
         });
+
+        //cambiamos el device output en caso de que sea diferente al default
+        if(RtcService.devicesSelected.audioOutputId && RtcService.devicesSelected.audioOutputId!=="default")
+        {
+          vm.changeAudioDestination();
+
+        }
       }
 
       //guarda el trak.
@@ -678,8 +869,8 @@ changeAudioDestination(videoId) {
 
   private static getConstraint(): MediaStreamConstraints {
     return {
-       audio: isDefined(this.devices.audioInput) ? { deviceId: {exact: this.devices.audioInput.id}} :true,
-      video: isDefined(this.devices.videoInput) ? { deviceId: {exact: this.devices.videoInput.id}} :true
+       audio: isDefined(this.devicesSelected.audioInputId) ? { deviceId: {exact: this.devicesSelected.audioInputId}} :true,
+      video: isDefined(this.devicesSelected.videoInputId) ? { deviceId: {exact: this.devicesSelected.videoInputId}} :true
      };
     /*{
       audio: {deviceId: audioSource ? {exact: audioSource} : undefined},
