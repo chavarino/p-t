@@ -23,6 +23,8 @@ export class TimeCounter implements OnInit, OnDestroy {
     private _mostrar :boolean
     comenzado : boolean;
     tView : TiempoView;
+
+    @Output() onNewMinutes= new EventEmitter<number>();
     constructor()
     {
        
@@ -123,7 +125,7 @@ export class TimeCounter implements OnInit, OnDestroy {
         }
         let  contIntervalFn =() => {
             vm._secondsIni ++;
-
+            vm.onNewMinutes.emit(vm._secondsIni/60) // emitir los minutos
             vm.setTimeView();
         }
         

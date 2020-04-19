@@ -1,13 +1,17 @@
 <div class=" room-alumno padding-pag">
     
 
-
+  
         <h2 class="bd-title text-center">
             Consulta profesor 
+            <span *ngIf="isEstadoSelProf() || isEstadoClass()" title="Configurar dispositivos de Video/Audio" class="material-icons float-right" style="cursor: pointer;font-size: 1.5vw;color: #63b36a;" (click)="openModalDeviceIOConfig()">
+                settings
+                </span>
         </h2>
         <div *ngIf="isEstadoIni()">
             Iniciando...
         </div>
+
         <div  *ngIf="isEstadoSelProf()">
             <div class="row">
                 <div class="col-sm-12">

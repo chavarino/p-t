@@ -1,5 +1,19 @@
 
 <div class="room-prof padding-pag container">
+    <div class="row">
+        <div class="col-2">
+    
+        </div>
+        <div class="col-9">
+            <span title="Configurar dispositivos de Video/Audio" class="material-icons float-right" style="cursor: pointer;font-size: 1.5vw;color: #63b36a;" (click)="openModalDeviceIOConfig()">
+                settings
+                </span>
+        </div>
+
+        <div class="col-1">
+
+        </div>
+    </div>
         <div class="row" *ngIf="!isEstadoClass()">
             <div class="col-2">
     
@@ -57,7 +71,7 @@
                                    
                                
                                 </div>
-                                <div class="col-2 text-left">
+                                <div class="col-4 text-left">
                                     <label for="elo">
                                         <label for="elo">
                                             <strong>Elo</strong>
@@ -70,8 +84,8 @@
                                     </span>
                                     </div>
                                     
-                                    <div class="col-4 text-left">
-                                        <label for="precio"><strong>Precio(min)</strong></label><br>
+                                    <div class="col-4 text-left" *ngIf="false">
+                                        <label for="precio"><strong>Precio(€/min)</strong></label><br>
 
                                         <input *ngIf="isEstadoPreClass()" id="precio"  formControlName="ultPrecio" type="number" class="form-control" id="ultPrecio" name="ultPrecio" required placeholder="Precio" [(ngModel)]="perfClase.ultPrecio">
                                         <span *ngIf="isEstadoWaitCall()">{{perfClase.ultPrecio}}</span>

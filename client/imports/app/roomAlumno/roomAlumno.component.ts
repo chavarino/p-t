@@ -67,10 +67,10 @@ export class RoomAlumnoComponent extends RoomClass implements OnInit, OnDestroy,
   
     
  
-    constructor( private modalService: NgbModal,  rutas : Router ,private route: ActivatedRoute , rol : RolesService, private formBuilder: FormBuilder, sanitizer : DomSanitizer,flags : BanderasService, cd :ChangeDetectorRef)
+    constructor( modalService: NgbModal,  rutas : Router ,private route: ActivatedRoute , rol : RolesService, private formBuilder: FormBuilder, sanitizer : DomSanitizer,flags : BanderasService, cd :ChangeDetectorRef)
     {
 
-        super("alumno", rol, cd, rutas);
+        super("alumno", rol, cd, rutas, modalService);
         rol.setModulo(ModulesEnum.CLASE_ALUMNO);
         
         
@@ -882,6 +882,7 @@ export class RoomAlumnoComponent extends RoomClass implements OnInit, OnDestroy,
             nextState.destroy = ()=>{
 
                 vm.rtc.close();
+                vm.rtc = undefined;
                 clearInterval(vm.estado.campos.idIntervalPing);
 
                

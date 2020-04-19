@@ -36,6 +36,8 @@ import { AppComponent } from './app.component';
 import { TagInputModule } from 'ngx-chips';
 import { PadreComponent} from './padre/padreComponent';
 import { ModalKpm} from './modalKpm/modaKpm.component';
+import { ModalDevicesSelectionComponent} from './modalDevicesSelection/modalDevicesSelection.component'
+
 import { FileInput } from './file.component/file.component';
 import { TimeCounter } from './timeCounter/timeCounter.component';
 import { KeyDectect } from './directivas/keyDetect.directive';
@@ -138,6 +140,7 @@ const routes: Routes = [
     RoomAlumnoComponent,
     RoomProfComponent,
     ModalKpm,
+    ModalDevicesSelectionComponent,
     FileInput,
     KeyDectect,
     ReportsComponent,
@@ -157,7 +160,7 @@ const routes: Routes = [
    HnResolver,
     BanderasService
   ],
-  entryComponents: [ModalKpm]
+  entryComponents: [ModalKpm, ModalDevicesSelectionComponent] //modales y componentes que no se les de declara de forma explicita con etiquetas
 })
 export class AppModule {
 

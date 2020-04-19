@@ -5,13 +5,15 @@ import { RolesService } from 'client/imports/app/services/roles.service';
 import { MethodsClass } from 'imports/functions/methodsClass';
 import { User } from 'imports/models/User';
 import { Estado, ReduxC, LogicEstado } from 'client/imports/app/services/reduxC';
-import { RtcService } from 'client/imports/app/services/rtc.service';
+import { RtcService, DevicesSelected } from 'client/imports/app/services/rtc.service';
 import { isUndefined } from 'util';
 
 import { Component, OnInit, OnDestroy, ChangeDetectorRef, DoCheck } from '@angular/core';
 import { resolve } from 'url';
 import { Router } from '@angular/router';
 import { Tipo } from 'imports/models/enums';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ModalDevicesSelectionComponent } from 'client/imports/app/modalDevicesSelection/modalDevicesSelection.component';
 
 /*enum ETipo  {
     INIT = 1,
@@ -52,7 +54,7 @@ export class RoomClass extends Generic {
     redux : ReduxC;
 
     estadoLogic :  LogicEstado[];
-    constructor(modulo:string, rol : RolesService, cd :ChangeDetectorRef, private rutas : Router)
+    constructor(modulo:string, rol : RolesService, cd :ChangeDetectorRef, private rutas : Router, public modalService: NgbModal)
     {
         super(1, 1, modulo, rol)
         let vm=this;
@@ -115,6 +117,22 @@ export class RoomClass extends Generic {
         
         //this.cd.reattach();.detectChanges();
         //console.log("update cd " + vm.estado.id)
+    }
+
+    async openModalDeviceIOConfig()
+    {
+
+
+        let result : DevicesSelected = await this.modalService.open(ModalDevicesSelectionComponent, {size: 'lg',ariaLabelledBy: 'modal-basic-title'}).result;
+
+        if(result)
+        {
+
+            RtcService.setSelectedDevices(result, this.rtc);
+
+            //si está definido rtc => cambiar configuracion
+            
+        }
     }
 
 
