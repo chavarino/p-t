@@ -26,6 +26,7 @@ import { Router } from '@angular/router';
 import { ModulesEnum } from 'imports/models/enums';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { isDefined } from '@angular/compiler/src/util';
+import { SoundClass } from 'imports/clases/sound';
 
 
 
@@ -57,6 +58,7 @@ export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy ,
         listCatBusc : []
     }
     userSuscripcion: Subscription;
+    tonoLlamada: SoundClass;
     
    
     constructor( rol : RolesService,  rutas : Router , private formBuilder: FormBuilder, cd :ChangeDetectorRef, modalService: NgbModal )
@@ -64,6 +66,7 @@ export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy ,
         super( "Prof", rol, cd, rutas, modalService);
         rol.setModulo(ModulesEnum.CLASE_PRFSOR);
      
+        this.tonoLlamada = SoundClass.crearTonoLlamada("/sounds/ring.mp3");
         let vm =this;
         vm.perfClase = {
             categorias : [],
@@ -513,6 +516,7 @@ export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy ,
                
                 nextState.ini =  ()  =>{
                     //vm.audios["call"].play();
+                    this.tonoLlamada.play();
                     vm.redux.estado.campos.idTimeOut= setTimeout(() =>{
 
                         //si pasa el tiempo y se ejecuta se cancela.
@@ -535,6 +539,7 @@ export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy ,
                 
                 nextState.destroy = ()=>{
                     //vm.audios["call"].stop()
+                    this.tonoLlamada.stop();
                     clearTimeout(vm.redux.estado.campos.idTimeOut)
                 }
                 
@@ -794,6 +799,7 @@ export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy ,
             this.userSuscripcion.unsubscribe();
           }
           vm.intervalUpdAction()
+          this.tonoLlamada.destroy();
     }
 
     isValid()
