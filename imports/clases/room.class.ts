@@ -8,12 +8,12 @@ import { Estado, ReduxC, LogicEstado } from 'client/imports/app/services/reduxC'
 import { RtcService, DevicesSelected } from 'client/imports/app/services/rtc.service';
 import { isUndefined } from 'util';
 
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, DoCheck } from '@angular/core';
-import { resolve } from 'url';
+import { ChangeDetectorRef } from '@angular/core';
+
 import { Router } from '@angular/router';
 import { Tipo } from 'imports/models/enums';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ModalDevSelectComponent } from 'client/imports/app/modalDevSelect/modalDevSelect.component';
+
 
 
 
@@ -122,21 +122,7 @@ export class RoomClass extends Generic {
         //console.log("update cd " + vm.estado.id)
     }
 
-    async openModalDeviceIOConfig()
-    {
-
-
-        let result : DevicesSelected = await this.modalService.open(ModalDevSelectComponent, {size: 'lg',ariaLabelledBy: 'modal-basic-title'}).result;
-
-        if(result)
-        {
-
-            RtcService.setSelectedDevices(result, this.rtc);
-
-            //si está definido rtc => cambiar configuracion
-            
-        }
-    }
+    
 
 
     canColgar() :boolean 

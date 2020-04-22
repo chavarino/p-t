@@ -2,7 +2,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Component, OnInit, OnDestroy, ChangeDetectorRef, DoCheck, HostListener } from '@angular/core';
 import  {RolesService} from "../services/roles.service";
-import {RtcService} from "../services/rtc.service"
+import {RtcService, DevicesSelected} from "../services/rtc.service"
 
 import {Room} from "../../../../imports/models/room"
 import {Perfil, PerfClase} from "../../../../imports/models/perfil"
@@ -27,6 +27,7 @@ import { ModulesEnum } from 'imports/models/enums';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { isDefined } from '@angular/compiler/src/util';
 import { SoundClass } from 'imports/clases/sound';
+import { ModalDevSelectComponent } from '../modalDevSelect/modalDevSelect.component';
 
 
 
@@ -170,7 +171,21 @@ export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy ,
   
 
 
+    async openModalDeviceIOConfig()
+    {
 
+
+        let result : DevicesSelected = await this.modalService.open(ModalDevSelectComponent, {size: 'lg',ariaLabelledBy: 'modal-basic-title'}).result;
+
+        if(result)
+        {
+
+            RtcService.setSelectedDevices(result, this.rtc);
+
+            //si está definido rtc => cambiar configuracion
+            
+        }
+    }
     
     isDisabledPrecio()
     {
