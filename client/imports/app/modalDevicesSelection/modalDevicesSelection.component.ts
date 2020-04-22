@@ -5,7 +5,7 @@ import { RtcService, DevicesMapInterface, DeviceInterface, DevicesSelected,  } f
 import { isDefined } from '@angular/compiler/src/util';
 @Component({
   //selector: 'deviceSelection',
-  templateUrl: 'modalDevicesSelection.html',
+  templateUrl: './modalDevicesSelection.html',
   styleUrls: ['modalDevicesSelection.scss']
   
 })
