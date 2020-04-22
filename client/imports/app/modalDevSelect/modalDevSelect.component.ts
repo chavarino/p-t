@@ -1,15 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, NavigationExtras } from '@angular/router';
-import {NgbModal, ModalDismissReasons, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import { RtcService, DevicesMapInterface, DeviceInterface, DevicesSelected,  } from '../services/rtc.service';
-import { isDefined } from '@angular/compiler/src/util';
 @Component({
   //selector: 'deviceSelection',
-  templateUrl: './modalDevicesSelection.html',
-  styleUrls: ['modalDevicesSelection.scss']
+  templateUrl: './modalDevSelect.html',
+  styleUrls: ['modalDevSelect.scss']
   
 })
-export class ModalDevicesSelectionComponent  implements OnInit {
+export class ModalDevSelectComponent  implements OnInit {
   devicesList: DevicesMapInterface = {
     audioInputs : [],
     audioOutputs : [],
