@@ -51,6 +51,7 @@ import { CookiesConsentComponent } from './cookiesConsent/cookiesConsent.compone
 import {PoliticaCookiesComponent} from './politicaCookies/politicaCookies.component'
 import { ModalDevicesSelectionComponent } from './modalDevicesSelection/modalDevicesSelection.component';
 
+
 export const ROUTES_PROVIDERS = [];
 const routes: Routes = [
     {
@@ -161,7 +162,7 @@ const routes: Routes = [
    HnResolver,
     BanderasService
   ],
-  entryComponents: [ModalKpm, ModalDevicesSelectionComponent] //modales y componentes que no se les de declara de forma explicita con etiquetas
+  entryComponents: [ModalDevicesSelectionComponent, ModalKpm] //modales y componentes que no se les de declara de forma explicita con etiquetas
 })
 export class AppModule {
 
