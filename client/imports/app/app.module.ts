@@ -36,7 +36,7 @@ import { AppComponent } from './app.component';
 import { TagInputModule } from 'ngx-chips';
 import { PadreComponent} from './padre/padreComponent';
 import { ModalKpm} from './modalKpm/modaKpm.component';
-import { ModalDevicesSelectionComponent} from './modalDevicesSelection/modalDevicesSelection.component'
+
 
 import { FileInput } from './file.component/file.component';
 import { TimeCounter } from './timeCounter/timeCounter.component';
@@ -49,6 +49,7 @@ import { FragmentPolyfillModule } from "./FragmentPolyfillModule/fragment-polyfi
 
 import { CookiesConsentComponent } from './cookiesConsent/cookiesConsent.component';
 import {PoliticaCookiesComponent} from './politicaCookies/politicaCookies.component'
+import { ModalDevicesSelectionComponent } from './modalDevicesSelection/modalDevicesSelection.component';
 
 export const ROUTES_PROVIDERS = [];
 const routes: Routes = [
@@ -140,14 +141,14 @@ const routes: Routes = [
     RoomAlumnoComponent,
     RoomProfComponent,
     ModalKpm,
-    ModalDevicesSelectionComponent,
     FileInput,
     KeyDectect,
     ReportsComponent,
     LoadRoles,
     StarView,
     CookiesConsentComponent,
-    PoliticaCookiesComponent
+    PoliticaCookiesComponent,
+    ModalDevicesSelectionComponent
   ],
   bootstrap: [
     AppComponent

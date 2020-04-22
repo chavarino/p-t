@@ -15,6 +15,8 @@ import { Tipo } from 'imports/models/enums';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalDevicesSelectionComponent } from 'client/imports/app/modalDevicesSelection/modalDevicesSelection.component';
 
+
+
 /*enum ETipo  {
     INIT = 1,
     CLASS = 2,
