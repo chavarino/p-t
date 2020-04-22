@@ -20,7 +20,7 @@ import { MsgClass, FactoryCommon, Log } from 'imports/functions/commonFunctions'
 
 import {Perfil} from "../../../../imports/models/perfil"
 
-import {RtcService} from "../services/rtc.service"
+import {RtcService, DevicesSelected} from "../services/rtc.service"
 
 import {MethodsClass} from "../../../../imports/functions/methodsClass"
 import { ConfigTags } from '../categorias/categorias.component';
@@ -31,6 +31,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { RoomClass, ETipo } from 'imports/clases/room.class';
 
 import { ModulesEnum } from 'imports/models/enums';
+import { ModalDevSelectComponent } from '../modalDevSelect/modalDevSelect.component';
 
 
 
@@ -140,7 +141,21 @@ export class RoomAlumnoComponent extends RoomClass implements OnInit, OnDestroy,
     
 
    
-       
+    async openModalDeviceIOConfig()
+    {
+
+
+        let result : DevicesSelected = await this.modalService.open(ModalDevSelectComponent, {size: 'lg',ariaLabelledBy: 'modal-basic-title'}).result;
+
+        if(result)
+        {
+
+            RtcService.setSelectedDevices(result, this.rtc);
+
+            //si está definido rtc => cambiar configuracion
+            
+        }
+    }
      
 
     getCategorias(categorias : Array<string>) : ConfigTags
