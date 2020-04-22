@@ -13,7 +13,8 @@ import { resolve } from 'url';
 import { Router } from '@angular/router';
 import { Tipo } from 'imports/models/enums';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ModalDevicesSelectionComponent } from 'client/imports/app/modalDevicesSelection/modalDevicesSelection.component';
+import { ModalDevSelectComponent } from 'client/imports/app/modalDevSelect/modalDevSelect.component';
+
 
 
 
@@ -125,7 +126,7 @@ export class RoomClass extends Generic {
     {
 
 
-        let result : DevicesSelected = await this.modalService.open(ModalDevicesSelectionComponent, {size: 'lg',ariaLabelledBy: 'modal-basic-title'}).result;
+        let result : DevicesSelected = await this.modalService.open(ModalDevSelectComponent, {size: 'lg',ariaLabelledBy: 'modal-basic-title'}).result;
 
         if(result)
         {

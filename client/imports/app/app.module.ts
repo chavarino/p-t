@@ -49,7 +49,8 @@ import { FragmentPolyfillModule } from "./FragmentPolyfillModule/fragment-polyfi
 
 import { CookiesConsentComponent } from './cookiesConsent/cookiesConsent.component';
 import {PoliticaCookiesComponent} from './politicaCookies/politicaCookies.component'
-import { ModalDevicesSelectionComponent } from './modalDevicesSelection/modalDevicesSelection.component';
+import { ModalDevSelectComponent } from './modalDevSelect/modalDevSelect.component';
+
 
 
 export const ROUTES_PROVIDERS = [];
@@ -149,7 +150,7 @@ const routes: Routes = [
     StarView,
     CookiesConsentComponent,
     PoliticaCookiesComponent,
-    ModalDevicesSelectionComponent
+    ModalDevSelectComponent
   ],
   bootstrap: [
     AppComponent
@@ -162,7 +163,7 @@ const routes: Routes = [
    HnResolver,
     BanderasService
   ],
-  entryComponents: [ModalDevicesSelectionComponent, ModalKpm] //modales y componentes que no se les de declara de forma explicita con etiquetas
+  entryComponents: [ModalDevSelectComponent, ModalKpm] //modales y componentes que no se les de declara de forma explicita con etiquetas
 })
 export class AppModule {
 
