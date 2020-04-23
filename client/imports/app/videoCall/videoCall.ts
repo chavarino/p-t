@@ -15,7 +15,14 @@ import { isDefined } from '@angular/compiler/src/util';
 @Component({
   selector: 'videoCall',
   templateUrl: 'videoCall.html',
-  styleUrls: ['videoCall.scss']
+  styleUrls: ['videoCall.scss'],
+  styles: [`
+  /*para que el input interior llegue hasta el final*/
+        :host ::ng-deep fileInput button i {
+           font-size: 1.1vw!important;
+      }
+  
+  `]
 })
 export class VideoCall implements OnInit, OnDestroy, AfterViewChecked{
   
