@@ -87,8 +87,18 @@
             </div>
             <!-- CONTROL CHAT -->
             <div class="row">
-                <button (click)="newMsg()" style="color: white; border-color: #63B36A; border-radius: 5px; background: #63B36A; margin-left: 73%;">Enviar</button>
-                <!--i (click)="newMsg()"  class="material-icons"  style="color: #63B36A;font-size: 90px;">play_circle_outline</i-->
+                <div class="col-2 p-0">
+                    <fileInput [multiple]="false" (onSelectFile)="addFile($event)"></fileInput>
+
+                </div>
+                <div class="col-5">
+
+                </div>
+                <div class="col-5" style="padding-left: 14%;">
+                    <button (click)="newMsg()" style="color: white; border-color: #63B36A; border-radius: 5px; background: #63B36A;">Enviar</button>
+                    <!--i (click)="newMsg()"  class="material-icons"  style="color: #63B36A;font-size: 90px;">play_circle_outline</i-->
+
+                </div>
             </div>
         </div>
         <div class="col-8">
