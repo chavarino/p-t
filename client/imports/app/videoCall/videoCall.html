@@ -1,11 +1,8 @@
-<div class="video-call" [hidden]="!mostrar()" [ngClass]="{'full-screen': isFullScreen()}"  >
+<div class="video-call container" [hidden]="!mostrar()" [ngClass]="{'full-screen': isFullScreen()}"  >
     <div class="row">
-        <div class="col-2" style="    padding-left: 30px;">
-            <timeCounter   [tipo]="contador.tipo" [secondsIni]="contador.secondsIni"  [mostrar]="mostrar()" (onNewMinutes)="setContandorMinutosLive($event)">
-
-            </timeCounter>
-
-            
+        <div class="col-2">
+            <timeCounter [tipo]="contador.tipo" [secondsIni]="contador.secondsIni"  [mostrar]="mostrar()" (onNewMinutes)="setContandorMinutosLive($event)">
+            </timeCounter> 
         </div>
         <div class="col-8">
 
@@ -24,15 +21,104 @@
 
 
     <div class="row">
+        <div class="col-4">
+            <!-- CAJA VIDEO REMOTO -->
+            <div class="row">
+                <video  id="remoteId" autoplay ></video>
+            </div>
+            <!-- CONTROL VIDEO REMOTO -->
+            <div class="row">
+                <div class="col"  *ngIf="!isFullScreen()">
+                    <i style="margin-left: 88%;" class="material-icons fullscreen-on" title="Pantalla completa" (click)="switchFullScreen()">
+                            {{  "fullscreen"}}
+                    </i> 
+                </div>
+                <div class="col" *ngIf="isFullScreen()">
+                    <div class="barra-accion-fscreen">
+                        <i  class="material-icons mr-2" title="Compartir/Cancelar escritorio" (click)="switchVideoSource()">
+                                {{isModeCam()? "screen_share" : "switch_video"}}  
+                        </i>      
+                        <i class="material-icons micro-on  mr-2" title="habilitar/deshabilitar micrófono" (click)="switchMicro()">
+                                {{isSonidoOn() ? "mic" : "mic_off" }}
+                        </i>
+                        <i  (click)="switchVideo()" class="material-icons videocam-on mr-2"  title="habilitar/deshabilitar cámara">
+                                {{isVideoOn() ? "videocam" : "videocam_off" }}             
+                        </i>
 
-        <div class="col-6">
-            <!-- CAJA DE VIDEO-->
+                        <i class="material-icons fullscreen-on md-48" title="deshabilitar pantalla completa" (click)="switchFullScreen()" >
+                                {{ "fullscreen_exit" }}
+                        </i>
+                    </div>
+                </div>
+            </div>
+            <!-- CAJA CHAT (OUTPUT) -->
+            <div class="row" #textchat style="height: 35%;
+            width: 98%;
+            overflow-y: auto;
+            border: 1px solid #63B36A;
+            border-radius: 5px;
+            background: #f9f2f2;
+            max-height: 9.7em;">
+                <div class="col">
+                   <div class="row" [ngClass]="{'owner': imOwner(m)}" *ngFor="let m of chat" >                           
+                            <div *ngIf="isMsg(m)" class="msg-cont msg-text">
+                                <span>
+                                    {{m.msg}}
+                                </span>
+                            </div>
+                            <div class="msg-cont msg-file row " *ngIf="isFile(m)" (click)="download(m)" style="border-bottom: 1px solid #d4d4d4;width: 100%">
+                                <div class="col">
+                                    <i class="material-icons" style="color: #63B36A;">
+                                        <!--cloud_download-->get_app
+                                    </i>
+                                </div>
+                                <div class="col"> 
+                                    {{m.filename}}
+                                </div>
+                            </div>
+                    </div>      
+                </div>
+            </div>           
+            <!-- CAJA CHAT (INPUT) -->
+            <div class="row">
+                <textarea keyDectect [fn]="fnKeyDetectChat" [(ngModel)]="msg" name="" id="" cols="30" rows="10"
+                        style="width: 90%; resize: none; height: 30px; border-radius: 5px; border-color: #63B36A; background: #f9f2f2;" >
+                </textarea>
+            </div>
+            <!-- CONTROL CHAT -->
+            <div class="row">
+                <button (click)="newMsg()" style="color: white; border-color: #63B36A; border-radius: 5px; background: #63B36A; margin-left: 73%;">Enviar</button>
+                <!--i (click)="newMsg()"  class="material-icons"  style="color: #63B36A;font-size: 90px;">play_circle_outline</i-->
+            </div>
+        </div>
+        <div class="col-8">
+            <!-- CAJA VIDEO LOCAL -->
+            <div class="row">
+                <video id="localId"   autoplay ></video>
+            </div>
+            <!-- CONTROL VIDEO LOCAL -->
+            <div class="row" style="margin-left: 45%;" *ngIf="!isFullScreen()">
+                <i class="material-icons mr-2" (click)="switchVideoSource()">
+                        {{isModeCam()? "screen_share" : "switch_video"}}  
+                </i>      
+                <i class="material-icons micro-on  mr-2" (click)="switchMicro()">
+                        {{isSonidoOn() ? "mic" : "mic_off" }}
+                </i>
+                <i  (click)="switchVideo()" class="material-icons videocam-on mr-2">
+                        {{isVideoOn() ? "videocam" : "videocam_off" }}             
+                </i>
+            </div>
+        </div>
+    </div>
+
+
+<!--
+    <div class="row">
+
+        <div class="col-4">
             <div class="row">
                 <div class="col">
-                    <video  id="remoteId" autoplay >
-       
-                   </video>
-                   
+                    <video  id="remoteId" autoplay ></video>
                 </div>
             </div>
             <div class="row box-full-screen"   >
@@ -40,52 +126,39 @@
                             <i class="material-icons fullscreen-on" title="Pantalla completa" (click)="switchFullScreen()">
                                     {{  "fullscreen"}}
                             </i>
-                          <!--  <i class="material-icons" title="Recargar video" (click)="reconectarVideo()">
-                                refresh
-                            </i>-->
                             
                         </div>
                     <div class="col" *ngIf="isFullScreen()">
-                                    <div class="barra-accion-fscreen">
-                                        <i  class="material-icons mr-2" title="Compartir/Cancelar escritorio" (click)="switchVideoSource()">
-                                              {{isModeCam()? "screen_share" : "switch_video"}}  
-                                        </i>      
-                                        <i class="material-icons micro-on  mr-2" title="habilitar/deshabilitar micrófono" (click)="switchMicro()">
-                                                {{isSonidoOn() ? "mic" : "mic_off" }}
-                                        </i>
-                                        <i  (click)="switchVideo()" class="material-icons videocam-on mr-2"  title="habilitar/deshabilitar cámara">
-                                                {{isVideoOn() ? "videocam" : "videocam_off" }}             
-                                        </i>
+                        <div class="barra-accion-fscreen">
+                            <i  class="material-icons mr-2" title="Compartir/Cancelar escritorio" (click)="switchVideoSource()">
+                                    {{isModeCam()? "screen_share" : "switch_video"}}  
+                            </i>      
+                            <i class="material-icons micro-on  mr-2" title="habilitar/deshabilitar micrófono" (click)="switchMicro()">
+                                    {{isSonidoOn() ? "mic" : "mic_off" }}
+                            </i>
+                            <i  (click)="switchVideo()" class="material-icons videocam-on mr-2"  title="habilitar/deshabilitar cámara">
+                                    {{isVideoOn() ? "videocam" : "videocam_off" }}             
+                            </i>
 
-                                        <i class="material-icons fullscreen-on md-48" title="deshabilitar pantalla completa" (click)="switchFullScreen()" >
-                                                {{ "fullscreen_exit" }}
-                                        </i>
-                                       <!--
-                                           <i class="material-icons">
-                                                refresh
-                                            </i>
+                            <i class="material-icons fullscreen-on md-48" title="deshabilitar pantalla completa" (click)="switchFullScreen()" >
+                                    {{ "fullscreen_exit" }}
+                            </i>
 
-                                       --> 
-            
-                                    </div>
-                                </div>
+                        </div>
+                    </div>
             </div>   
             
         </div>
-        <!-- CAJA DE FICHEROS se debe mover-->
         <div class="col-6">
             <div class="row">
                 <div class="col-12">
-                    <!-- CAJA chat-->
                 </div>
             </div>
-            <div class="row"
-            #textchat
-            style="height: 325px;
+            <div class="row" #textchat style="height: 325px;
             max-height: 325px;
             min-width: 325px;
             overflow-y: auto;
-            border: 1px solid #38f094;
+            border: 1px solid #63B36A;
             border-radius: 5px;    background: #f9f2f2;">
                 <div class="col-12" >
                    <div class="row" [ngClass]="{'owner': imOwner(m)}" *ngFor="let m of chat" >
@@ -99,9 +172,9 @@
                                 
                                 
                                 <div class="col-1">
-                                        <i class="material-icons" style="color: #38f094;">
-                                                <!--cloud_download-->get_app
-                                                </i>
+                                        <i class="material-icons" style="color: #63B36A;"-->
+                                                <!--cloud_downloadget_app-->
+                                                <!--/i>
                                 </div>
                                 <div class="col-11">
                                     
@@ -136,7 +209,6 @@
     <div class="row">
             
             <div class="col-7">
-                <!-- caja de escritura -->
                 
                 <div class="row">
                     
@@ -146,47 +218,35 @@
                         
                      </div>
                      <div class="col-1">
-                         <!--[disabled]="isSendDisabled()"-->
-                            <i (click)="newMsg()"  class="material-icons"  style="color: #38f094;font-size: 90px;">
-                                    play_circle_outline
-                                    </i>
+                            <i (click)="newMsg()"  class="material-icons"  style="color: #63B36A;font-size: 90px;">play_circle_outline</i>
                      </div>
                 </div>
             </div>
             <div class="col-3">
-                <!-- caja de escritura -->
                 
             </div>
             <div class="col-2"> 
-             <!-- CAJA DE VIDEO local-->
              <div class="box-local-video" >
-                    <!--[ngClass]="{'no-video': !isVideoOn()}"-->
                     <div class="row">
                             <div class="col">
-                                <video id="localId"   autoplay >
-                
-                                </video>
+                                <video id="localId"   autoplay ></video>
                            
 
                             </div>
                     </div>
-                    <!--md-24-->
                     <div class="row">
     
                             
                         <div class="col" *ngIf="!isFullScreen()">
-                            <div>
-                                <i  class="material-icons mr-2" (click)="switchVideoSource()">
-                                      {{isModeCam()? "screen_share" : "switch_video"}}  
-                                </i>      
-                                <i class="material-icons micro-on  mr-2" (click)="switchMicro()">
-                                        {{isSonidoOn() ? "mic" : "mic_off" }}
-                                </i>
-                                <i  (click)="switchVideo()" class="material-icons videocam-on mr-2">
-                                        {{isVideoOn() ? "videocam" : "videocam_off" }}             
-                                </i>
-    
-                            </div>
+                            <i  class="material-icons mr-2" (click)="switchVideoSource()">
+                                    {{isModeCam()? "screen_share" : "switch_video"}}  
+                            </i>      
+                            <i class="material-icons micro-on  mr-2" (click)="switchMicro()">
+                                    {{isSonidoOn() ? "mic" : "mic_off" }}
+                            </i>
+                            <i  (click)="switchVideo()" class="material-icons videocam-on mr-2">
+                                    {{isVideoOn() ? "videocam" : "videocam_off" }}             
+                            </i>
                         </div>
                         
                     </div>
@@ -194,113 +254,9 @@
                 </div>
                 
             </div>
-        </div>
+        </div-->
 
 
 
 
-    
-    <!--
-
-        <div class="row">
-
-        <div class="col-8">
-            
-            <video  id="remoteId" autoplay>
-
-            </video>
-            <div class="row box-full-screen">
-                    <div class="col " (click)="switchFullScreen()">
-                            <i class="material-icons fullscreen-on" [ngClass]="{'md-48': isFullScreen()}">
-                                    {{ isFullScreen() ? "fullscreen_exit" : "fullscreen"}}
-                            </i>
-                            
-                    </div>
-            </div>
-        </div>
-        <div class="col-4">
-
-        </div>
-
-    </div>
-    <div class="row">
-        
-        <div class="col-3">
-            
-        </div>
-        <div class="col-6">
-            <div style="max-height : 150px; overflow-y :auto;width:100%" >
-                <div class="row" *ngFor="let f of _clase.files" (click)="download(f)" style="border-bottom: 1px solid #d4d4d4;width: 100%">
-                    <div class="col-1">
-                            <i class="material-icons" style="color: #38f094;">
-                                    cloud_download
-                                    </i>
-                    </div>
-                    <div class="col-11">
-                        
-                        {{f.filename}}
-                    </div>
-                </div>
-
-            </div>
-        </div>
-        <div class="col-3">
-
-        </div>
-    </div>
-    <div class="row">
-
-        <div class="col-8">
-                <fileInput [multiple]="false" (onSelectFile)="addFile($event)"></fileInput>
-            
-        </div>
-        <div class="col-4">
-            <div class="box-local-video" >
-        
-                <video id="localId"   autoplay >
-
-                    </video>
-                   
-                    <div class="row">
-    
-                            
-                        <div class="col">
-                            <div>
-                                <i  class="material-icons mr-2" (click)="switchVideoSource()">
-                                      {{isModeCam()? "screen_share" : "switch_video"}}  
-                                </i>      
-                                <i class="material-icons micro-on  mr-2" (click)="switchMicro()">
-                                        {{isSonidoOn() ? "mic" : "mic_off" }}
-                                </i>
-                                <i  (click)="switchVideo()" class="material-icons videocam-on mr-2">
-                                        {{isVideoOn() ? "videocam" : "videocam_off" }}             
-                                </i>
-    
-                            </div>
-                        </div>
-                        
-                    </div>
-                    
-                </div>
-            
-            </div>
-        </div>
-
-
-        <div class="row">
-    
-            <button (click)="shareDesk()" *ngIf="isModeCam()">
-                    <i class="material-icons md-48">
-                            screen_share
-                    </i>
-            </button>
-            <button (click)="cam()" *ngIf="!isModeCam()">
-                    <i class="material-icons md-48">
-                            switch_video
-                    </i>
-            </button>
-            
-        </div>
-
-    -->
 </div>
