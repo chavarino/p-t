@@ -1,18 +1,9 @@
 
 <div class="room-prof padding-pag container">
     <div class="row">
-        <div class="col-2">
-    
-        </div>
-        <div class="col-9">
-            <span title="Configurar dispositivos de Video/Audio" class="material-icons float-right" style="cursor: pointer;font-size: 1.5vw;color: #63b36a;" (click)="openModalDeviceIOConfig()">
-                settings
-                </span>
-        </div>
-
-        <div class="col-1">
-
-        </div>
+        <span *ngIf="isEstadoSelProf() || isEstadoClass()" title="Configurar dispositivos de Video/Audio" class="material-icons" style="margin-left:96%; cursor: pointer;font-size: 1.5vw;color: #4b4b4b;" (click)="openModalDeviceIOConfig()">
+            settings
+        </span>
     </div>
         <div class="row" *ngIf="!isEstadoClass()">
             <div class="col-2">
@@ -269,8 +260,10 @@
     </div>
     <div  *ngIf="isEstadoClass()">
         <div [hidden]="!isConnected()" >
-
-            <div class="row">
+            <span class="alert alert-danger float-right" *ngIf="estado.campos.ping>1">
+                Conexión perdida, reintento ({{estado.campos.ping-1}})
+            </span>
+            <!--div class="row">
                 <div class="col">
                     <h3>
                         En clase.
@@ -281,12 +274,17 @@
                     </h3>
     
                 </div>
-            </div>
+            </div-->
             <videoCall  [clase]="clase" [secondsIni]="secondsIniClass" [rtc]="rtc" ></videoCall>
-            
             <div class="row">  
                 <div class="col-sm">
-                    <button class="btn btn-primary" *ngIf="canColgar()" (click)="colgarCall()"> Colgar</button>
+                    <!--button class="btn btn-primary" *ngIf="canColgar()" (click)="colgarCall()"> Colgar</button-->
+                    <button class="colgar" *ngIf="canColgar()" (click)="colgarCall()" style="padding: 1px 12px; margin-left: 65%; margin-top: -1%; font-size:30px;color:white;background-color: red; border-radius:50px; border-style:solid;border-width:7px;border-color:red">
+                        <span class="fa fa-phone"></span>
+                    </button>                    
+                    <!--span *ngIf="isEstadoSelProf() || isEstadoClass()" title="Configurar dispositivos de Video/Audio" class="material-icons" style="cursor: pointer;font-size: 1.5vw;color: #63b36a;" (click)="openModalDeviceIOConfig()">
+                        settings
+                    </span>-->
                 </div>
             </div>
         </div>

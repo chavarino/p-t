@@ -1,7 +1,5 @@
 @import '../../../../imports/scss/shared.scss';
-video {
-   
-   
+video {  
     box-sizing: border-box;
     border-radius: 2px;
     padding: 0;
@@ -10,15 +8,17 @@ video {
 
   video#remoteId {
     max-width : 1920px;
-    width: calc(75% - 100px);
+    width: 90%;
     min-width: 200px;
 }
 
+video#localId {
+    max-width: 1920px;
+    width: 100%;
+    min-width: 200px;
+  }
 
 .full-screen {
-
-
-
     .jaleo{
         z-index: 55; position: fixed !important;
         top: 0px;
@@ -92,11 +92,7 @@ video {
 
 
 
-  video#localId {
-    max-width: 1920px;
-    width: calc(20% - 100px);
-    min-width: 200px;
-  }
+
 
 
   .video-call
@@ -149,7 +145,7 @@ video {
             }
         }
 
-        textarea {
+        /*textarea {
             resize: none;
           margin-top: 0px;
           margin-bottom: 0px;
@@ -160,6 +156,6 @@ video {
           border-radius: 5px;
           border-color: rgb(56, 240, 148);
           background: rgb(249, 242, 242);
-        }
+        }*/
 
   }
