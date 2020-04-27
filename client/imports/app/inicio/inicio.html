@@ -22,6 +22,17 @@
             <div class="row">
                 <div class="col">
                     <div class="text-center pt-5">
+                        <div class="alert alert-success">
+                            <h4 class="alert-heading">
+                                ¡Lanzamos Sapens en fase alfa!
+                            </h4>
+                            <span>
+                                Profesores y alumnos. Estamos muy contentos de compartir con vosotros el lanzamiento de Sapens. El proyecto se encuentra aún en fase alfa, por lo que, pedimos disculpas por cualquier inconveniente 
+                                técnico que se produzca en la plataforma. 
+                                <hr> 
+                                Si tenéis alguna sugerencia, nos encantaría poder escucharos <a href="#modalSugerencias" style="color: #155724;" data-toggle="modal"><b>aquí</b></a>
+                            </span>
+                        </div>
                         <h1 class="letra-titulo tamaño-titulo-big" style="margin-top:10%">Consigue mejores notas</h1>
                         <h3 class="letra-titulo">Selecciona ahora tu profesor <b>online.</b> ¡Al instante!</h3>
                     </div>
@@ -141,10 +152,9 @@
                 Elige la oferta que más se adapte a tus necesidades y... ¡ahorra en tiempo!
             </div>    
         </div>
-        <div class="alert alert-primary">
+        <div class="alert alert-success text-center">
             <span>
-                Sapens es un <strong>servicio de pago</strong> en fase alfa. Sin embargo, debido al coronavirus y a la necesidad de proveer de un servicio de tele-aprendizaje de forma online <strong>más facil y accesible</strong>, proveeremos el servicio de forma <strong>gratuita</strong> de forma temporal hasta nuevo aviso.
-                
+                Debido a la situación actual con el COVID-19, nuestro servicio será <strong>gratuito</strong> durante el tiempo que dure el confinamiento. Porque lo primero eres tú.
             </span>
         </div>
         <div class="capa-gris" style="position: absolute;
@@ -232,8 +242,8 @@
         <hr class="text-center" style="background-color: white; width:80%"/>
         <div class="row text-center text-footer">
             <div class="col-md-12">
-                <i class="fa fa-facebook-official" style="font-size: 35px; color:white">&nbsp;</i>
-                <i class="fa fa-instagram" style="font-size:35px;color:white">&nbsp;</i>
+                <a href="https://www.facebook.com/sapens.sapens.92"><i class="fa fa-facebook-official" style="font-size: 35px; color:white">&nbsp;</i></a>
+                <a href="https://www.instagram.com/sapensapens/?hl=es"><i class="fa fa-instagram" style="font-size:35px;color:white">&nbsp;</i></a>
                 <i class="fa fa-twitter" style="font-size:35px;color:white">&nbsp;</i>
             </div>
             <!--div class="col-md-4 title-footer">
@@ -251,7 +261,7 @@
             </div-->
         </div>
         <div class="row text-center text-footer">
-            <div class="col-md-12">sapensemail@gmail.com</div>
+            <div class="col-md-12">info@sapens.es</div>
         </div>
     </div>
 </footer>
@@ -273,3 +283,36 @@
       </div>
     </div>
 </div>
+
+<div id="modalSugerencias" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="singInLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+          <div class="modal-header">
+            <h3>
+                Estamos encantados de escucharte
+            </h3>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form  #claseForm2="ngForm" [formGroup]="addForm2">
+                <label for="exampleFormControlTextarea1">Cuéntanos aquí si tienes alguna sugerencia o has experimentado alguna incidencia con Sapens. ¡Tu opinión significa mucho para nosotros!</label>
+                <div class="form-group">
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <div class="g-recaptcha" data-sitekey="6Lcjd30UAAAAAIWm....."></div>
+                </div>
+            </form>          
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary">Cancelar</button>
+            <button type="button" class="btn btn-success">Enviar</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+
