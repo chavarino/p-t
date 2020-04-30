@@ -7,9 +7,12 @@ import './imports/publications/room'
 import './imports/publications/msg'
 import './imports/methods/msg'
 import './imports/methods/pagos';
+import './imports/methods/sendEmail';
 import './imports/methods/general';
 import './imports/publications/kpm';
 import './imports/publications/pagos';
+
+
 import {PagosFn} from "./imports/libAux/pagos";
 
 /*ServiceConfiguration.configurations.remove({
@@ -135,15 +138,9 @@ if(Meteor.isServer)
         
    
     console.log("url absoluta :" +Meteor.absoluteUrl());
-    process.env.HTTP_FORWARDED_COUNT="1";
-    if(Meteor.isProduction)
-    {
-      //process.env.MAIL_URL="smtps://infosapens@gmail.com:S4p3nsInfo##@smtp.gmail.com:465/";
 
-    }
-    else {
-      //process.env.MAIL_URL="smtps://infosapens@gmail.com:S4p3nsInfo##@smtp.gmail.com:465/";
-    }
+    process.env.HTTP_FORWARDED_COUNT="1";
+ 
     
     SyncedCron.config({
       // Log job run details to console

@@ -92,6 +92,7 @@ export class RtcService {
        
         }]
     }
+    isConnectionRelayType : boolean =false;
     private videoType : VideoType = VideoType.CAM;
     negotiating :boolean;
     rtc :  Rtc
@@ -456,6 +457,14 @@ changeAudioDestination() {
           pc.onconnectionstatechange  = function(event) {
 
             vm.l.log("ESTADO: rtc  onconnectionstatechange(). " + JSON.stringify(event));
+            if(vm.isConnected())
+            {
+              vm.rtc.pc.getStats(vm.stream.getVideoTracks()[0]).then((v)=>{
+                  console.log("getStarts: " + JSON.stringify(v))
+              }).catch((e)=>console.log("Error getStats" + e))
+            }
+
+
             if (vm.isConnected() && vm.rtc.handlerConnected) {
               // Handle the failure
               vm.l.log("rtc  onconnectionstatechange(). isConnected ");
@@ -468,7 +477,10 @@ changeAudioDestination() {
             if (event.candidate) {
               vm.l.log("rtc  onicecandidate() event.candidate ");
               vm.l.log("rtc  onicecandidate() Send Candidate");
-             
+               /* if(!event.candidate.candidate.includes("relay")) FUERZA TURN
+                {
+                    return;//TODO
+                }*/
               vm.sendMessage(vm.newMsg( MsgTipo.CANDIDATE, null,event.candidate.toJSON()));
             }
           };
@@ -610,9 +622,15 @@ changeAudioDestination() {
                 
               }
             } else if (msg.msgTipo === MsgTipo.CANDIDATE) {
-              this.l.log(`getMsg CANDIDATE `+ JSON.stringify(msg.candidate));
+
+              this.isConnectionRelayType = msg.candidate.candidate.includes(" relay ")
+              this.l.log(`getMsg CANDIDATE `+ JSON.stringify(msg.candidate) + `, conexion : ${ this.isConnectionRelayType ? "TURN" : "STUN" }` );
+
+
+
 
               this.l.log(`getMsg addIceCandidate... `);
+              
               await pc.addIceCandidate(new RTCIceCandidate(msg.candidate ))
               this.l.log(`getMsg addIceCandidate... ok`);
             }
