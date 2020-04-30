@@ -202,7 +202,8 @@ Meteor.methods({
       clase.scores.profesor.kpms = score.kpms || [];
 
       Rooms.update({_id: clase._id}, clase,{ upsert: false });
-
+      
+      Meteor.call("sendValoracion", clase, secretshared);
       Meteor.call("calcularElo", clase.profId, clase.scores.profesor.kpms, secretshared);
     } catch (error) {
       //  console.log(error);
@@ -212,6 +213,10 @@ Meteor.methods({
 
   },
   //la clase la crea el alumno
+ /* setClassConnectionTypeToRelay()
+  {
+
+  },*/
   crearClase(profId : string) {
 
   check(profId, String);
@@ -227,7 +232,8 @@ Meteor.methods({
     ips: {
       comprador: "",
       vendedor : ""
-    }
+    },
+    isConnectionRelayType: false
   };
     try
     {

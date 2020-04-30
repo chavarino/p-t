@@ -31,6 +31,7 @@ export interface MessageRoom extends MsgChat  {
     msg : string
 }
 export interface Room {
+    isConnectionRelayType ?: boolean;
   nomProfe: string;
   nomAlumn: string;
     _id ?: string,
