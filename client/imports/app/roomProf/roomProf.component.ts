@@ -60,14 +60,18 @@ export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy ,
     }
     userSuscripcion: Subscription;
     tonoLlamada: SoundClass;
-    
+    numberAlumnosConect: number;
+    tIntNumAlumnsConnected : number;
+    tonoBip: SoundClass;
    
     constructor( rol : RolesService,  rutas : Router , private formBuilder: FormBuilder, cd :ChangeDetectorRef, modalService: NgbModal )
     {
         super( "Prof", rol, cd, rutas, modalService);
         rol.setModulo(ModulesEnum.CLASE_PRFSOR);
-     
+        this.tIntNumAlumnsConnected = 5000;
+        this.numberAlumnosConect = 0;
         this.tonoLlamada = SoundClass.crearTonoLlamada("/sounds/ring.mp3");
+        this.tonoBip = SoundClass.crearBip("/sounds/bipConectado.mp3");
         let vm =this;
         vm.perfClase = {
             categorias : [],
@@ -621,6 +625,12 @@ export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy ,
 
                     //si pasa el tiempo y se ejecuta se cancela.
                     //ping
+                    if(vm.rtc.isConnectionRelayType && vm.clase.isConnectionRelayType !== vm.rtc.isConnectionRelayType)
+                    {
+                            vm.clase.isConnectionRelayType = vm.rtc.isConnectionRelayType;
+                    }
+
+
                     if(vm.redux.estado.campos.ping === vm.maxPing)//time out
                     {
                         //TODO COLGAR
@@ -741,6 +751,28 @@ export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy ,
             return true;
         }
         
+
+        /*this.numberAlumnosConect =  MeteorObservable.subscribe('usersConected').subscribe((value) => {
+
+            console.log("conectados " + JSON.stringify(value))
+            Users.find({_id:Meteor.userId()}).subscribe((data)=>{
+
+                if(data[0])
+                {
+                    let p : Perfil = data[0].profile;
+                    let precio = this.perfClase ? this.perfClase.ultPrecio : p.perfClase.ultPrecio;
+                    this.perfClase = p.perfClase;
+                    this.perfClase.ultPrecio = isDefined(precio) && precio >0 ? precio : 0  ;
+                }
+                else{
+                  //this.rol.setRoles(data[0].rol);
+        
+                }
+              })
+           // this.rol.setRoles(Roles.findOne().rol);
+
+          });*/
+
         this.userSuscripcion =  MeteorObservable.subscribe('usersProfile').subscribe(() => {
 
             Users.find({_id:Meteor.userId()}).subscribe((data)=>{
@@ -782,7 +814,16 @@ export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy ,
                     //vm.findClass();
             });
           });
-          vm.intervalUpdAction()
+          vm.intervalUpdAction(()=>{
+              MethodsClass.call("getNumAlumnosConectados",(result: number)=>{
+                            if(vm.numberAlumnosConect<result)
+                            {
+                                this.tonoBip.play();
+                            }
+                            vm.numberAlumnosConect = result;
+
+                        })
+          }, this.tIntNumAlumnsConnected)
 
           vm.iniRoom()
     }

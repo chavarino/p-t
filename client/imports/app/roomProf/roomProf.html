@@ -1,9 +1,25 @@
 
 <div class="room-prof padding-pag container">
     <div class="row">
-        <span *ngIf="isEstadoPreClass() || isEstadoWaitCall() || isEstadoClass()" title="Configurar dispositivos de Video/Audio" class="material-icons" style="margin-left:96%; cursor: pointer;font-size: 1.5vw;color: #4b4b4b;" (click)="openModalDeviceIOConfig()">
-            settings
-        </span>
+        <div class="col-2">
+            
+    
+        </div>
+        <div class="col-7">
+            <span *ngIf="isEstadoPreClass() || isEstadoWaitCall()" style=" margin-top: 1vw;   padding: 0.5vw;
+            background: #63b36a;
+            border-radius: 0.2vw;
+            color: white;
+            box-shadow: 1px 0px 5px 0px #bdbcbc;    font-size: 0.8vw;">
+                Alumnos conectados: {{numberAlumnosConect}}
+            </span>  
+        </div>
+        <div class="col-3">
+            <span *ngIf="isEstadoPreClass() || isEstadoWaitCall() || isEstadoClass()" title="Configurar dispositivos de Video/Audio" class="material-icons" style="margin-left:0.2vw; cursor: pointer;font-size: 1.5vw;color: #4b4b4b;" (click)="openModalDeviceIOConfig()">
+                settings
+            </span>
+
+        </div>
     </div>
         <div class="row" *ngIf="!isEstadoClass()">
             <div class="col-2">
@@ -115,6 +131,7 @@
                     
                     </form>
                 </section>
+                
             </div>
             <!--
 

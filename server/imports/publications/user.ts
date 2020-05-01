@@ -1,7 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 
 import { Users } from '../../../imports/collections/users';
-import { RolesEnum, AutoCompleteModel } from 'imports/models/perfil';
+import { RolesEnum, AutoCompleteModel, Perfil } from 'imports/models/perfil';
+import { ModulesEnum } from 'imports/models/enums';
+import { User } from 'imports/models/User';
 
 Meteor.publish('usersProfile', function() {
   
@@ -29,7 +31,7 @@ Meteor.publish('alumnoCall', function() {
 Meteor.publish('allAvalaibleTeacher', function() {
   
 
-  return Users.find({"profile.disponible" : !false,'profile.rol' : { $gte: RolesEnum.PROFFESOR}  /*, _id : { $ne: Meteor.userId() }*/}, {fields:  {
+  return Users.find({"profile.disponible" : !false,'profile.rol' : { $gte: RolesEnum.PROFFESOR}, "lastModulo" :  ModulesEnum.CLASE_PRFSOR  /*, _id : { $ne: Meteor.userId() }*/}, {fields:  {
     'profile.name' : 1,
     "profile.foto" : 1,
     'profile.nombre' : 1,
@@ -42,3 +44,5 @@ Meteor.publish('allAvalaibleTeacher', function() {
     'profile.perfClase.ultElo' : 1
   }});
 });
+
+

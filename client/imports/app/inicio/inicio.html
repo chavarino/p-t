@@ -224,18 +224,19 @@
             <div class="col-lg-6 col-md-12 text-footer" style="margin-top: 5%;">
                 <h4 style="color: white;">Conócenos</h4>
                 <ul class="list-unstyled">
-                    <li><a href="#">¿Quiénes somos?</a></li>
-                    <li><a href="#">¿Tienes sugerencias?</a></li>
+                    <li *ngIf="false"><a href="#">¿Quiénes somos?</a></li>
+                    <li><a href="#modalSugerencias" data-toggle="modal">¿Tienes sugerencias?</a></li>
                     <li><a id="linkPrivacidad" href="#modalPrivacidad" data-toggle="modal">Política de privacidad</a></li>
                 </ul>
             </div>
             <div class="col-lg-6 col-md-12 text-footer" style="margin-top: 5%;">
                 <h4 style="color: white;">Aprende con nosotros</h4>
                 <ul class="list-unstyled">
-                    <li class="nav-item" *ngIf="canReadC('none')">
+                    <li class="nav-item" *ngIf="false &&  canReadC('none')">
                         <a routerLink="/inicio" fragment="asignaturas">Asignaturas</a>
                     </li>                    
-                    <li><a href="#">FAQ</a></li>
+                    <li *ngIf="false"><a href="#">FAQ</a></li>
+                    <li><a  routerLink="/politica-de-cookies">Política de cookies</a></li>
                 </ul>
             </div>
         </div>
