@@ -6,6 +6,7 @@ import  {secretshared} from '../libAux/sharedPass'
 import { ModulesEnum } from 'imports/models/enums';
 import { Perfil } from 'imports/models/perfil';
 import { updateDatePing } from './room';
+import { User } from 'imports/models/User';
 var crypto = require('crypto');
 
   
@@ -55,6 +56,15 @@ var crypto = require('crypto');
     
     Meteor.methods(
       {
+        getNumAlumnosConectados()
+        {
+            return Users.find({"lastModulo" :  ModulesEnum.CLASE_ALUMNO}).cursor.map((doc :User) => {
+                return  (new Date().getTime() - doc.lastUpdate.getTime()) <= 30000 ? 1 : 0
+               
+            }).reduce( (p : number, c : number)=> {
+              return p + c;
+            }, 0  )
+        },
   
         
           getDiffTimeInSeconds(date1 : Date) {

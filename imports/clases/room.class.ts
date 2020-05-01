@@ -130,14 +130,16 @@ export class RoomClass extends Generic {
         return !isUndefined(this.getUserCall() )&& !isUndefined(this.getUserCall()._id);
     }
 
-    intervalUpdAction()
+    intervalUpdAction(fn ?: ()=>void, time ?: number)
     {
         let vm = this;
         if(!this.intervalUpd)  
         {
-            /*this.intervalUpd = setInterval(()=>{
-                vm.cdUpdate(vm.estado)
-            },500)*/
+            if(fn)
+            {
+                this.intervalUpd = setInterval(fn,time)
+
+            }
 
         }
         else {

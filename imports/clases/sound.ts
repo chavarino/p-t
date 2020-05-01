@@ -26,7 +26,19 @@ export class SoundClass {
         
         return llamada;
     }
+    /**
+     * Crear HTMLAudioElement configurado para ser tono de llamada: 
+     * no visible, auto y en loop desde que se reproduce hasta que se pausa.
+     * @param src tono fuente
+     */
+    static crearBip(src: string) : SoundClass
+    {
 
+        let bip : SoundClass = new SoundClass(src, "auto", "none", false, "none");
+        
+        
+        return bip;
+    }
     play() {
       this.sound.play();
     }
