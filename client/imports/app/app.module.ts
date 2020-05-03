@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, LOCALE_ID } from '@angular/core';
 
 import { BrowserModule } from '@angular/platform-browser';
 
@@ -50,8 +50,11 @@ import { FragmentPolyfillModule } from "./FragmentPolyfillModule/fragment-polyfi
 import { CookiesConsentComponent } from './cookiesConsent/cookiesConsent.component';
 import {PoliticaCookiesComponent} from './politicaCookies/politicaCookies.component'
 import { ModalDevSelectComponent } from './modalDevSelect/modalDevSelect.component';
+import { ReportsAdminComponent } from './reportAdmin/reportsAdmin.component';
+import es from '@angular/common/locales/es';
+import { registerLocaleData } from '@angular/common';
 
-
+    registerLocaleData(es);
 
 export const ROUTES_PROVIDERS = [];
 const routes: Routes = [
@@ -93,7 +96,12 @@ const routes: Routes = [
         {
           path: 'room/report',
           component: ReportsComponent, canActivate: [canActivateLogin]
+        },
+        {
+          path: 'admin/report',
+          component: ReportsAdminComponent, canActivate: [canActivateAdmin]
         }
+        
       ]
     },
     {
@@ -150,7 +158,8 @@ const routes: Routes = [
     StarView,
     CookiesConsentComponent,
     PoliticaCookiesComponent,
-    ModalDevSelectComponent
+    ModalDevSelectComponent,
+    ReportsAdminComponent
   ],
   bootstrap: [
     AppComponent
@@ -161,7 +170,8 @@ const routes: Routes = [
    canActivateAlumno, canActivateProf, 
    canActivateAdmin, canActivateSAdmin,
    HnResolver,
-    BanderasService
+    BanderasService,
+    { provide: LOCALE_ID, useValue: 'es-*' }
   ],
   entryComponents: [ModalDevSelectComponent, ModalKpm] //modales y componentes que no se les de declara de forma explicita con etiquetas
 })

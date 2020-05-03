@@ -12,7 +12,7 @@ td.red-text::before {
 }
 
 td.green-text {
-    color: green;
+    color: #63b36a;
 }
 
 td.green-text::before {
@@ -35,10 +35,10 @@ table {
 }
 .tag span.selected {
         /* background: #f8f9fa; */
-        color: #38f094;
+        color: #63b36a;
         font-weight: bold;
         border-bottom: 0px;
-        border-bottom: 2px solid #38f094;
+        border-bottom: 2px solid #63b36a;
         
     
 }
@@ -60,7 +60,7 @@ table {
 
     thead tr {
         background: #f8f9fa;
-        color: #38f094;
+        color: #63b36a;
     }
     table {
 

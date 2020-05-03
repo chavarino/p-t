@@ -13,7 +13,30 @@ let id =  Meteor.userId();
 
 
 
+//TODO SOLO PODER SACAR NOMBRE Y FOTO.
+Meteor.publish('allUsers', function() {
+  
 
+  let user = Meteor.user();
+  if(!user || (user.profile as Perfil).rol!==RolesEnum.ADMIN)
+  {
+    return [];
+  }
+
+    return Users.find({}, {fields:  {
+      "emails" : 1,
+      'profile.nombre' : 1,
+      'profile.apellidos' : 1,
+     
+      "profile.rol" : 1,
+      "lastModulo" : 1,
+      "createdAt" : 1,
+      "lastUpdate" : 1,
+      "lastIp" : 1,
+      'profile.disponible' : 1,
+      'profile.claseId' : 1
+    }});
+  });
 
 //TODO SOLO PODER SACAR NOMBRE Y FOTO.
 Meteor.publish('alumnoCall', function() {

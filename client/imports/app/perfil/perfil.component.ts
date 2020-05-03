@@ -28,7 +28,7 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy{
   
     perfil : Perfil
     userSuscripcion :Subscription;
-
+    updated : boolean;
     addForm: FormGroup;
     flags : BanderasService;
     configTags : ConfigTags = {
@@ -39,6 +39,7 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy{
     {
 
         super(1, 1, "comun", rol);
+        this.updated=false;
         rol.setModulo(ModulesEnum.PERFIL);
         this.perfil = {
             foto : "",
@@ -91,6 +92,7 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy{
        else  {
         alert("Invalido")
         }
+        this.updated =false;
     }
     ngOnInit()
     {
@@ -137,7 +139,7 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy{
 
             Users.find({_id:Meteor.userId()}).subscribe((data)=>{
 
-                if(data[0])
+                if(data[0] &&  !this.updated)
                 {
                     
                     this.perfil = data[0].profile;
@@ -146,6 +148,8 @@ export class PerfilComponent extends Generic implements OnInit, OnDestroy{
 
                         this.configTags.listCat = this.perfil.perfClase.categorias || [];
                     }
+
+                    this.updated=true;
                 }
                 else{
                   //this.rol.setRoles(data[0].rol);
