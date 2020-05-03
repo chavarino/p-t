@@ -45,6 +45,7 @@ import { SecretServices, test } from './imports/libAux/sharedPass';
 import { ModulesEnum } from 'imports/models/enums';
 import { terminarClaseById } from './imports/methods/room';
 import { Rooms } from 'imports/collections/room';
+import { of, from } from 'rxjs';
 //import {SyncedCron} from 'meteor/percolate:synced-cron';
 //)
 
@@ -201,20 +202,26 @@ if(Meteor.isServer)
           for(let i = 0 ; i<ids.length ; i++)
           {
            //console.log("pASA")
+
+
               terminarClaseById(ids[i]._id, true);
-              arrayIds.push(ids[i].profId, ids[i].alumnoId);
+              arrayIds.push(ids[i]._id);
+              //let f1 = {"profile.claseId": ids[i]};
+              //let f2= ;
+              //Vfrom().
           }
           if(arrayIds.length===0)
           {
             return;
           }
          
-
+          let f1 = {"profile.claseId": { "$in": arrayIds }};
+          //{ $unset: { quantity: "", instock: "" }
+          let f2 = {$unset : { "profile.claseId" : ""}};
+          console.log("eliminando clase de ususuarios: " + JSON.stringify(arrayIds));
           
-
-           console.log("eliminando clase de ususuarios: " + JSON.stringify(arrayIds));
-          Users.update({"_id": { "$in": arrayIds }}, {$set : { "profile.claseId" : ""}})
-          
+          console.log("f1: "+ JSON.stringify(f1) + ", " + JSON.stringify(f2))
+          Users.update(f1, f2);
         } catch (error) {
           console.log(error);
           //throw e;

@@ -10,7 +10,7 @@ import { Roles } from 'imports/collections/rol';
 import  {secretshared} from '../libAux/sharedPass'
 
 const modulo = "Methods-Perfil";
-let savePerfil = (id :string, profile: Perfil, all ?: boolean) =>
+export let savePerfil = (id :string, profile: Perfil, all ?: boolean) =>
 {
   check(id, String);
   //check(profile, Perfil);

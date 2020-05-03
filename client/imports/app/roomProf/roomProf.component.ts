@@ -820,7 +820,11 @@ export class RoomProfComponent extends RoomClass  implements OnInit, OnDestroy ,
                             {
                                 this.tonoBip.play();
                             }
-                            vm.numberAlumnosConect = result;
+                            if(vm.numberAlumnosConect!== result)
+                            {
+                                vm.numberAlumnosConect = result;
+
+                            }
 
                         })
           }, this.tIntNumAlumnsConnected)

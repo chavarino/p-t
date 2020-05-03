@@ -59,7 +59,7 @@ var crypto = require('crypto');
         getNumAlumnosConectados()
         {
             return Users.find({"lastModulo" :  ModulesEnum.CLASE_ALUMNO}).cursor.map((doc :User) => {
-                return  (new Date().getTime() - doc.lastUpdate.getTime()) <= 30000 ? 1 : 0
+                return  (new Date().getTime() - doc.lastUpdate.getTime()) <= 40000 ? 1 : 0
                
             }).reduce( (p : number, c : number)=> {
               return p + c;

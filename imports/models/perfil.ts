@@ -29,7 +29,8 @@ export interface Perfil {
 export enum RolesEnum {
 
     ALUMNO = 3,
-    PROFFESOR = 4
+    PROFFESOR = 4,
+    ADMIN = 6
   }
 
 export interface AutoCompleteModel {
