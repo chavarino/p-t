@@ -115,8 +115,14 @@
                             </div>
                             <div class="row mb-3" *ngIf="isEstadoWaitCall()">
                                     <div class="col-8">
-                                        <span class="alert alert-info" style="line-height: 3rem;">No existe ninguna llamada para dar clase.</span>
-                                    
+                                        <div class="alert alert-info" style="line-height: 3rem;">
+                                            <span >
+                                                
+                                                    No existe ninguna llamada para dar clase.
+
+                                                </span>
+                                        </div>
+
                                         </div>
                                         <div class="col-4 text-center">
                                             <button class="material-icons  btn btn-custom" (click)="cancelarEspera()" title="Cancelar">

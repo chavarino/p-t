@@ -1,322 +1,326 @@
 
-<div class="reports-admin container">
-    <h2 class="text-center">
+<div class="reports-admin container" style="margin-top: 20vh;">
+    <h1 class="text-center">
         Reportes de uso
-    </h2>
+    </h1>
     <br>
 
+    <div class="contenido">
 
-    <div class="row">
-        <span class="material-icons cursor-pointer"  (click)="acordeon.usuarios =  !acordeon.usuarios">
-            {{  !acordeon.usuarios ? "keyboard_arrow_down" : "keyboard_arrow_right"}}
+        <div class="row">
+            <span class="material-icons cursor-pointer"  (click)="acordeon.usuarios =  !acordeon.usuarios">
+                {{  !acordeon.usuarios ? "keyboard_arrow_down" : "keyboard_arrow_right"}}
+                </span>
+            <span>
+                <strong>
+                    Usuarios
+    
+                </strong>
             </span>
-        <span>
-            <strong>
-                Usuarios
-
-            </strong>
-        </span>
-    </div>
-    <div class="row">
-        <div class="col" *ngFor="let estat of estadisticas.usuarios" style="border-right: 1px solid #e4e2e2;">
-            <div class="row">
-                <div class="col-10">
-                        {{estat.nombre}}
-                        
-                    </div>
-                    <div class="col-2">
-                        
-                        <span class="material-icons" [attr.title]="estat.descMetodo" style="    color: #aeb363;">
-                            help
-                            </span>
-                </div>
-
-            </div>
-            <div class="row">
-                <div class="col-12">
-                        {{estat.view}}
-                </div>
-
-            </div>
         </div>
-
-    </div>
-    <div class="content users" [hidden]="acordeon.usuarios">
-        <div class="lista-reports-users">
+        <div class="row">
+            <div class="col" *ngFor="let estat of estadisticas.usuarios" style="border-right: 1px solid #e4e2e2;">
+                <div class="row">
+                    <div class="col-9">
+                            {{estat.nombre}}
+                            
+                        </div>
+                        <div class="col-3">
+                            
+                            <span class="material-icons" [attr.title]="estat.descMetodo" style="    color: #aeb363;">
+                                help
+                                </span>
+                    </div>
     
-            <!--
-                Perfil del cliente
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                            {{estat.view}}
+                    </div>
     
-                si es profesor que muestre el datos actuales de precio(ult), elo y categorias
-    
-            -->
-          
-            <div class="row thead tit">
-                  <div class="col-3">Email</div>
-                  <div class="col-2">
-                      Nombre
-                  </div>
-                  <div class="col-2">Rol</div>
-                  <div class="col-1">Módulo</div>
-                  <div class="col-1">Fecha Creación</div>
-                  <div class="col-1">Última conexión</div>
-                  <div class="col-1">Última conexión</div>
-                  <div class="col-1">Clase</div>
-                  
-                 <!-- 
-                     <div class="col">Acción</div>
-  
-                 -->
+                </div>
             </div>
-            <div class="row">
+    
+        </div>
+        <div class="content users" [hidden]="acordeon.usuarios">
+            <div class="lista-reports-users">
+        
+                <!--
+                    Perfil del cliente
+        
+                    si es profesor que muestre el datos actuales de precio(ult), elo y categorias
+        
+                -->
+              
+                <div class="row thead tit">
+                      <div class="col-3">Email</div>
+                      <div class="col-2">
+                          Nombre
+                      </div>
+                      <div class="col-2">Rol</div>
+                      <div class="col-1">Módulo</div>
+                      <div class="col-1">Fecha Creación</div>
+                      <div class="col-1">Última conexión</div>
+                      <div class="col-1">Clase</div>
+                      <div class="col-1">Conectado</div>
+                      
+                     <!-- 
+                         <div class="col">Acción</div>
+      
+                     -->
+                </div>
+                <div class="row">
+                    <div class="col" >
+                        <span class="material-icons cursor-pointer float-right filter-button" (click)="filtrarArrayUsuarios()" >
+                            filter_list
+                            </span>
+                    </div>
+                </div>
+                <div class="row thead filter">
+                      <div class="col-3">
+                          
+                          <input  type="text" [(ngModel)]="filtroBuscadorUsuario.email">
+                      </div>
+                      <div class="col-2">
+                          
+                          <input   type="text" [(ngModel)]="filtroBuscadorUsuario.nombre">
+                      </div>
+                      <div class="col-2">
+                          
+                          <select    [(ngModel)]="filtroBuscadorUsuario.rol">
+                            <option [ngValue]="obj.codigo" *ngFor="let obj of combos.roles">{{obj.valor}}</option>
+                        </select>
+                      </div>
+                      <div class="col-1">
+                          <select    [(ngModel)]="filtroBuscadorUsuario.modulo">
+                              <option [ngValue]="obj.codigo" *ngFor="let obj of combos.modulos">{{obj.valor}}</option>
+                          </select>
+                         
+                      </div>
+                      <div class="col-1">
+                        <input   type="text" [(ngModel)]="filtroBuscadorUsuario.fechCreate">
+                    </div>
+                      <div class="col-1">
+                          <input   type="text" [(ngModel)]="filtroBuscadorUsuario.lastUpdate">
+                      </div>
+                      <div class="col-1">
+                        <input   type="text" [(ngModel)]="filtroBuscadorUsuario.claseId">
+                    </div>
+                      <div class="col-1">
+                        <select    [(ngModel)]="filtroBuscadorUsuario.conectado">
+                            <option [ngValue]="obj.codigo" *ngFor="let obj of combos.condicConectd">{{obj.valor}}</option>
+                        </select>
+                          
+                      </div>
+                      
+                      
+                      
+              </div>
+                <div class="tbody">
+                  <div class="tr row" *ngFor="let user of usuarios | async">
+                       
+                      <div class="div col-3" >{{user.email}}</div>
+                      <div class="div col-2" >{{user.nombre}}</div>
+                      <div class="div col-2" >{{user.desRol}}</div>
+                      <div class="div col-1" >{{user.desModulo}}</div>
+                      <div class="div col-1" >{{user.fechCreate}}</div>
+                      <div class="div col-1" >{{user.lastUpdate }}</div>
+                      <div class="div col-1" >
+                          <a *ngIf="user.claseId && user.claseId!==''" [attr.href]="'/admin/report#'+user.claseId">
+    
+                            Sí
+                          </a>
+                          <span *ngIf="!user.claseId || user.claseId===''">
+                                No
+                          </span>
+                      
+    
+                      </div>
+                      <div class="div col-1" >
+    
+                        <span [attr.title]='user.conectado ? "Sí" : "No"' 
+                            [ngClass]="{'color-red': !user.conectado,'color-green': user.conectado }" 
+                            class="material-icons">
+                            lens
+                            </span>
+                      </div>
+                      
+                      
+                    </div>
+                </div>
+      
+      
+                <!--
+      
+                  <select name="audioinput" [(ngModel)]="devicesSelected.audioInputId">
+                      <option [value]="dev.id" *ngFor="let dev of devicesList.audioInputs">{{dev.label}}</option>
+                      </select>
+                -->
+               
+            </div>
+        
+            
+      
+      
+          </div>
+    
+          <br>
+          <!--<div class="row col-12" style="border-top: 1px solid grey;"></div>-->
+          <br>
+    
+          <div class="row">
+            <span class="material-icons cursor-pointer"  (click)="acordeon.clases =  !acordeon.clases">
+                {{  !acordeon.clases ? "keyboard_arrow_down" : "keyboard_arrow_right"}}
+                </span>
+            <span>
+                <strong>
+                    Clases
+    
+                </strong>
+            </span>
+        </div>
+        <div class="row">
+            <div class="col" *ngFor="let estat of estadisticas.clases" style="border-right: 1px solid #e4e2e2;">
+                <div class="row">
+                    <div class="col-9">
+                            {{estat.nombre}}
+                            
+                        </div>
+                        <div class="col-3">
+                            
+                            <span class="material-icons" [attr.title]="estat.descMetodo" style="    color: #aeb363;">
+                                help
+                                </span>
+                    </div>
+    
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                            {{estat.view}}
+                    </div>
+    
+                </div>
+            </div>
+    
+        </div>
+        <div class="content rooms"  [hidden]="acordeon.clases">
+          <div class="lista-reports-room">
+      
+              <!--
+                  Perfil del cliente
+      
+                  si es profesor que muestre el datos actuales de precio(ult), elo y categorias
+      
+              -->
+            
+              <div class="row thead tit">
+                    <!--
+                        <div class="col">Id</div>
+    
+                    --> 
+                    <div class="col">Fecha Inicio</div>
+                    <div class="col">Fecha Fin</div>
+                    <div class="col">Profesor</div>
+                    <div class="col">Elo Profesor</div>
+                    <div class="col">Alumno</div>
+                    <div class="col">Tiempo</div>
+                    <div class="col">Precio(€)/min</div>
+                    <div class="col">Precio(€) total</div>
+                    <div class="col">Puntuación</div>
+                   <!-- 
+                       <div class="col">Acción</div>
+    
+                   -->
+              </div>
+              <div class="row">
                 <div class="col" >
-                    <span class="material-icons cursor-pointer float-right filter-button" (click)="filtrarArrayUsuarios()" >
+                    
+                    <span class="material-icons cursor-pointer float-right filter-button" (click)="filtrarArrayClases()" >
                         filter_list
                         </span>
                 </div>
             </div>
-            <div class="row thead filter">
-                  <div class="col-3">
-                      
-                      <input  type="text" [(ngModel)]="filtroBuscadorUsuario.email">
-                  </div>
-                  <div class="col-2">
-                      
-                      <input   type="text" [(ngModel)]="filtroBuscadorUsuario.nombre">
-                  </div>
-                  <div class="col-2">
-                      
-                      <select    [(ngModel)]="filtroBuscadorUsuario.rol">
-                        <option [ngValue]="obj.codigo" *ngFor="let obj of combos.roles">{{obj.valor}}</option>
-                    </select>
-                  </div>
-                  <div class="col-1">
-                      <select    [(ngModel)]="filtroBuscadorUsuario.modulo">
-                          <option [ngValue]="obj.codigo" *ngFor="let obj of combos.modulos">{{obj.valor}}</option>
-                      </select>
-                     
-                  </div>
-                  <div class="col-1">
-                    <input   type="text" [(ngModel)]="filtroBuscadorUsuario.fechCreate">
-                </div>
-                  <div class="col-1">
-                      <input   type="text" [(ngModel)]="filtroBuscadorUsuario.lastUpdate">
-                  </div>
-                  <div class="col-1">
-                    <input   type="text" [(ngModel)]="filtroBuscadorUsuario.claseId">
-                </div>
-                  <div class="col-1">
-                    <select    [(ngModel)]="filtroBuscadorUsuario.conectado">
-                        <option [ngValue]="obj.codigo" *ngFor="let obj of combos.condicConectd">{{obj.valor}}</option>
-                    </select>
-                      
-                  </div>
-                  
-                  
-                  
-          </div>
-            <div class="tbody">
-              <div class="tr row" *ngFor="let user of usuarios | async">
-                   
-                  <div class="div col-3" >{{user.email}}</div>
-                  <div class="div col-2" >{{user.nombre}}</div>
-                  <div class="div col-2" >{{user.desRol}}</div>
-                  <div class="div col-1" >{{user.desModulo}}</div>
-                  <div class="div col-1" >{{user.fechCreate}}</div>
-                  <div class="div col-1" >{{user.lastUpdate }}</div>
-                  <div class="div col-1" >
-                      <a *ngIf="user.claseId && user.claseId!==''" [attr.href]="'/admin/report#'+user.claseId">
-
-                        Sí
-                      </a>
-                      <span *ngIf="!user.claseId || user.claseId===''">
-                            No
-                      </span>
-                  
-
-                  </div>
-                  <div class="div col-1" >
-
-                    <span [attr.title]='user.conectado ? "Sí" : "No"' 
-                        [ngClass]="{'color-red': !user.conectado,'color-green': user.conectado }" 
-                        class="material-icons">
-                        lens
-                        </span>
-                  </div>
-                  
-                  
-                </div>
-            </div>
-  
-  
-            <!--
-  
-              <select name="audioinput" [(ngModel)]="devicesSelected.audioInputId">
-                  <option [value]="dev.id" *ngFor="let dev of devicesList.audioInputs">{{dev.label}}</option>
-                  </select>
-            -->
-           
-        </div>
-    
-        
-  
-  
-      </div>
-
-
-
-      <div class="row">
-        <span class="material-icons cursor-pointer"  (click)="acordeon.clases =  !acordeon.clases">
-            {{  !acordeon.clases ? "keyboard_arrow_down" : "keyboard_arrow_right"}}
-            </span>
-        <span>
-            <strong>
-                Clases
-
-            </strong>
-        </span>
-    </div>
-    <div class="row">
-        <div class="col" *ngFor="let estat of estadisticas.clases" style="border-right: 1px solid #e4e2e2;">
-            <div class="row">
-                <div class="col-10">
-                        {{estat.nombre}}
+              <div class="row thead filter">
+               <!-- <div class="col">
                         
+                    <input   type="text" [(ngModel)]="filtroBuscadorClase.id">
+                </div>-->
+                    <div class="col">
+                        
+                        <input   type="text" [(ngModel)]="filtroBuscadorClase.fechIni">
                     </div>
-                    <div class="col-2">
+                    <div class="col">
                         
-                        <span class="material-icons" [attr.title]="estat.descMetodo" style="    color: #aeb363;">
-                            help
-                            </span>
-                </div>
-
-            </div>
-            <div class="row">
-                <div class="col-12">
-                        {{estat.view}}
-                </div>
-
-            </div>
-        </div>
-
-    </div>
-    <div class="content rooms"  [hidden]="acordeon.clases">
-      <div class="lista-reports-room">
-  
-          <!--
-              Perfil del cliente
-  
-              si es profesor que muestre el datos actuales de precio(ult), elo y categorias
-  
-          -->
-        
-          <div class="row thead tit">
-                <!--
-                    <div class="col">Id</div>
-
-                --> 
-                <div class="col">Fecha Inicio</div>
-                <div class="col">Fecha Fin</div>
-                <div class="col">Profesor</div>
-                <div class="col">Elo Profesor</div>
-                <div class="col">Alumno</div>
-                <div class="col">Tiempo</div>
-                <div class="col">Precio(€)/min</div>
-                <div class="col">Precio(€) total</div>
-                <div class="col">Puntuación</div>
-               <!-- 
-                   <div class="col">Acción</div>
-
-               -->
-          </div>
-          <div class="row">
-            <div class="col" >
-                
-                <span class="material-icons cursor-pointer float-right filter-button" (click)="filtrarArrayClases()" >
-                    filter_list
-                    </span>
-            </div>
-        </div>
-          <div class="row thead filter">
-           <!-- <div class="col">
+                        <input   type="text" [(ngModel)]="filtroBuscadorClase.fechFin">
+                    </div>
+                    <div class="col">
+                        <input  type="text" [(ngModel)]="filtroBuscadorClase.prfName">
+                    </div>
+                    <div class="col">
+                        <select   [(ngModel)]="filtroBuscadorClase.condprfElo">
+                            <option [ngValue]="obj.codigo" *ngFor="let obj of combos.condicionales">{{obj.valor}}</option>
+                        </select>
+                        <input  type="number" [(ngModel)]="filtroBuscadorClase.prfElo">
+                    </div>
+                    <div class="col">
+                        <input  type="text" [(ngModel)]="filtroBuscadorClase.aluName">
+                    </div>
+                    <div class="col">
+                        <input  type="text" [(ngModel)]="filtroBuscadorClase.duracion">
+                    </div>
+                    <div class="col">
+                        <select   [(ngModel)]="filtroBuscadorClase.condprecioTime">
+                            <option [ngValue]="obj.codigo" *ngFor="let obj of combos.condicionales">{{obj.valor}}</option>
+                        </select>
+                         <input  type="number" [(ngModel)]="filtroBuscadorClase.precioTime">
+                    </div>
+                    <div class="col">
+                        <select   [(ngModel)]="filtroBuscadorClase.condprecioTotal">
+                            <option [ngValue]="obj.codigo" *ngFor="let obj of combos.condicionales">{{obj.valor}}</option>
+                        </select>
+                         <input  type="text" [(ngModel)]="filtroBuscadorClase.precioTotal">
+                    </div>
+                    <div class="col">
+                        <select   [(ngModel)]="filtroBuscadorClase.condpuntuacion">
+                            <option [ngValue]="obj.codigo" *ngFor="let obj of combos.condicionales">{{obj.valor}}</option>
+                        </select>
+                          <input  type="text" [(ngModel)]="filtroBuscadorClase.puntuacion">
+                    </div>
                     
-                <input   type="text" [(ngModel)]="filtroBuscadorClase.id">
-            </div>-->
-                <div class="col">
                     
-                    <input   type="text" [(ngModel)]="filtroBuscadorClase.fechIni">
-                </div>
-                <div class="col">
-                    
-                    <input   type="text" [(ngModel)]="filtroBuscadorClase.fechFin">
-                </div>
-                <div class="col">
-                    <input  type="text" [(ngModel)]="filtroBuscadorClase.prfName">
-                </div>
-                <div class="col">
-                    <select   [(ngModel)]="filtroBuscadorClase.condprfElo">
-                        <option [ngValue]="obj.codigo" *ngFor="let obj of combos.condicionales">{{obj.valor}}</option>
-                    </select>
-                    <input  type="number" [(ngModel)]="filtroBuscadorClase.prfElo">
-                </div>
-                <div class="col">
-                    <input  type="text" [(ngModel)]="filtroBuscadorClase.aluName">
-                </div>
-                <div class="col">
-                    <input  type="text" [(ngModel)]="filtroBuscadorClase.duracion">
-                </div>
-                <div class="col">
-                    <select   [(ngModel)]="filtroBuscadorClase.condprecioTime">
-                        <option [ngValue]="obj.codigo" *ngFor="let obj of combos.condicionales">{{obj.valor}}</option>
-                    </select>
-                     <input  type="number" [(ngModel)]="filtroBuscadorClase.precioTime">
-                </div>
-                <div class="col">
-                    <select   [(ngModel)]="filtroBuscadorClase.condprecioTotal">
-                        <option [ngValue]="obj.codigo" *ngFor="let obj of combos.condicionales">{{obj.valor}}</option>
-                    </select>
-                     <input  type="text" [(ngModel)]="filtroBuscadorClase.precioTotal">
-                </div>
-                <div class="col">
-                    <select   [(ngModel)]="filtroBuscadorClase.condpuntuacion">
-                        <option [ngValue]="obj.codigo" *ngFor="let obj of combos.condicionales">{{obj.valor}}</option>
-                    </select>
-                      <input  type="text" [(ngModel)]="filtroBuscadorClase.puntuacion">
-                </div>
-                
-                
-        </div>
-          <div class="tbody">
-            <div class="tr row" *ngFor="let clas of clases | async" [attr.id]="clas.id">
-                <!--<div class="div col" >{{clas.id}}</div>-->
-                <div class="div col" >{{clas.fechIni}}</div>
-                  <div class="div col" >{{clas.fechFin}}</div>
-                  <div class="div col" >{{clas.prfName}}</div>
-                  <div class="div col" >{{clas.prfElo | number:'1.0-2'}}</div>
-                  <div class="div col" >{{clas.aluName}}</div>
-                  <div class="div col" >{{clas.duracion }}</div>
-                  <div class="div col" >{{clas.precioTime | number:'1.0-2'}}</div>
-                  <div class="div col"  >{{clas.precioTotal | number:'1.0-2'}}</div>
-                  <div class="div col" > 
-                      <starView [score]="clas.puntuacion">
-                       </starView>   <!--{{calcularPuntuacion(clas)| number:'1.0-2'}}-->
+            </div>
+              <div class="tbody">
+                <div class="tr row" *ngFor="let clas of clases | async" [attr.id]="clas.id">
+                    <!--<div class="div col" >{{clas.id}}</div>-->
+                    <div class="div col" >{{clas.fechIni}}</div>
+                      <div class="div col" >{{clas.fechFin}}</div>
+                      <div class="div col" >{{clas.prfName}}</div>
+                      <div class="div col" >{{clas.prfElo | number:'1.0-2'}}</div>
+                      <div class="div col" >{{clas.aluName}}</div>
+                      <div class="div col" >{{clas.duracion }}</div>
+                      <div class="div col" >{{clas.precioTime | number:'1.0-2'}}</div>
+                      <div class="div col"  >{{clas.precioTotal | number:'1.0-2'}}</div>
+                      <div class="div col" > 
+                          <starView [score]="clas.puntuacion">
+                           </starView>   <!--{{calcularPuntuacion(clas)| number:'1.0-2'}}-->
+                      </div>
                   </div>
               </div>
+    
+    
+              <!--
+    
+                <select name="audioinput" [(ngModel)]="devicesSelected.audioInputId">
+                    <option [value]="dev.id" *ngFor="let dev of devicesList.audioInputs">{{dev.label}}</option>
+                    </select>
+              -->
+             
           </div>
-
-
-          <!--
-
-            <select name="audioinput" [(ngModel)]="devicesSelected.audioInputId">
-                <option [value]="dev.id" *ngFor="let dev of devicesList.audioInputs">{{dev.label}}</option>
-                </select>
-          -->
-         
-      </div>
-  
       
-
-
+          
+    
+    
+        </div>
     </div>
     
 

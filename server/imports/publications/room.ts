@@ -79,7 +79,7 @@ if(!user || (user.profile as Perfil).rol!==RolesEnum.ADMIN)
       'comenzado': 1,
       'elo': 1,
       'precio': 1,
-      'files': 1,
+      //'files': 1,
       //'chat': 1,
       'scores': 1,
       'cargadoCoste': 1,

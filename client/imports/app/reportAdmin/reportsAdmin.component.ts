@@ -51,7 +51,9 @@ interface BuscadorUsersInterface  extends BuscadorGenericInterface {
     ip ?: string,
     conectado?: boolean,
     claseId  ?: string
-    disponible ?: Boolean
+    disponible ?: Boolean,
+    diasEntreCreacYUltCon ?: number,
+     diasDesdeUltCon ?: number
 
    
 
@@ -120,6 +122,10 @@ enum CondicionalEnum {
         clases : Array<EstadisticaInterface>
 
     } 
+    intervalRecargaUsers: number;
+    private readonly intervalTimeRecarga = 10000;
+    intervalRecargaClases: number;
+
     defineCombos(){
         
 
@@ -250,37 +256,59 @@ enum CondicionalEnum {
             {
                 nombre: "Alumnos % (filtro/total)",
                 view : "",
-                descMetodo: "Porcentaje de alumnos. Este método considera como tal a los perfiles Alumno y otros perfiles que estén en el modulo de clase de alumno. % alumnos con el filtro aplicado/ % de alumnos totales",
+                descMetodo: "Porcentaje de alumnos.  % alumnos con el filtro aplicado/ % de alumnos totales. Este método considera como tal a los perfiles Alumno y otros perfiles que estén en el modulo de clase de alumno. El filtro general se aplica sobre el los alumnos filtrados",
                 metodo : async ()=>{
 
-                    let arrayAux  = (await this.usuarios.toPromise());
-                    let u1 :number =  arrayAux.filter((v)=>{return v.rol===RolesEnum.ALUMNO || v.modulo===ModulesEnum.CLASE_ALUMNO}).length *100 / arrayAux.length // this.usuariosOri.length
-                    let uT : number =  this.usuariosOri.filter((v)=>{return v.rol===RolesEnum.ALUMNO|| v.modulo===ModulesEnum.CLASE_ALUMNO}).length *100/ this.usuariosOri.length;
+                    let arrayAux  = this.usuariosOri.filter((v)=>{return v.rol=== RolesEnum.ALUMNO && v.modulo!==ModulesEnum.CLASE_ALUMNO || v.modulo===ModulesEnum.CLASE_ALUMNO});
+                    // this.filtrar(this.filtroBuscadorUsuario, e);
+                    let u1 :number =  arrayAux.filter((v)=>{return this.filtrar(this.filtroBuscadorUsuario, v);}).length *100 / arrayAux.length // this.usuariosOri.length
+                    let uT : number =  arrayAux.length *100/ this.usuariosOri.length;
                     return `${u1.toFixed(2)}/${uT.toFixed(2)}`
                 }
             },
             {
                 nombre: "Profesores % (filtro/total)",
                 view : "",
-                descMetodo: "Porcentaje de profesores. Este método considera como tal a los perfiles profesor que no estén en el modulo de clase de alumno y otros perfiles que estén en el módulo de clase de profesor. % profesores con el filtro aplicado/ % de profesores totales",
+                descMetodo: "Porcentaje de profesores.  % profesores con el filtro aplicado/ % de profesores totales. Este método considera como tal a los perfiles profesor que no estén en el modulo de clase de alumno y otros perfiles que estén en el módulo de clase de profesor. El filtro general se aplica sobre el los profesor filtrados",
                 metodo : async ()=>{
 
-                    let arrayAux  = (await this.usuarios.toPromise());
-                    let u1 :number =  arrayAux.filter((v)=>{return  v.rol===RolesEnum.PROFFESOR && v.modulo!==ModulesEnum.CLASE_ALUMNO || v.modulo===ModulesEnum.CLASE_PRFSOR}).length *100 / arrayAux.length // this.usuariosOri.length
-                    let uT : number =  this.usuariosOri.filter((v)=>{ return v.rol===RolesEnum.PROFFESOR && v.modulo!==ModulesEnum.CLASE_ALUMNO || v.modulo===ModulesEnum.CLASE_PRFSOR}).length *100/ this.usuariosOri.length;
+                   
+                    let arrayAux  = this.usuariosOri.filter((v)=>{return  v.rol===RolesEnum.PROFFESOR && v.modulo!==ModulesEnum.CLASE_ALUMNO || v.modulo===ModulesEnum.CLASE_PRFSOR});
+                    // this.filtrar(this.filtroBuscadorUsuario, e);
+                    let u1 :number =  arrayAux.filter((v)=>{return this.filtrar(this.filtroBuscadorUsuario, v);}).length *100 / arrayAux.length // this.usuariosOri.length
+                    let uT : number =  arrayAux.length *100/ this.usuariosOri.length;
                     return `${u1.toFixed(2)}/${uT.toFixed(2)}`
                 }
             },
             {
                 nombre: "Otros perfiles % (filtro/total)",
                 view : "",
-                descMetodo: "Porcentaje de otros perfiles diferentes a alumno o profesor. Este método considera como tal a perfiles diferentes a los que no son ni alumno ni profesor (por ejemplo admin) o que no estén ejerciendo como tal. % otros perfiles con el filtro aplicado/ % de otros perfiles totales",
+                descMetodo: "Porcentaje de otros perfiles diferentes a alumno o profesor. % otros perfiles con el filtro aplicado/ % de otros perfiles totales. Este método considera como tal a perfiles diferentes a los que no son ni alumno ni profesor (por ejemplo admin) o que no estén ejerciendo como tal. El filtro general se aplica sobre el los profesor filtrados",
                 metodo : async ()=>{
 
-                    let arrayAux  = (await this.usuarios.toPromise());
-                    let u1 :number =  arrayAux.filter((v)=>{return  v.rol!==RolesEnum.PROFFESOR && v.rol!==RolesEnum.ALUMNO  && v.modulo!==ModulesEnum.CLASE_ALUMNO &&  v.modulo!==ModulesEnum.CLASE_PRFSOR  }).length *100 / arrayAux.length // this.usuariosOri.length
-                    let uT : number =  this.usuariosOri.filter((v)=>{ return v.rol!==RolesEnum.PROFFESOR && v.rol!==RolesEnum.ALUMNO  && v.modulo!==ModulesEnum.CLASE_ALUMNO &&  v.modulo!==ModulesEnum.CLASE_PRFSOR}).length *100/ this.usuariosOri.length;
+                    let arrayAux  = this.usuariosOri.filter((v)=>{return  v.rol!==RolesEnum.PROFFESOR && v.rol!==RolesEnum.ALUMNO  && v.modulo!==ModulesEnum.CLASE_ALUMNO &&  v.modulo!==ModulesEnum.CLASE_PRFSOR});
+                    // this.filtrar(this.filtroBuscadorUsuario, e);
+                    let u1 :number =  arrayAux.filter((v)=>{return this.filtrar(this.filtroBuscadorUsuario, v);}).length *100 / arrayAux.length // this.usuariosOri.length
+                    let uT : number =  arrayAux.length *100/ this.usuariosOri.length;
                     return `${u1.toFixed(2)}/${uT.toFixed(2)}`
+                }
+            },
+            {
+                nombre: "Tiempo (dias) entre Fecha de registro y última conexión (Min/Media/Max/Var)",
+                view : "",
+                descMetodo: "Cálculo del valor mínimo, medio, máximo y de varianza del Tiempo entre Fecha de registro y última conexión sobre la lista filtrada",
+                metodo : async ()=>{
+                    let arrayAux  = (await this.usuarios.toPromise()).map((v)=> v.diasEntreCreacYUltCon);
+                    return this.calcStatsTipico(arrayAux, true);
+                }
+            },
+            {
+                nombre: "Tiempo (dias) desde la última conexión (Min/Media/Max/Var)",
+                view : "",
+                descMetodo: "Cálculo del valor mínimo, medio, máximo y de varianza del Tiempo (dias) desde la última conexión sobre la lista filtrada",
+                metodo : async ()=>{
+                    let arrayAux  = (await this.usuarios.toPromise()).map((v)=> v.diasDesdeUltCon);
+                    return this.calcStatsTipico(arrayAux, true);
                 }
             }
 
@@ -297,7 +325,7 @@ enum CondicionalEnum {
             }
         },
         {
-            nombre: "Duración (minutos) (Min/Media/Max/Sum)",
+            nombre: "Duración (minutos) (Min/Media/Max/Var/Sum)",
             view : "",
             descMetodo: "Cálculo del valor mínimo, medio, máximo y sumatorio de las duraciones en minutos sobre la lista filtrada",
             metodo : async ()=>{
@@ -307,17 +335,17 @@ enum CondicionalEnum {
             }
         },
         {
-            nombre: "Precio (€/minutos) (Min/Media/Max/Sum)",
+            nombre: "Precio (€/minutos) (Min/Media/Max/Var)",
             view : "",
-            descMetodo: "Cálculo del valor mínimo, medio, máximo y sumatorio del precio/minuto sobre la lista filtrada",
+            descMetodo: "Cálculo del valor mínimo, medio, máximo y de varianza del precio/minuto sobre la lista filtrada",
             metodo : async ()=>{
                 let arrayAux  = (await this.clases.toPromise()).map((v)=> v.precioTime);
                 
-                return this.calcStatsTipico(arrayAux);
+                return this.calcStatsTipico(arrayAux, true);
             }
         },
         {
-            nombre: "Precio total (Min/Media/Max/Sum)",
+            nombre: "Precio total (Min/Media/Max/Var/Sum)",
             view : "",
             descMetodo: "Cálculo del valor mínimo, medio, máximo y sumatorio del precio total sobre la lista filtrada",
             metodo : async ()=>{
@@ -326,21 +354,21 @@ enum CondicionalEnum {
             }
         },
         {
-            nombre: "Elo (Min/Media/Max/Sum)",
+            nombre: "Elo (Min/Media/Max/Var)",
             view : "",
-            descMetodo: "Cálculo del valor mínimo, medio, máximo y sumatorio del elo sobre la lista filtrada",
+            descMetodo: "Cálculo del valor mínimo, medio, máximo y de varianza del elo sobre la lista filtrada",
             metodo : async ()=>{
                 let arrayAux  = (await this.clases.toPromise()).map((v)=> v.prfElo);
-                return this.calcStatsTipico(arrayAux);
+                return this.calcStatsTipico(arrayAux, true);
             }
         },
         {
-            nombre: "Puntuación (Min/Media/Max/Sum)",
+            nombre: "Puntuación (Min/Media/Max/Var)",
             view : "",
-            descMetodo: "Cálculo del valor mínimo, medio, máximo y sumatorio de la puntuación sobre la lista filtrada",
+            descMetodo: "Cálculo del valor mínimo, medio, máximo y de varianza de la puntuación sobre la lista filtrada",
             metodo : async ()=>{
                 let arrayAux  = (await this.clases.toPromise()).map((v)=> v.puntuacion);
-                return this.calcStatsTipico(arrayAux);
+                return this.calcStatsTipico(arrayAux, true);
             }
         }
       ]
@@ -388,21 +416,27 @@ enum CondicionalEnum {
 
       rol.setModulo(ModulesEnum.REPORTING_ADMIN);
     }
-    private calcStatsTipico(arrayAux: number[]) {
+    private calcStatsTipico(arrayAux: number[], sinSumatorio ?: boolean) {
         let sum = arrayAux.reduce((p, c) => p + c, 0);
-        return `${Math.min(...arrayAux).toFixed(2)}/${Math.max(...arrayAux).toFixed(2)}/${(sum / arrayAux.length).toFixed(2)}/${sum.toFixed(2)}`;
+
+        
+        const media :number = sum / arrayAux.length;
+        const varianza :number = arrayAux.reduce((p, c) => p +  Math.abs(media-c), 0)/ arrayAux.length;
+
+        return `${Math.min(...arrayAux).toFixed(2)}/${media.toFixed(2)}/${Math.max(...arrayAux).toFixed(2)}/${varianza.toFixed(2)}` + (!sinSumatorio ? `/${sum.toFixed(2)}` : "" );
+        
     }
 
     ngOnInit() {
      
     this.defineCombos();
       this.roomSuscript =  MeteorObservable.subscribe('allRooms').subscribe(() => {
-        Tracker.autorun(()=>{
+        this.intervalRecargaClases = Meteor.setInterval(()=>{
       
           this.recargarClases();
     
-        });
-       
+        }, this.intervalTimeRecarga);
+       this.recargarClases();
          // this.getRoomReport();
   
       //getRoomReport
@@ -411,11 +445,11 @@ enum CondicionalEnum {
 
     this.usersSuscript =  MeteorObservable.subscribe('allUsers').subscribe(() => {
                     
-         Tracker.autorun(()=>{
+        this.intervalRecargaUsers = Meteor.setInterval(()=>{
            this.recargarUsuarios();
-            });
+            }, this.intervalTimeRecarga);
             // this.getRoomReport();
-    
+            this.recargarUsuarios();
         //getRoomReport
         });
 
@@ -515,6 +549,8 @@ enum CondicionalEnum {
                 fechCreate: this.formatDate(new Date(u.createdAt)),
                 ip: u.lastIp,
                 lastUpdate: this.formatDate(u.lastUpdate),
+                diasEntreCreacYUltCon: isDefined(u.lastUpdate) ? (u.lastUpdate.getTime() - u.createdAt)/*miliseconds*//(24 * 60 * 60 *1000) : 0/*days*/, 
+                diasDesdeUltCon: diffFechas/*miliseconds*//(24 * 60 * 60 *1000)/*days*/,
                 modulo: u.lastModulo,
                 nombre: `${p.nombre} ${p.apellidos}`,
                 disponible: p.disponible,
@@ -590,6 +626,16 @@ enum CondicionalEnum {
         });
     }
     ngOnDestroy(){
+
+        if(this.intervalRecargaClases)
+        {
+            Meteor.clearInterval(this.intervalRecargaClases)
+        }
+
+        if(this.intervalRecargaUsers)
+        {
+            Meteor.clearInterval(this.intervalRecargaUsers)
+        }
         if(this.roomSuscript)
         {
           this.roomSuscript.unsubscribe()
