@@ -24,8 +24,8 @@ td.green-text::before {
 
 
 }
-* {
-    font-size: 0.9vw;
+.contenido * {
+    font-size: 0.6vw;
 }
 
 .cursor-pointer {
@@ -66,9 +66,9 @@ table {
     border-radius: 5px;
     margin-left: 0.1vw;
     }
-    .reports-admin.container * {
+   /* .reports-admin.container .contenido * * {
         font-size: 0.8vw;
-    }
+    }*/
     .tr.row.ng-star-inserted {
         border-bottom: 0.2px solid #eaeaea;
     }
