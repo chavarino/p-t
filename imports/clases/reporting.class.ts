@@ -3,6 +3,7 @@ import { RolesService } from 'client/imports/app/services/roles.service';
 import { Room } from 'imports/models/room';
 import { Observable, Subscription } from 'rxjs';
 import { DatePipe } from '@angular/common';
+import { isDefined } from '@angular/compiler/src/util';
 
 
 export class ReportingGeneric  extends Generic{
@@ -34,7 +35,8 @@ export class ReportingGeneric  extends Generic{
     }
     calcMinutos(clase : Room) : number
     {
-          return  (clase.fechaFin.getTime() - clase.fechaIni.getTime()) / this.conversion;
+        let fechaFin : Date = isDefined(clase.fechaFin) ? clase.fechaFin : new Date();
+          return  (fechaFin.getTime() - clase.fechaIni.getTime()) / this.conversion;
     }
 
     calcTiempo(clase :Room) : string
