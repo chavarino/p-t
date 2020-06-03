@@ -7,6 +7,7 @@ import { ModulesEnum } from 'imports/models/enums';
 import { Perfil } from 'imports/models/perfil';
 import { updateDatePing } from './room';
 import { User } from 'imports/models/User';
+import { isDefined } from '@angular/compiler/src/util';
 var crypto = require('crypto');
 
   
@@ -136,6 +137,11 @@ var crypto = require('crypto');
                 MethodsClass.noLogueado();
             }
   
+            if(!isDefined(module))
+            {
+
+              module=1;
+            }
             let ip =""
             try {
               ip = this.connection.clientAddress;

@@ -225,34 +225,61 @@ Meteor.methods({
     //Accounts.findUserByEmail(user.em)
    // console.log(JSON.stringify(user));
     //console.log("email val:" +  patt.test(user.username))
+    let texto = "";
     try{
       if(!user )
       {
           console.log("ERROR : CAMPOS MAL INTRODUCIDOS")
-          throw "";
+          throw "User";
         }
         console.log("user: " + JSON.stringify(user))
         
+        texto= "email";
         check(user.username, String);
-        console.log("email correcto")
+        console.log("email definido")
+        texto= "pass";
         check(user.password, String);
-        console.log("pass correcto")
+        console.log("pass definido")
+
+        texto= "nombre";
         check(user.profile.nombre.trim(), String);
-        console.log("nombre correcto")
+        console.log("nombre definido")
+
+        texto= "apellidos";
         check(user.profile.apellidos.trim(),String);
-        console.log("apellidos correcto")
+        console.log("apellidos definido")
+
+        texto ="";
         
-        let flags =[ user.username.match(PATTERN.EMAIL), user.password.match(PATTERN.PASS)
-          , user.profile.nombre.match("^.{3,40}$"), user.profile.apellidos.match("^.{3,40}$") ]
-        
-          if(!flags.reduce((ante,cu)=>{ return  ante && cu}, true))
+        let flags =[ {
+          match: user.username.match(PATTERN.EMAIL),
+          campo: "email"
+        },
+        {
+          match: user.password.match(PATTERN.PASS),
+          campo: "Password"
+        },
+        {
+          match: user.profile.nombre.match("^.{3,40}$"),
+          campo: "Nombre"
+        },
+        {
+          match: user.profile.apellidos.match("^.{3,40}$"),
+          campo: "Apellidos"
+        }];
+
+        flags.forEach((e)=>{
+
+          if(!e.match)
           {
-             throw "";
+             throw e.campo;
           }
+
+        })
           
       }
       catch(e){
-        MethodsClass.creacionUserGeneral();
+        MethodsClass.creacionUserGeneral(e);
 
     }
 
@@ -267,6 +294,8 @@ Meteor.methods({
 
       console.log("enviando Email de verificacion");
       Accounts.sendVerificationEmail(userId);
+
+      return userId;
     }
     catch(e)
     {

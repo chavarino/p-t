@@ -22,7 +22,7 @@ Meteor.methods({
         }
         msg.from = Meteor.userId();
         msg.fecha = new Date();
-        Msg.insert(msg);
+        return Msg.insert(msg);
     },
     borrarMsg(id : string)
     {
@@ -39,7 +39,7 @@ Meteor.methods({
         if( !message  || !message.to )
         {
 
-          return;
+          return -1;
         }
        //console.log("mensjae a borrar " +JSON.stringify(message))
        if(!message || message.to !== Meteor.userId())
@@ -47,7 +47,7 @@ Meteor.methods({
             MethodsClass.noPermisos();
        }
 
-       Msg.remove(id)
+       return Msg.remove(id).toPromise()
     },
     setReaded(id : string) {
 

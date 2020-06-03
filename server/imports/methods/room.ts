@@ -298,7 +298,7 @@ Meteor.methods({
          Meteor.call('savePerfil',  p);
 
 
-          
+          return _idRoom;
 
     }
     catch(e) {
