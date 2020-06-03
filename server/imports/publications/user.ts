@@ -22,7 +22,7 @@ Meteor.publish('allUsers', function() {
   {
     return [];
   }
-
+  
     return Users.find({}, {fields:  {
       "emails" : 1,
       'profile.nombre' : 1,

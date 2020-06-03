@@ -28,3 +28,4 @@ percolate:synced-cron
 promise
 check
 email
+meteortesting:mocha

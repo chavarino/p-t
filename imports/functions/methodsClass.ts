@@ -149,10 +149,10 @@ export class MethodsClass {
         
         throw new Meteor.Error(500, 'Parámetros incorrectos');
     }
-    static creacionUserGeneral() 
+    static creacionUserGeneral(text) 
     {
         
-        throw new Meteor.Error(500, 'No se pudo crear usuario, usuario/contraseña incorrectos.');
+        throw new Meteor.Error(500, 'No se pudo crear usuario : incorrecto ' + text);
     }
     /**
      * 
