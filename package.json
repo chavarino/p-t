@@ -14,6 +14,7 @@
     "run": "MONGO_URL='***REMOVED***' meteor",
     "setDb": "SET MONGO_URL=mongodb://fasmos:javier88@ds253243.mlab.com:53243/meteor",
     "build": "TOOL_NODE_FLAGS='--max-old-space-size=4096' meteor build ../apps/sapens/",
+    "build:ci": "TOOL_NODE_FLAGS='--max-old-space-size=4096' meteor build .",
     "remove": "rm -rf ~/.meteor"
   },
   "dependencies": {
