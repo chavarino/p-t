@@ -1,14 +1,5 @@
 # imagen base de node oficial
-FROM node:latest
-## label de texto
-LABEL team "app node"
-
-ENV PATH_ENV /settings
-ENV PATH_BUNDLE /bundle
-ENV PORT 3000
-EXPOSE 3000
-
-COPY ./startApp.sh  .
+FROM javierch/meteor:base
 
 ## se copia el package.json para la instalacion de las dependencias de node.
 COPY bundle $PATH_BUNDLE
