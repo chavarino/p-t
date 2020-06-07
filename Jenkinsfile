@@ -15,7 +15,7 @@ pipeline {
                         dockerImage.pull()
                       }
 
-                    dockerImage.run('--rm --name="builder" -v "$PWD":/app javierch/meteor:builder', 'test:ci')
+                    dockerImage.run('-i --rm --name="builder" -v "$PWD":/app javierch/meteor:builder', 'test:ci')
                 }
                 sh 'docker rm builder'
                 
@@ -26,7 +26,7 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    dockerImage.run('--rm --name="builder" -v "$PWD":/app javierch/meteor:builder', 'build:ci')
+                    dockerImage.run('-i --rm --name="builder" -v "$PWD":/app javierch/meteor:builder', 'build:ci')
                 }
                 sh "docker rm builder"
             }
