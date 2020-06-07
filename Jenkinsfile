@@ -17,6 +17,7 @@ pipeline {
 
                     dockerImage.run('--rm --name="builder" -v "$PWD":/app javierch/meteor:builder', 'test:ci')
                 }
+                sh 'docker rm builder'
                 
 
 
