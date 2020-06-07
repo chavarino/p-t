@@ -15,7 +15,7 @@ pipeline {
                         dockerImage.pull()
                       }
                     sh 'ls -la'
-                    sh 'docker run --name="builder" --rm -v "$PWD":/app javierch/meteor:builder  test:ci'
+                    sh 'docker run --name="builder" --rm -v /home/ubuntu/workspace/sapens:/app javierch/meteor:builder  test:ci'
                     sh 'ls -la'
                     sh 'docker rm builder'
                     
@@ -30,7 +30,7 @@ pipeline {
         stage('Build') {
             steps {
                
-                sh 'docker run --name="builder" --rm -v "$PWD":/app javierch/meteor:builder build:ci'
+                sh 'docker run --name="builder" --rm -v /home/ubuntu/workspace/sapens:/app javierch/meteor:builder build:ci'
                 sh "docker rm builder"
                 
             }
