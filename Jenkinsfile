@@ -24,17 +24,19 @@ pipeline {
 
             }
         }
-        sh 'docker rm builder'
+        
         stage('Build') {
             steps {
+                sh 'docker rm builder'
                 script {
                     dockerImage.run('-i --rm --name="builder" -v "$PWD":/app javierch/meteor:builder', 'build:ci')
                 }
-                sh "docker rm builder"
+                
             }
         }
         stage('Backup before release') {
             steps {
+                sh "docker rm builder"
                 script {
                     docker.withRegistry( '', registryCredential ) {
                         docker.image(registry+":sapens").pull().push("sapens_old")
