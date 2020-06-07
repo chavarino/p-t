@@ -16,6 +16,7 @@ pipeline {
                       }
                     sh 'ls -la'
                     sh 'docker run --name="builder" --rm -v "$PWD":/app javierch/meteor:builder  test:ci'
+                    sh 'ls -la'
                     sh 'docker rm builder'
                     
                 }
