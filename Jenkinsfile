@@ -39,8 +39,10 @@ pipeline {
             steps {
                 
                 script {
+                    dockerImage =docker.image(registry+":sapens")
                     docker.withRegistry( '', registryCredential ) {
-                        docker.image(registry+":sapens").pull().push("sapens_old")
+                        dockerImage.pull()
+                        dockerImage.push("sapens_old")
                         sh 'docker rmi $registry:sapens'
                         sh 'docker rmi $registry:sapens_old'
                       }
