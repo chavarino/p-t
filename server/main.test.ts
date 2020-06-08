@@ -43,9 +43,9 @@ var userLogin  = {
   }
  if(Meteor.isTest && Meteor.isServer)
   {
-    console.log("Sobrescribiendo")  
+    //console.log("Sobrescribiendo")  
     Meteor.userId = ()=>{
-       // console.log("call userId: " + getIds().idUser )
+       // //console.log("call userId: " + getIds().idUser )
         return getIds().idUser;
     }
     
@@ -84,7 +84,7 @@ var userLogin  = {
         
                                 if(error)
                                 {
-                                    console.log("Error al insertar: " + JSON.stringify(error))
+                                    //console.log("Error al insertar: " + JSON.stringify(error))
                                     chai.assert.ok(true)
             
                                 }
@@ -96,7 +96,7 @@ var userLogin  = {
                         }
                         catch(e)
                         {
-                            console.log("Exception al insertar "  + JSON.stringify(e))
+                            //console.log("Exception al insertar "  + JSON.stringify(e))
                             chai.assert.ok(true)
                         }
                     })
@@ -104,7 +104,7 @@ var userLogin  = {
         
         
                 let email = "";
-                console.log(`insert user : ${JSON.stringify(user)}`)
+                //console.log(`insert user : ${JSON.stringify(user)}`)
                 it('registro con usuario normal=> insercion correcta', function () {
                         // This code will be executed by the test driver when the app is started
                         // in the correct mode
@@ -125,14 +125,14 @@ var userLogin  = {
                                 
                                 if(error)
                                 {
-                                    console.log("Error al insertar: " + JSON.stringify(error))
+                                    //console.log("Error al insertar: " + JSON.stringify(error))
                                     chai.assert.ok(false)
             
                                 }
                                 else{
                                     email = user2.username;
                                     id = result;
-                                    console.log(`Usuario insertado id =${result}`)
+                                    //console.log(`Usuario insertado id =${result}`)
                                     chai.assert.ok(result && result!== "")
                                 }
                             });
@@ -140,7 +140,7 @@ var userLogin  = {
                         }
                         catch(e)
                         {
-                            console.log("Exception al insertar "  + JSON.stringify(e))
+                            //console.log("Exception al insertar "  + JSON.stringify(e))
                             chai.assert.ok(false)
                         }
                     });
@@ -160,11 +160,11 @@ var userLogin  = {
                     getIds().idProfesor = Accounts.createUser({email :userLogin.username, username:userLogin.username, password:userLogin.password, profile:{nombre: userLogin.profile.nombre, 
                         apellidos: userLogin.profile.apellidos} });
     
-                    console.log("idProfesor: " + getIds().idProfesor);
+                    //console.log("idProfesor: " + getIds().idProfesor);
         
                     getIds().idAlumno = Accounts.createUser({email :userLogin2.username, username:userLogin2.username, password:userLogin2.password, profile:{nombre: userLogin2.profile.nombre, 
                             apellidos: userLogin2.profile.apellidos} });
-                        console.log("idAlumno: " + getIds().idAlumno);
+                        //console.log("idAlumno: " + getIds().idAlumno);
                     done();
                 } catch (error) {
                      done(error);
@@ -177,7 +177,7 @@ var userLogin  = {
                     Users.remove(getIds().idAlumno);
                     getIds().idAlumno="";
                     getIds().idUser ="";
-                    console.log("borrados elementos")
+                    //console.log("borrados elementos")
                     done();
                 } catch (error) {
                         done(error);
@@ -198,12 +198,12 @@ var userLogin  = {
                                 
                                 if(error)
                                 {
-                                    console.log("Error al insertar: " + JSON.stringify(error))
+                                    //console.log("Error al insertar: " + JSON.stringify(error))
                                     chai.assert.ok(false);
             
                                 }
                                 else{
-                                    console.log(`resultado =${result}`)
+                                    //console.log(`resultado =${result}`)
                                     chai.assert.ok(result >=0)
                                 }
                             });
@@ -211,7 +211,7 @@ var userLogin  = {
                         }
                         catch(e)
                         {
-                            console.log("Exception al insertar "  + JSON.stringify(e))
+                            //console.log("Exception al insertar "  + JSON.stringify(e))
                             chai.assert.ok(false)
                         }
                     });    
@@ -232,7 +232,7 @@ var userLogin  = {
         
                           }
                           else{
-                              console.log(`resultado =${result}`)
+                              //console.log(`resultado =${result}`)
                               chai.assert.ok(result>=0);
                           }
                     });
@@ -255,7 +255,7 @@ var userLogin  = {
                            
                                            }
                                            else{
-                                            console.log(`resultado =${JSON.stringify(result)}`)
+                                            //console.log(`resultado =${JSON.stringify(result)}`)
                                             chai.assert.isEmpty(result)
                                            }
                                             
@@ -271,7 +271,7 @@ var userLogin  = {
                                         // This code will be executed by the test driver when the app is started
                                         // in the correct mode
                                     try {
-                                        console.log("idProfesor: " + getIds().idProfesor)
+                                        //console.log("idProfesor: " + getIds().idProfesor)
                                         getIds().idUser = getIds().idProfesor;
                                         Meteor.call('getServerCustom', (error, result)=>{
                                             
@@ -282,7 +282,7 @@ var userLogin  = {
                            
                                            }
                                            else{
-                                                console.log(`resultado =${JSON.stringify(result)}`)
+                                                //console.log(`resultado =${JSON.stringify(result)}`)
                                                 chai.assert.isNotEmpty(result)
                                            }
                                            
@@ -337,11 +337,11 @@ var userLogin  = {
                         getIds().idProfesor = Accounts.createUser({email :userLogin.username, username:userLogin.username, password:userLogin.password, profile:{nombre: userLogin.profile.nombre, 
                             apellidos: userLogin.profile.apellidos} });
         
-                        console.log("idProfesor: " + getIds().idProfesor);
+                        //console.log("idProfesor: " + getIds().idProfesor);
             
                         getIds().idAlumno = Accounts.createUser({email :userLogin2.username, username:userLogin2.username, password:userLogin2.password, profile:{nombre: userLogin2.profile.nombre, 
                                 apellidos: userLogin2.profile.apellidos} });
-                            console.log("idAlumno: " + getIds().idAlumno);
+                            //console.log("idAlumno: " + getIds().idAlumno);
                         done();
                     } catch (error) {
                         done(error);
@@ -354,7 +354,7 @@ var userLogin  = {
                         Users.remove(getIds().idAlumno);
                         getIds().idAlumno="";
                         getIds().idUser ="";
-                        //console.log("borrados elementos")
+                        ////console.log("borrados elementos")
                         done();
                     } catch (error) {
                             done(error);
@@ -432,7 +432,7 @@ var userLogin  = {
                         else{
                                 await result
                                 let aux = Msg.findOne(msg._id);
-                                console.log("result: " +result + ", " + JSON.stringify(aux))
+                                //console.log("result: " +result + ", " + JSON.stringify(aux))
                                 chai.assert.ok(!aux)
                         }
                         
@@ -465,13 +465,13 @@ var userLogin  = {
                         
                         if(error)
                         {
-                            console.log(JSON.stringify(error))
+                            //console.log(JSON.stringify(error))
                             chai.assert.ok(true)
         
                         }
                         else{
                                 let aux = Msg.findOne(msg._id);
-                                console.log("result: " +result + ", " + JSON.stringify(aux))
+                                //console.log("result: " +result + ", " + JSON.stringify(aux))
                                 chai.assert.ok(!aux)
                         }
                         
@@ -533,7 +533,7 @@ var userLogin  = {
 
                     })
     
-                    console.log("idProfesor: " + getIds().idProfesor);
+                    //console.log("idProfesor: " + getIds().idProfesor);
         
 
                     getIds().idAlumno = await  new Promise((res, rej)=>
@@ -552,7 +552,7 @@ var userLogin  = {
                         });
 
                     })
-                    console.log("idAlumno: " + getIds().idAlumno);
+                    //console.log("idAlumno: " + getIds().idAlumno);
                     done();
                 } catch (error) {
                     done(error);
@@ -565,7 +565,7 @@ var userLogin  = {
                     Users.remove(getIds().idAlumno);
                     getIds().idAlumno="";
                     getIds().idUser ="";
-                    //console.log("borrados elementos")
+                    ////console.log("borrados elementos")
                     done();
                 } catch (error) {
                         done(error);
@@ -638,7 +638,7 @@ var userLogin  = {
                     
                     if(error)
                     {
-                        console.log(JSON.stringify(error))
+                        //console.log(JSON.stringify(error))
                         chai.assert.ok(false)
     
                     }
