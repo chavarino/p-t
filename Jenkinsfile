@@ -9,51 +9,63 @@ pipeline {
     stages {
         stage('Testing') {
             steps {
-                dockerImage = docker.image(registry+":builder")
-                docker.withRegistry( '', registryCredential ) {
-                    dockerImage.pull()
-                  }
+                script {
+                    dockerImage = docker.image(registry+":builder")
+                    docker.withRegistry( '', registryCredential ) {
+                        dockerImage.pull()
+                      }
+                    sh 'ls -la'
+                    sh 'docker run --name="builder" --rm -v /home/ubuntu/workspace/sapens:/app javierch/meteor:builder  test:ci'
+                    sh 'ls -la'
                 
-                dockerImage.run('--name="builder" --rm -v "$PWD":/app javierch/meteor:builder', 'test:ci')
+                    
+                }
+                
+                
 
 
             }
         }
+        
         stage('Build') {
             steps {
-                dockerImage.run('--name="builder" --rm -v "$PWD":/app javierch/meteor:builder', 'build:ci')
-                 
-                sh "docker rm builder"
+               
+                sh 'docker run --name="builder" --rm -v /home/ubuntu/workspace/sapens:/app javierch/meteor:builder build:ci'
+               
+                
             }
         }
         stage('Backup before release') {
             steps {
                 
-                docker.withRegistry( '', registryCredential ) {
-                    docker.image(registry+":sapens").pull().push("sapens_old")
-                  }
+                script {
+                    docker.withRegistry( '', registryCredential ) {
+                        docker.image(registry+":sapens").pull().push("sapens_old")
+                      }
+                }
+                
                 
             }
         }
         stage('Deliver') {
             steps {
-                
                 sh 'tar xzf app.tar.gz'
-                dockerImage = docker.build("javierch/meteor:sapens")
-                docker.withRegistry( '', registryCredential ) {
-                    dockerImage.push()
-                  }
-
+                script {
+                    dockerImage = docker.build("javierch/meteor:sapens")
+                    docker.withRegistry( '', registryCredential ) {
+                        dockerImage.push()
+                      }    
+                }
             }
         }
         stage('deploy') {
             steps {
-                
-                dockerImage = docker.build("javierch/meteor:sapens")
-                docker.withRegistry( '', registryCredential ) {
-                    dockerImage.push()
-                  }
-
+                script {
+                    dockerImage = docker.build("javierch/meteor:sapens")
+                    docker.withRegistry( '', registryCredential ) {
+                        dockerImage.push()
+                      }
+                }
             }
         }
     }
