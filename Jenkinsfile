@@ -7,7 +7,7 @@ pipeline {
         dockerImage = ''
     }
     stages {
-        stage('Testing') {
+       /* stage('Testing') {
             steps {
                 sh 'docker system prune -f --volumes'
                 script {
@@ -30,20 +30,21 @@ pipeline {
         
         stage('Build') {
             steps {
-                sh 'docker system prune -f --volumes'
+                //sh 'docker system prune -f --volumes'
                 sh 'docker run --name="builder" --rm -v /home/ubuntu/workspace/sapens:/app javierch/meteor:builder build:ci'
         
             }
-        }
+        }*/
         stage('Backup before release') {
             steps {
                 
                 script {
                     docker.withRegistry( '', registryCredential ) {
                         docker.image(registry+":sapens").pull().push("sapens_old")
+                        sh 'docker rmi $registry:sapens'
+                        sh 'docker rmi $registry:sapens_old'
                       }
-                    sh 'docker rmi $registry:sapens'
-                    sh 'docker rmi $registry:sapens_old'
+                    
                 }
                 
                 
