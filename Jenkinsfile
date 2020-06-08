@@ -34,7 +34,7 @@ pipeline {
                 sh 'docker run --name="builder" --rm -v /home/ubuntu/workspace/sapens:/app javierch/meteor:builder build:ci'
         
             }
-        }*/
+        }
         stage('Backup before release') {
             steps {
                 
@@ -51,7 +51,7 @@ pipeline {
                 
                 
             }
-        }
+        }*/
         stage('Deliver') {
             steps {
                 sh 'docker rmi -f $(docker images | grep "<none>" | awk "{print \$3}")'
