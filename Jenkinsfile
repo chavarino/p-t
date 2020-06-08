@@ -59,8 +59,9 @@ pipeline {
                 sh 'docker system prune -af'
                 sh 'tar xzf app.tar.gz'
                 script {
-                    dockerImage = docker.build("javierch/meteor:sapens")
+                    
                     docker.withRegistry( '', registryCredential ) {
+                        dockerImage = docker.build("javierch/meteor:sapens")
                         dockerImage.push()
                       }    
                 }
