@@ -54,6 +54,7 @@ pipeline {
         }
         stage('Deliver') {
             steps {
+                sh 'docker rmi -f $(docker images | grep "<none>" | awk "{print \$3}")'
                 sh 'docker system prune -f --volumes'
                 sh 'tar xzf app.tar.gz'
                 script {
