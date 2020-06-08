@@ -9,15 +9,15 @@ pipeline {
     stages {
         stage('Testing') {
             steps {
-                sh 'docker system prune -af'
+                sh 'docker system prune -f --volumes'
                 script {
                     dockerImage = docker.image(registry+":builder")
                     docker.withRegistry( '', registryCredential ) {
                         dockerImage.pull()
                       }
-                    sh 'ls -la'
+                    
                     sh 'docker run --name="builder" --rm -v /home/ubuntu/workspace/sapens:/app javierch/meteor:builder  test:ci'
-                    sh 'ls -la'
+                   
                 
                     
                 }
@@ -30,10 +30,9 @@ pipeline {
         
         stage('Build') {
             steps {
-                sh 'docker system prune -af'
+                sh 'docker system prune -f --volumes'
                 sh 'docker run --name="builder" --rm -v /home/ubuntu/workspace/sapens:/app javierch/meteor:builder build:ci'
-               
-                
+        
             }
         }
         stage('Backup before release') {
@@ -43,6 +42,8 @@ pipeline {
                     docker.withRegistry( '', registryCredential ) {
                         docker.image(registry+":sapens").pull().push("sapens_old")
                       }
+                    sh 'docker rmi $registry:sapens'
+                    sh 'docker rmi $registry:sapens_old'
                 }
                 
                 
@@ -50,9 +51,9 @@ pipeline {
         }
         stage('Deliver') {
             steps {
+                sh 'docker system prune -f --volumes'
                 sh 'tar xzf app.tar.gz'
                 script {
-                    sh 'docker system prune -af'
                     dockerImage = docker.build("javierch/meteor:sapens")
                     docker.withRegistry( '', registryCredential ) {
                         dockerImage.push()
