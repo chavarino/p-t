@@ -65,6 +65,9 @@ pipeline {
                         dockerImage.push()
                       }    
                 }
+                sh 'rm app.tar.gz'
+                sh 'rm -rf bundle'
+                
             }
         }
         stage('deploy') {
