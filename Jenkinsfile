@@ -73,13 +73,7 @@ pipeline {
         stage('deploy') {
             
             steps {
-                script {
-                
-               def tfHome = tool name: 'ansible'
-                env.PATH = "${tfHome}:${env.PATH}"
-                 sh 'ansible --version'
-                    
-            }
+                echo '$JOB_BASE_NAME'
             }
         }
     }
