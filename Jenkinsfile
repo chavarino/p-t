@@ -51,7 +51,7 @@ pipeline {
                 
                 
             }
-        }*/
+        }
         stage('Deliver') {
             steps {
                 //sh 'docker rmi -f $(docker images | grep "<none>" | awk "{print \$3}")'
@@ -69,11 +69,16 @@ pipeline {
                 sh 'rm -rf bundle'
                 
             }
-        }
+        }*/
         stage('deploy') {
+            tools {
+                ansible 'ansible'
+            }
             steps {
                 script {
-                    sh 'echo "desplegando"'
+                    sh 'echo "desplegando" '
+                    sh 'ansible --version'
+                    
                 }
             }
         }
