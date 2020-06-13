@@ -6,9 +6,6 @@ pipeline {
         registryCredential = 'dockerhub_crendencial'
         dockerImage = ''
     }
-    tools {
-                ansible 'ansible'
-            }
     stages {
        /* stage('Testing') {
             steps {
@@ -77,10 +74,12 @@ pipeline {
             
             steps {
                 script {
-                    sh 'echo "desplegando" '
-                    sh 'ansible --version'
+                
+               def tfHome = tool name: 'Ansible'
+                env.PATH = "${tfHome}:${env.PATH}"
+                 sh 'ansible --version'
                     
-                }
+            }
             }
         }
     }
