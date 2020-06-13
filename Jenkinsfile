@@ -73,7 +73,7 @@ pipeline {
         stage('deploy') {
             
             steps {
-                echo '$JOB_BASE_NAME'
+                sh 'echo $ENVIROMENT_DEPLOY'
             }
         }
     }
