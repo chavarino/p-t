@@ -6,6 +6,9 @@ pipeline {
         registryCredential = 'dockerhub_crendencial'
         dockerImage = ''
     }
+    tools {
+                ansible 'ansible'
+            }
     stages {
        /* stage('Testing') {
             steps {
@@ -71,9 +74,7 @@ pipeline {
             }
         }*/
         stage('deploy') {
-            tools {
-                ansible 'ansible'
-            }
+            
             steps {
                 script {
                     sh 'echo "desplegando" '
