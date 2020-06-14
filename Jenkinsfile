@@ -78,7 +78,7 @@ pipeline {
                 /*
                 -it
                 sudo docker run --rm -it -v  /home/ubuntu/enviroments:/ansible/playbooks javierch/ansible  -u ubuntu -i /ansible/playbooks/pro/inventory --private-key /ansible/playbooks/pro/deploy.pem /ansible/playbooks/playbook-deploy.yml --ssh-extra-args "-o StrictHostKeyChecking=no"
-                *
+                */
             }
         }
     }
