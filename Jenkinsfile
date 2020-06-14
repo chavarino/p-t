@@ -16,7 +16,7 @@ pipeline {
                         dockerImage.pull()
                       }
                     
-                    sh 'docker run --name="builder" --rm -v /home/ubuntu/workspace/sapens:/app javierch/meteor:builder  test:ci'
+                    sh 'docker run --name="builder" --rm -v /home/ubuntu/jenkins_home/workspace/sapens:/app javierch/meteor:builder  test:ci'
                    
                 
                     
@@ -31,7 +31,7 @@ pipeline {
         stage('Build') {
             steps {
                 //sh 'docker system prune -f --volumes'
-                sh 'docker run --name="builder" --rm -v /home/ubuntu/workspace/sapens:/app javierch/meteor:builder build:ci'
+                sh 'docker run --name="builder" --rm -v /home/ubuntu/jenkins_home/workspace/sapens:/app javierch/meteor:builder build:ci'
         
             }
         }
