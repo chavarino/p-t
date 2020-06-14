@@ -16,7 +16,7 @@ pipeline {
                         dockerImage.pull()
                       }
                     
-                    sh 'docker run --name="builder" --rm -v /home/ubuntu/jenkins_home/workspace/sapens:/app javierch/meteor:builder  test:ci'
+                    sh 'docker run --name="builder" --rm -v /home/ubuntu/jenkins_home/workspace/$JOB_NAME:/app javierch/meteor:builder  test:ci'
                    
                 
                     
@@ -31,21 +31,26 @@ pipeline {
         stage('Build') {
             steps {
                 //sh 'docker system prune -f --volumes'
-                sh 'docker run --name="builder" --rm -v /home/ubuntu/jenkins_home/workspace/sapens:/app javierch/meteor:builder build:ci'
+                sh 'docker run --name="builder" --rm -v /home/ubuntu/jenkins_home/workspace/$JOB_NAME:/app javierch/meteor:builder build:ci'
         
             }
         }
         stage('Backup before release') {
             steps {
-                
+                //$JOB_NAME
                 script {
-                    dockerImage =docker.image(registry+":sapens")
-                    docker.withRegistry( '', registryCredential ) {
-                        dockerImage.pull()
-                        dockerImage.push("sapens_old")
-                        sh 'docker rmi $registry:sapens'
-                        sh 'docker rmi $registry:sapens_old'
-                      }
+                    try {
+                        dockerImage =docker.image(registry+":sapens")
+                        docker.withRegistry( '', registryCredential ) {
+                            dockerImage.pull()
+                            dockerImage.push("sapens_old")
+                            sh 'docker rmi $registry:sapens'
+                            sh 'docker rmi $registry:sapens_old'
+                          }
+                    } catch (err) {
+                        echo err.getMessage()
+                    }
+                    
                     
                 }
                 
