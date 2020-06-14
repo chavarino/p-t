@@ -18,7 +18,7 @@
     "remove": "rm -rf ~/.meteor"
   },
   "dependencies": {
-    "@angular/animations": "^6.0.5",
+    "@angular/animations": "6.0.5",
     "@angular/cdk": "github:angular/cdk-builds",
     "@angular/common": "6.0.2",
     "@angular/compiler": "6.0.2",
@@ -36,7 +36,7 @@
     "@angular2-material/radio": "^2.0.0-alpha.8-3",
     "@angular2-material/sidenav": "^2.0.0-alpha.8-3",
     "@angular2-material/toolbar": "^2.0.0-alpha.8-3",
-    "@babel/runtime": "^7.9.2",
+    "@babel/runtime": "^7.1.2",
     "@ng-bootstrap/ng-bootstrap": "^4.2.1",
     "angular2-meteor-accounts-ui": "^1.0.0",
     "bcrypt": "^3.0.6",
@@ -49,12 +49,12 @@
     "meteor-node-stubs": "0.4.1",
     "meteor-rxjs": "0.4.11",
     "ng2-material": "^0.8.1",
-    "ngx-chips": "^2.0.2",
+    "ngx-chips": "2.0.0-beta.0",
     "redux": "^4.0.4",
     "rxjs": "6.1.0",
     "rxjs-compat": "6.1.0",
     "stripe": "^7.12.0",
-    "tslib": "^1.10.0",
+    "tslib": "^1.9.3",
     "uuid": "^3.3.3",
     "zone.js": "0.8.26"
   },

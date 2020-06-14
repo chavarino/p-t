@@ -1,5 +1,5 @@
 
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
 
 
 import  {RolesService} from "../services/roles.service";
@@ -11,7 +11,7 @@ import { MethodsClass } from 'imports/functions/methodsClass';
 import { RtcService } from '../services/rtc.service';
 import { Permisos } from 'imports/models/rol';
 
-import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
+import { ActivatedRoute, Router, NavigationExtras, ActivationStart, RouterOutlet } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Subscription } from 'rxjs/Subscription';
 
@@ -29,6 +29,9 @@ export class PadreComponent implements OnInit, OnDestroy {
   rolSubs : Subscription;
   interval: NodeJS.Timer;
   idIntervalPingAlive: NodeJS.Timer;
+
+  @ViewChild(RouterOutlet) outlet: RouterOutlet;
+
   constructor(rol:RolesService, flags : BanderasService, private cd :ChangeDetectorRef, 
     private router: Router, private route: ActivatedRoute)
   {
@@ -124,7 +127,8 @@ export class PadreComponent implements OnInit, OnDestroy {
       // If it is a NavigationEnd event re-initalise the component
       
         console.log(e)
-      
+        if (e instanceof ActivationStart && e.snapshot.outlet === "administration")
+          this.outlet.deactivate(); 
       /*if (e instanceof NavigationEnd) {
         this.initialiseInvites();
       }*/
