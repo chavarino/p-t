@@ -74,7 +74,7 @@ pipeline {
             
             steps {
                 //sh 'echo $ENVIROMENT_DEPLOY'
-                sh 'sudo docker run --rm -v  /home/ubuntu/enviroments:/ansible/playbooks javierch/ansible  -u ubuntu -i /ansible/playbooks/$ENVIROMENT_DEPLOY/inventory --private-key /ansible/playbooks/$ENVIROMENT_DEPLOY/deploy.pem /ansible/playbooks/playbook-deploy.yml --ssh-extra-args "-o StrictHostKeyChecking=no"'
+                sh 'docker run --rm -v  /home/ubuntu/enviroments:/ansible/playbooks javierch/ansible  -u ubuntu -i /ansible/playbooks/$ENVIROMENT_DEPLOY/inventory --private-key /ansible/playbooks/$ENVIROMENT_DEPLOY/deploy.pem /ansible/playbooks/playbook-deploy.yml --ssh-extra-args "-o StrictHostKeyChecking=no"'
                 /*
                 -it
                 sudo docker run --rm -it -v  /home/ubuntu/enviroments:/ansible/playbooks javierch/ansible  -u ubuntu -i /ansible/playbooks/pro/inventory --private-key /ansible/playbooks/pro/deploy.pem /ansible/playbooks/playbook-deploy.yml --ssh-extra-args "-o StrictHostKeyChecking=no"
