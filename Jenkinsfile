@@ -7,7 +7,7 @@ pipeline {
         dockerImage = ''
     }
     stages {
-       /* stage('Testing') {
+        stage('Testing') {
             steps {
                 sh 'docker system prune -f --volumes'
                 script {
@@ -69,7 +69,7 @@ pipeline {
                 sh 'rm -rf bundle'
                 
             }
-        }*/
+        }
         stage('deploy') {
             
             steps {
