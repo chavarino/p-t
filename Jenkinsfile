@@ -85,7 +85,7 @@ pipeline {
             
             steps {
                 //sh 'echo $APP_ENVIROMENT'
-                build job: 'deployer', parameters: [string(name: 'APP_NAME', value:"$APP_NAME"), string(name:'APP_ENVIROMENT', value: "$APP_ENVIROMENT"), string(name:'USER_ANSIBLE', value: "$USER_ANSIBLE"), string(name:'JOB_NAME', value: "$JOB_NAME")]
+                build job: 'deployer', parameters: [string(name: 'APP_NAME', value:"$APP_NAME"), string(name:'APP_ENVIROMENT', value: "$APP_ENVIROMENT"), string(name:'USER_ANSIBLE', value: "$USER_ANSIBLE"), string(name:'APP_SERVICE', value: "$JOB_NAME")]
                 //sh 'docker run --rm -v  $BASE_PATH/$ENV_DEPLOY_PATH:/ansible/playbooks javierch/ansible  -u $USER_ANSIBLE -i /ansible/playbooks/$APP_NAME/$APP_ENVIROMENT/inventory --private-key /ansible/playbooks/$APP_NAME/$APP_ENVIROMENT/deploy.pem /ansible/playbooks/playbook-deploy.yml --extra-vars "appservice=$JOB_NAME" --ssh-extra-args "-o StrictHostKeyChecking=no"'
                
             }
