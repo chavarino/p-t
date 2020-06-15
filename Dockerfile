@@ -13,6 +13,7 @@ RUN npm uninstall fibers && npm install fibers && npm prune --production
 WORKDIR /
 
 
+
 ## la ejecucion del comando cuando se inicie el servidor.
 CMD [ "./startApp.sh" ]
 
