@@ -2,12 +2,18 @@ pipeline {
     agent any
     environment {
         CI = 'true'
-        registry = "javierch/meteor"
-        registryCredential = 'dockerhub_crendencial'
+        //registry = "javierch/meteor"
+        //registryCredential = 'dockerhub_crendencial'
         dockerImage = ''
+        //BASE_PATH= "/home/ubuntu"
+        //ENV_DEPLOY_PATH ="enviroments"
+        /*WORKSPACE="jenkins_home/workspace"
+        APP_ENVIROMENT="pro"
+        USER_ANSIBLE="ubuntu"*/
+       /* APP_NAME="sapens"*/
     }
     stages {
-        stage('Testing') {
+       /* stage('Testing') {
             steps {
                 sh 'docker system prune -f --volumes'
                 script {
@@ -16,7 +22,7 @@ pipeline {
                         dockerImage.pull()
                       }
                     
-                    sh 'docker run --name="builder" --rm -v /home/ubuntu/jenkins_home/workspace/$JOB_NAME:/app javierch/meteor:builder  test:ci'
+                    sh 'docker run --name="builder" --rm -v $BASE_PATH/$WORKSPACE/$JOB_NAME:/app $registry:builder  test:ci'
                    
                 
                     
@@ -31,7 +37,7 @@ pipeline {
         stage('Build') {
             steps {
                 //sh 'docker system prune -f --volumes'
-                sh 'docker run --name="builder" --rm -v /home/ubuntu/jenkins_home/workspace/$JOB_NAME:/app javierch/meteor:builder build:ci'
+                sh 'docker run --name="builder" --rm -v $BASE_PATH/$WORKSPACE/$JOB_NAME:/app $registry:builder build:ci'
         
             }
         }
@@ -40,12 +46,12 @@ pipeline {
                 //$JOB_NAME
                 script {
                     try {
-                        dockerImage =docker.image(registry+":sapens")
+                        dockerImage =docker.image(registry+":$JOB_NAME")
                         docker.withRegistry( '', registryCredential ) {
                             dockerImage.pull()
-                            dockerImage.push("sapens_old")
-                            sh 'docker rmi $registry:sapens'
-                            sh 'docker rmi $registry:sapens_old'
+                            dockerImage.push("$JOB_NAME_old")
+                            sh 'docker rmi $registry:$JOB_NAME'
+                            sh 'docker rmi $registry:$JOB_NAME_old'
                           }
                     } catch (err) {
                         echo err.getMessage()
@@ -66,7 +72,7 @@ pipeline {
                 script {
                     
                     docker.withRegistry( '', registryCredential ) {
-                        dockerImage = docker.build("javierch/meteor:sapens")
+                        dockerImage = docker.build("$registry:$JOB_NAME")
                         dockerImage.push()
                       }    
                 }
@@ -74,19 +80,14 @@ pipeline {
                 sh 'rm -rf bundle'
                 
             }
-        }
+        }*/
         stage('deploy') {
             
             steps {
-                //sh 'echo $ENVIROMENT_DEPLOY'
-                sh 'docker run --rm -v  /home/ubuntu/enviroments:/ansible/playbooks javierch/ansible  -u ubuntu -i /ansible/playbooks/$ENVIROMENT_DEPLOY/inventory --private-key /ansible/playbooks/$ENVIROMENT_DEPLOY/deploy.pem /ansible/playbooks/playbook-deploy.yml --ssh-extra-args "-o StrictHostKeyChecking=no"'
+                //sh 'echo $APP_ENVIROMENT'
+                build job: 'deployer', parameters: [string(name: 'APP_NAME', value:"$APP_NAME"), string(name:'APP_ENVIROMENT', value: "$APP_ENVIROMENT"), string(name:'USER_ANSIBLE', value: "$USER_ANSIBLE"), string(name:'APP_SERVICE', value: "$JOB_NAME")]
+                //sh 'docker run --rm -v  $BASE_PATH/$ENV_DEPLOY_PATH:/ansible/playbooks javierch/ansible  -u $USER_ANSIBLE -i /ansible/playbooks/$APP_NAME/$APP_ENVIROMENT/inventory --private-key /ansible/playbooks/$APP_NAME/$APP_ENVIROMENT/deploy.pem /ansible/playbooks/playbook-deploy.yml --extra-vars "appservice=$JOB_NAME" --ssh-extra-args "-o StrictHostKeyChecking=no"'
                
-                
-                
-                /*
-                -it
-                sudo docker run --rm -it -v  /home/ubuntu/enviroments:/ansible/playbooks javierch/ansible  -u ubuntu -i /ansible/playbooks/pro/inventory --private-key /ansible/playbooks/pro/deploy.pem /ansible/playbooks/playbook-deploy.yml --ssh-extra-args "-o StrictHostKeyChecking=no"
-                */
             }
         }
     }
