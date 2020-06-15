@@ -2,15 +2,15 @@ pipeline {
     agent any
     environment {
         CI = 'true'
-        registry = "javierch/meteor"
-        registryCredential = 'dockerhub_crendencial'
+        //registry = "javierch/meteor"
+        //registryCredential = 'dockerhub_crendencial'
         dockerImage = ''
-        BASE_PATH= "/home/ubuntu"
+        //BASE_PATH= "/home/ubuntu"
         ENV_DEPLOY_PATH ="enviroments"
-        WORKSPACE="jenkins_home/workspace"
+        /*WORKSPACE="jenkins_home/workspace"
         APP_ENVIROMENT="pro"
-        USER_ANSIBLE="ubuntu"
-        APP_NAME="sapens"
+        USER_ANSIBLE="ubuntu"*/
+       /* APP_NAME="sapens"*/
     }
     stages {
         stage('Testing') {
