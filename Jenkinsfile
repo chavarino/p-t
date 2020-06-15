@@ -6,7 +6,7 @@ pipeline {
         //registryCredential = 'dockerhub_crendencial'
         dockerImage = ''
         //BASE_PATH= "/home/ubuntu"
-        ENV_DEPLOY_PATH ="enviroments"
+        //ENV_DEPLOY_PATH ="enviroments"
         /*WORKSPACE="jenkins_home/workspace"
         APP_ENVIROMENT="pro"
         USER_ANSIBLE="ubuntu"*/
