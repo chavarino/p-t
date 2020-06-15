@@ -36,7 +36,7 @@ pipeline {
         
         stage('Build') {
             steps {
-                //sh 'docker system prune -f --volumes'
+  
                 sh 'docker run --name="builder" --rm -v $BASE_PATH/$WORKSPACE/$JOB_NAME:/app $registry:builder build:ci'
         
             }
