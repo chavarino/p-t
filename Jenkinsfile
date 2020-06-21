@@ -1,6 +1,7 @@
 pipeline {
     agent any
     environment {
+        
         CI = 'true'
         //registry = "javierch/meteor"
         //registryCredential = 'dockerhub_crendencial'
