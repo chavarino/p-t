@@ -12,6 +12,7 @@ pipeline {
         APP_ENVIROMENT="pro"
         USER_ANSIBLE="ubuntu"*/
        /* APP_NAME="sapens"*/
+        
     }
     stages {
         stage('Testing') {
