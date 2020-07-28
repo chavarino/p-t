@@ -52,7 +52,7 @@ pipeline {
                         docker.withRegistry( '', registryCredential ) {
                             dockerImage.pull()
                             dockerImage.push("${JOB_NAME}_old")
-                            sh 'docker rmi $registry:JOB_NAME'
+                            sh 'docker rmi $registry:$JOB_NAME'
                             sh 'docker rmi $registry:${JOB_NAME}_old'
                           }
                     } catch (err) {
