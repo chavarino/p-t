@@ -26,8 +26,7 @@ pipeline {
                     
                     sh 'docker run --name="builder" --rm -v $BASE_PATH/$WORKSPACE/$JOB_NAME:/app $registry:builder  test:ci'
                    
-                
-                    
+               
                 }
                 
                 
