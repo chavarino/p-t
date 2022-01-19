@@ -1,12 +1,5 @@
-# Angular-Meteor Boilerplate
-
-## Usage
-
-Since Meteor v1.4 you can use one command to create a working Angular2 app based on this boilerplate:
-
-```
-meteor create --example angular2-boilerplate
-```
+Projecto de Angular 6 y meteor. Configurado con un pipeline en jenkins. Incluye un dockerfile que mediante el cual se crea el bundle de la aplicación en un contenedor.
+Esta aplicación esta orientada a las clases online y permite la conexión de video/audio mediante webrtc entre dos usuarios (de roles alumno-profesor) con el objetivo de resolver dudas de cualquier tema seleccionado. Los alumnos pueden buscar, ordenar, filtrar(por tema/nombre/puntuacion) y llamar directamente a profesores conectados mediante la lista que proporciona la aplicación. Los profesores pueden ser calificados por lo alumnos cuando termina la llamada. Mediante esa puntuación los profesores obtienen y forman un "elo", al estilo videojuego, mediante el cual la aplicación posiciona mejor a éste en la lista de profesores. En principio se espera que los profesores cobren por tiempo de llamada, para ello se a incorporado y preparado para  la api de pagos de stripe.
 
 ## NPM Scripts
 
